@@ -1,0 +1,9 @@
+#File	/home/pi/RbData/2018-03-20/POL2018-03-20_105209analysis.dat
+#DataFile	/home/pi/RbData/2018-03-20/POL2018-03-20_105209.dat
+#BackgroundFile	NONE
+#Comments	Run 3/7, AOUT=312, temp=120.5,  Stepping temp from 135.5 to 115 in steps of 3, 500 mTorr, AOUT=312, pump=s+
+#ALPHA	20.400000	0.100000
+#BETA	68.700000	0.100000
+#DELTA	94.500000	0.600000
+fileName	processedFile	backgroundFile	comments	alpha	d_alpha	beta_0	d_beta_0	delta	d_delta	normCurr	p0	p0ErrUp	p0ErrDown	p1	p1ErrUp	p1ErrDown	p2	p2ErrUp	p2ErrDown	p3	p3ErrUp	p3ErrDown	c0	c0ErrUp	c0ErrDown	c4	c4ErrUp	c4ErrDown	s4	s4ErrUp	s4ErrDown	s2	s2ErrUp	s2ErrDown	c2	c2ErrUp	c2ErrDown	Avg.Current	Avg.CurrentStdDev
+/home/pi/RbData/2018-03-20/POL2018-03-20_105209analysis.dat	/home/pi/RbData/2018-03-20/POL2018-03-20_105209.dat	NONE	Run 3/7, AOUT=312, temp=120.5,  Stepping temp from 135.5 to 115 in steps of 3, 500 mTorr, AOUT=312, pump=s+	20.400000	0.100000	68.700000	0.100000	94.500000	0.600000	1	2783.928467	92.411949	92.427292	0.042681	0.074299	0.074300	-0.008727	0.072927	0.072927	0.032849	0.022504	0.022493	2818.059326	6.923278	6.923279	36.612297	107.837608	107.855438	-54.188751	108.295227	108.277458	78.287071	55.157631	55.053474	46.166168	54.374062	54.479523	-0.357637	0.001194

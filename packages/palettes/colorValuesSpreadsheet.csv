@@ -1,0 +1,154 @@
+R,G,B,Name
+#tolBright,,,
+68,119,170,Blue
+238,102,119,Red
+34,136,51,Green
+204,187,68,Yellow
+102,204,238,Cyan
+170,51,119,Purple
+187,187,187,Grey
+,,,
+#tolHighContrast,,,
+0,68,136,blue
+221,170,51,yellow
+187,85,102,red
+0,0,0,black
+255,255,255,white
+,,,
+#tolYlOrBr,,,
+255,255,229,FFFFE5
+255,247,188,FFF7BC
+254,227,145,FEE391
+254,196,79,FEC44F
+251,154,41,FB9A29
+236,112,20,EC7014
+204,76,2,CC4C02
+153,52,4,993404
+102,37,6,662506
+136,136,136,888888
+,,,
+#tolPale,,,
+187,204,238,pale blue
+204,238,255,pale cyan
+204,221,170,pale green
+238,238,187,pale yellow
+255,204,204,pale red
+221,221,221,pale grey
+,,,
+#tolDark,,,
+34,34,85,dark blue
+34,85,85,dark cyan
+34,85,34,dark green
+102,102,51,dark yellow
+102,51,51,dark red
+85,85,85,dark grey
+,,,
+#tolLight,,,
+119,170,221,light blue
+153,221,255,light cyan
+68,187,153,mint
+187,204,51,pear
+170,170,0,olive
+238,221,136,light yellow
+238,136,102,orange
+255,170,187,pink
+221,221,221,pale grey
+,,,
+#unlColors,,,
+208,0,0,Scarlet
+245,241,231,Cream
+199,200,202,Gray
+254,253,250,Lighter Cream
+0,18,38,Navy
+36,154,181,Cerulean
+188,203,42,Green
+245,138,31,Orange
+0,93,132,Lapis
+255,215,79,Yellow
+165,34,141,Purple
+,,,
+#tolPurpleGreen,,,
+118,42,131,762A83
+153,112,171,9970AB
+194,165,207,C2A5CF
+231,212,232,E7D4E8
+247,247,247,F7F7F7
+217,240,211,D9F0D3
+172,211,158,ACD39E
+90,174,97,5AAE61
+27,120,55,1B7837
+255,238,153,BADDATA
+,,,
+#tolBlueRed,,,
+33,102,172,2166AC
+67,147,195,4393C3
+146,197,222,92C5DE
+209,229,240,D1E5F0
+247,247,247,F7F7F7
+253,219,199,FDDBC7
+244,165,130,F4A582
+214,96,77,D6604D
+178,24,43,B2182B
+255,238,153,BADDATA
+,,,
+#tolSunset,,,
+54,75,154,364B9A
+74,123,183,4A7BB7
+110,166,205,6EA6CD
+152,202,225,98CAE1
+194,228,239,C2E4EF
+234,236,204,EAECCC
+254,218,139,FEDA8B
+253,179,102,FDB366
+246,126,75,F67E4B
+221,61,45,DD3D2D
+165,0,38,A50026
+255,255,255,BADDATA
+,,,
+#martinK8,,,
+0,0,0,black
+34,113,178,honolulublue
+61,183,233,summersky
+247,72,165,barbiepink
+53,155,115,oceangreen
+213,94,0,bamboo
+230,159,0,gamboge
+240,228,66,holiday
+,,,
+#martinK8alt,,,
+0,0,0,black
+170,13,180,barney
+255,84,237,lightmagenta
+0,177,159,strongopal
+235,5,122,vividrose
+248,7,29,vividred
+255,141,26,darkorange
+158,255,55,frenchlime
+,,,
+#martinK12,,,
+159,1,98,deepmagenta
+0,159,129,paolo
+255,90,175,brilliantrose
+0,252,207,brightteal
+132,0,205,frenchviolet
+0,141,249,dodgerblue
+0,194,249,spiro
+255,178,253,plum
+164,1,34,strongcrimson
+226,1,52,vividcrimson
+255,110,58,burningorange
+255,195,59,brightspark
+,,,
+#martinK12alt,,,
+0,106,94,genoa
+237,13,136,deeppink
+0,189,169,tealish
+255,196,212,palecrimson
+0,88,204,ceruleanblue
+210,8,251,hotpurple
+255,102,253,pinkflamingo
+0,239,249,turquoise
+21,109,3,japaneselaurel
+0,151,25,islamicgreen
+0,198,27,permanentgreen
+0,251,29,luminous

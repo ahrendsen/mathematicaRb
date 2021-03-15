@@ -1,0 +1,21 @@
+Wed Mar 25 22:07:44 CDT 2020
+
+                                                                                                                                -7                                 -15               -12
+NIntegrate::ncvb: NIntegrate failed to converge to prescribed accuracy after 9 recursive bisections in θ near {θ} = {1.1269 10  }. NIntegrate obtained 4.32987 10    and 8.65172 10    for the integral and error estimates.
+
+                                                                                                                                -7                                  -15               -12
+NIntegrate::ncvb: NIntegrate failed to converge to prescribed accuracy after 9 recursive bisections in θ near {θ} = {1.1269 10  }. NIntegrate obtained -2.10942 10    and 8.77588 10    for the integral and error estimates.
+
+                                                                                                                                                                                                                           -15               -12
+NIntegrate::ncvb: NIntegrate failed to converge to prescribed accuracy after 9 recursive bisections in θ near {θ} = {6.28318519448951320385675257047976413268819406710008479421958327293}. NIntegrate obtained 4.10783 10    and 9.22426 10    for the integral and error estimates.
+
+General::stop: Further output of NIntegrate::ncvb will be suppressed during this calculation.
+
+NIntegrate::slwcon: Numerical integration converging too slowly; suspect one of the following: singularity, value of the integration is 0, highly oscillatory integrand, or WorkingPrecision too small.
+
+NIntegrate::slwcon: Numerical integration converging too slowly; suspect one of the following: singularity, value of the integration is 0, highly oscillatory integrand, or WorkingPrecision too small.
+
+NIntegrate::slwcon: Numerical integration converging too slowly; suspect one of the following: singularity, value of the integration is 0, highly oscillatory integrand, or WorkingPrecision too small.
+
+General::stop: Further output of NIntegrate::slwcon will be suppressed during this calculation.
+Thu Mar 26 00:19:02 CDT 2020

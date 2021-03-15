@@ -1,0 +1,23 @@
+Fri Apr  3 10:08:41 CDT 2020
+
+                                                                                                                                -7                                 -16               -13
+NIntegrate::ncvb: NIntegrate failed to converge to prescribed accuracy after 9 recursive bisections in θ near {θ} = {1.1269 10  }. NIntegrate obtained 3.53884 10    and 6.28995 10    for the integral and error estimates.
+
+                                                                                                                                                               -16               -16
+NIntegrate::ncvb: NIntegrate failed to converge to prescribed accuracy after 9 recursive bisections in θ near {θ} = {3.59555}. NIntegrate obtained 5.55112 10    and 1.58423 10    for the integral and error estimates.
+
+                                                                                                                                -7                                 -16               -13
+NIntegrate::ncvb: NIntegrate failed to converge to prescribed accuracy after 9 recursive bisections in θ near {θ} = {1.1269 10  }. NIntegrate obtained 1.66533 10    and 6.44782 10    for the integral and error estimates.
+
+General::stop: Further output of NIntegrate::ncvb will be suppressed during this calculation.
+
+NIntegrate::slwcon: Numerical integration converging too slowly; suspect one of the following: singularity, value of the integration is 0, highly oscillatory integrand, or WorkingPrecision too small.
+
+NIntegrate::slwcon: Numerical integration converging too slowly; suspect one of the following: singularity, value of the integration is 0, highly oscillatory integrand, or WorkingPrecision too small.
+
+NIntegrate::slwcon: Numerical integration converging too slowly; suspect one of the following: singularity, value of the integration is 0, highly oscillatory integrand, or WorkingPrecision too small.
+
+General::stop: Further output of NIntegrate::slwcon will be suppressed during this calculation.
+Fri Apr  3 17:07:37 CDT 2020
+Current memory usage for job 26206404 is: 5.66 MBs
+Maximum memory usage for job 26206404 is: 6302.16 MBs

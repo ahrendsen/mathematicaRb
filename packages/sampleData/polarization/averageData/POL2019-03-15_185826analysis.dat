@@ -1,0 +1,9 @@
+#File	/home/pi/RbData/2019-03-15/POL2019-03-15_185826analysis.dat
+#DataFile	/home/pi/RbData/2019-03-15/POL2019-03-15_185826.dat
+#BackgroundFile	NONE
+#Comments	Run 1/2, AOUT=672, variac->14, nRb->6*^12, pRb->.4, AOUT->672, pump->s-, Run 2/3
+#ALPHA	20.400000	0.100000
+#BETA	68.700000	0.100000
+#DELTA	94.500000	0.600000
+fileName	processedFile	backgroundFile	comments	alpha	d_alpha	beta_0	d_beta_0	delta	d_delta	normCurr	p0	p0ErrUp	p0ErrDown	p1	p1ErrUp	p1ErrDown	p2	p2ErrUp	p2ErrDown	p3	p3ErrUp	p3ErrDown	c0	c0ErrUp	c0ErrDown	c4	c4ErrUp	c4ErrDown	s4	s4ErrUp	s4ErrDown	s2	s2ErrUp	s2ErrDown	c2	c2ErrUp	c2ErrDown	Avg.Current	Avg.CurrentStdDev
+/home/pi/RbData/2019-03-15/POL2019-03-15_185826analysis.dat	/home/pi/RbData/2019-03-15/POL2019-03-15_185826.dat	NONE	Run 1/2, AOUT=672, variac->14, nRb->6*^12, pRb->.4, AOUT->672, pump->s-, Run 2/3	20.400000	0.100000	68.700000	0.100000	94.500000	0.600000	1	120.666336	6.810989	6.810460	-0.045004	0.108138	0.108138	-0.010511	0.109557	0.109556	0.020744	0.061465	0.061464	118.390297	3.766788	3.766788	-2.570703	6.637641	6.636884	1.560180	7.346970	7.347654	1.068457	5.644698	5.645956	2.246598	5.936403	5.935206	-0.176844	0.010085

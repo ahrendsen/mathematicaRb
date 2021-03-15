@@ -1,0 +1,3300 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 6.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[    131706,       3292]
+NotebookOptionsPosition[    120565,       3082]
+NotebookOutlinePosition[    121502,       3118]
+CellTagsIndexPosition[    121459,       3115]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Header comments", "Section",ExpressionUUID->"887c7061-f43f-4366-a273-6ddd4562e050"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{":", 
+    RowBox[{"Title", ":", " ", "CustomTicks"}]}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{":", 
+    RowBox[{"Context", ":", " ", "CustomTicks`"}]}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{":", 
+     RowBox[{"Author", ":", " ", 
+      RowBox[{"Mark", " ", 
+       RowBox[{"A", ".", " ", "Caprio"}]}]}]}], ",", " ", 
+    RowBox[{"Department", " ", "of", " ", "Physics"}], ",", " ", 
+    RowBox[{"University", " ", "of", " ", "Notre", " ", "Dame"}]}], " ", 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{":", 
+     RowBox[{"Summary", ":", " ", 
+      RowBox[{
+      "Custom", " ", "tick", " ", "mark", " ", "generation", " ", "for", " ", 
+       "linear"}]}]}], ",", " ", "log", ",", " ", 
+    RowBox[{"and", " ", "general", " ", "nonlinear", " ", 
+     RowBox[{"axes", "."}]}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{":", "Copyright", ":", " ", 
+     RowBox[{"Copyright", " ", "2012"}]}], ",", " ", 
+    RowBox[{"Mark", " ", 
+     RowBox[{"A", ".", " ", "Caprio"}]}]}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{":", 
+    RowBox[{"Package", " ", "Version"}], ":", " ", "1.90"}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{":", 
+    RowBox[{"Mathematica", " ", 
+     RowBox[{"Version", ":", " ", "6.0"}]}]}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{":", "History", ":", "\[IndentingNewLine]", 
+     RowBox[{"MCAxes", " ", "package"}]}], ",", " ", 
+    RowBox[{"January", " ", "10"}], ",", " ", 
+    RowBox[{
+    "2003.", "\[IndentingNewLine]", " ", "MCAxes", " ", "and", " ", "then", 
+     " ", "MCTicks", " ", "packages", " ", "distributed", " ", "as", " ", 
+     "part", " ", "of", " ", "LevelScheme"}], ",", " ", 
+    RowBox[{"2004.", "\[IndentingNewLine]", " ", "V1", 
+     RowBox[{".0", ".", " ", "March"}], " ", "11"}], ",", " ", 
+    RowBox[{"2005.", "  ", "MathSource", " ", 
+     RowBox[{"No", ".", " ", "5599."}], "\[IndentingNewLine]", " ", "V1", 
+     RowBox[{".1", ".", " ", "March"}], " ", "18"}], ",", " ", 
+    RowBox[{"2005.", "  ", "Documentation", " ", 
+     RowBox[{"update", ".", "\[IndentingNewLine]", "V1"}], 
+     RowBox[{".2", ".", " ", "September"}], " ", "17"}], ",", " ", 
+    RowBox[{"2005.", "  ", "Simplified", " ", "LogTicks", " ", 
+     RowBox[{"syntax", ".", "\[IndentingNewLine]", "V1"}], 
+     RowBox[{".3", ".", " ", "November"}], " ", "29"}], ",", " ", 
+    RowBox[{"2005.", "  ", "Documentation", " ", 
+     RowBox[{"update", ".", "\[IndentingNewLine]", "V1"}], 
+     RowBox[{".4", ".", " ", "July"}], " ", "18"}], ",", " ", 
+    RowBox[{"2007.", "  ", "FixedPointForm"}], ",", " ", 
+    RowBox[{"ExtraTicks", " ", 
+     RowBox[{"option", ".", "\[IndentingNewLine]", "V1"}], 
+     RowBox[{".5", ".", " ", "August"}], " ", "2"}], ",", " ", 
+    RowBox[{"2007.", "  ", "Mathematica", " ", "6", " ", "compatibility", " ", 
+     RowBox[{"update", ".", "\[IndentingNewLine]", "V1"}], 
+     RowBox[{".6", ".", " ", "July"}], " ", "10"}], ",", " ", 
+    RowBox[{
+    "2008.", "  ", "Overhaul", " ", "of", " ", "FixedPointForm", " ", "to", 
+     " ", "string", " ", 
+     RowBox[{"output", ".", "  ", "Separate"}], " ", "options", " ", "for", 
+     " ", 
+     RowBox[{"LogTicks", ".", "  ", "Updates"}], " ", "for", " ", "use", " ", 
+     "of", " ", "LinTicks", " ", "and", " ", "LogTicks", " ", "as", " ", 
+     "automatic", " ", "tick", " ", 
+     RowBox[{"functions", ".", "\[IndentingNewLine]", "V1"}], 
+     RowBox[{".61", ".", " ", "July"}], " ", "23"}], ",", " ", 
+    RowBox[{
+    "2008.", " ", "Workaround", " ", "for", " ", "unexpected", " ", 
+     "behavior", " ", "of", " ", 
+     RowBox[{"RealDigits", ".", "\[IndentingNewLine]", "V1"}], 
+     RowBox[{".62", ".", " ", "September"}], " ", "30"}], ",", " ", 
+    RowBox[{
+    "2008.", " ", "Rounding", " ", "rather", " ", "than", " ", "truncation", 
+     " ", "on", " ", "digits", " ", "to", " ", "right", " ", "of", " ", 
+     "decimal", " ", 
+     RowBox[{"point", ".", "\[IndentingNewLine]", "V1"}], 
+     RowBox[{".63", ".", " ", "December"}], " ", "29"}], ",", " ", 
+    RowBox[{"2009.", " ", "TickTest", " ", "and", " ", 
+     RowBox[{"TickLabelTest", ".", "  ", "TickLengthScale"}], " ", "and", " ", 
+     RowBox[{
+     "TickReverse", ".", "  ", "LimitTickLabelRange", ".", 
+      "\[IndentingNewLine]", "V1"}], 
+     RowBox[{".64", ".", " ", "October"}], " ", "27"}], ",", " ", 
+    RowBox[{
+    "2010.", " ", "Context", " ", "changed", " ", "to", " ", "LevelScheme`", 
+     "*", 
+     RowBox[{".", "\[IndentingNewLine]", "V1"}], 
+     RowBox[{".70", ".", " ", "June"}], " ", "3"}], ",", " ", 
+    RowBox[{"2011.", " ", "Restructured", " ", "with", " ", 
+     RowBox[{"init", ".", "m"}], " ", 
+     RowBox[{"file", ".", "  ", "Added"}], " ", "option", " ", 
+     RowBox[{"LogPlot", ".", "  ", "Replaced"}], " ", "StyleForm", " ", 
+     "with", " ", "Style", " ", 
+     RowBox[{"(", 
+      RowBox[{"Mathematica", " ", "6"}], ")"}], " ", "in", " ", "natural", 
+     " ", "log", " ", 
+     RowBox[{"plot", ".", "\[IndentingNewLine]", "V1"}], 
+     RowBox[{".80", ".", " ", "September"}], " ", "30"}], ",", " ", 
+    RowBox[{"2011.", " ", 
+     RowBox[{"TickDirection", ".", "\[IndentingNewLine]", "V1"}], 
+     RowBox[{".81", ".", " ", "March"}], " ", "24"}], ",", " ", 
+    RowBox[{
+     RowBox[{"2012.", " ", "Add", " ", "pass"}], "-", 
+     RowBox[{
+     "through", " ", "of", " ", "nonnumeric", " ", "values", " ", "for", " ", 
+      
+      RowBox[{"FixedPointForm", ".", "\[IndentingNewLine]", "V1"}], 
+      RowBox[{".82", ".", " ", "July"}], " ", "15"}]}], ",", " ", 
+    RowBox[{
+    "2012.", " ", "Patch", " ", "to", " ", "allow", " ", "negative", " ", 
+     "tick", " ", "range", " ", "in", " ", "range", " ", "tests"}], ",", " ", 
+    
+    RowBox[{
+     RowBox[{"for", " ", "use", " ", "with", " ", "reversed"}], "-", 
+     RowBox[{"axis", " ", 
+      RowBox[{"plots", ".", "\[IndentingNewLine]", "V1"}], 
+      RowBox[{".90", ".", " ", "October"}], " ", "6"}]}], ",", " ", 
+    RowBox[{
+    "2014.", " ", "Pass", " ", "through", " ", "of", " ", "options", " ", 
+     "to", " ", "FixedPointForm", " ", "from", " ", "LinTicks"}], ",", " ", 
+    RowBox[{
+    "to", " ", "allow", " ", "easier", " ", "control", " ", "over", " ", 
+     "sign", " ", "formatting", " ", "in", " ", 
+     RowBox[{"ticks", ".", "\[IndentingNewLine]", "V2"}], ".0", 
+     RowBox[{".0", ".", " ", "March"}], " ", "1"}], ",", " ", 
+    RowBox[{
+    "2015.", " ", "Add", " ", "support", " ", "for", " ", "minor", " ", 
+     "tick", " ", 
+     RowBox[{"labels", ":", " ", 
+      RowBox[{"option", " ", "ShowMinorTickLabels"}]}]}], ",", " ", 
+    RowBox[{
+    "MinorTickLabelStyle", ".", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+     
+     RowBox[{"TODO", ":", " ", 
+      RowBox[{
+       RowBox[{"Revise", " ", 
+        RowBox[{"MajorTickX", "/", "MinorTickX"}], " ", "options", " ", "to", 
+        " ", 
+        RowBox[{"TickX", "/", "MinorTickX"}], " ", "with", " ", "suitable", 
+        " ", "fall"}], "-", 
+       RowBox[{"through", " ", "for", " ", "minor", " ", 
+        RowBox[{"ticks", "."}]}]}]}]}]}], "\[IndentingNewLine]", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "Acknowledgements", " ", "for", " ", "bug", " ", "reports", " ", "and", 
+     " ", 
+     RowBox[{"suggestions", ":", " ", 
+      RowBox[{"Johannes", " ", "Grosse"}]}]}], ",", " ", 
+    RowBox[{"Will", " ", "Robertson"}], ",", " ", 
+    RowBox[{"Robert", " ", "Collyer"}]}], " ", "*)"}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{
+  3.3951514190625*^9, {3.39568157340625*^9, 3.39568157496875*^9}, {
+   3.424725546640625*^9, 3.424725567828125*^9}, {3.424727071734375*^9, 
+   3.424727073109375*^9}, {3.42472710353125*^9, 3.42472711078125*^9}, {
+   3.42472922071875*^9, 3.424729256*^9}, {3.42473050140625*^9, 
+   3.424730591828125*^9}, {3.424730948*^9, 3.42473095884375*^9}, {
+   3.42473179496875*^9, 3.4247317985625*^9}, {3.425856536703125*^9, 
+   3.42585655975*^9}, {3.431814907515625*^9, 3.431814916421875*^9}, {
+   3.43181540325*^9, 3.4318154251875*^9}, {3.456517029390625*^9, 
+   3.4565170318125*^9}, {3.456517228203125*^9, 3.456517234828125*^9}, {
+   3.456517769359375*^9, 3.45651777596875*^9}, {3.4639578190464115`*^9, 
+   3.4639578227026615`*^9}, {3.464877504828125*^9, 3.464877509171875*^9}, {
+   3.4657255575*^9, 3.46572556121875*^9}, {3.471903775953125*^9, 
+   3.471903792171875*^9}, {3.4972227648125*^9, 3.497222765375*^9}, {
+   3.5148188310625*^9, 3.51481887053125*^9}, {3.51481890178125*^9, 
+   3.514818904453125*^9}, {3.514819079328125*^9, 3.5148190883125*^9}, {
+   3.514819169078125*^9, 3.514819288203125*^9}, {3.515273865890625*^9, 
+   3.5152738930625*^9}, {3.516129456359375*^9, 3.5161294579375*^9}, {
+   3.516132449046875*^9, 3.516132464359375*^9}, {3.51613256821875*^9, 
+   3.516132608515625*^9}, {3.516298256375*^9, 3.51629827703125*^9}, {
+   3.52642132984375*^9, 3.526421343140625*^9}, {3.54049554575*^9, 
+   3.54049558584375*^9}, {3.54162255465625*^9, 3.5416225548125*^9}, {
+   3.543179094515625*^9, 3.54317909465625*^9}, {3.55135556959375*^9, 
+   3.55135560825*^9}, {3.573854897912553*^9, 3.5738549056525636`*^9}, {
+   3.614197317950938*^9, 3.6141973842978544`*^9}, {3.6216272862319956`*^9, 
+   3.6216272942972097`*^9}, {3.621627958822787*^9, 3.621627960008389*^9}, {
+   3.6342284575496716`*^9, 3.6342284911209307`*^9}, {3.6342285679822655`*^9, 
+   3.634228568902667*^9}, {3.6342289186084814`*^9, 3.634228958419751*^9}, {
+   3.6342290726743517`*^9, 3.634229075638357*^9}},
+ CellLabel->
+  "In[517]:=",ExpressionUUID->"705e08a4-a059-4635-80bb-6d7fd0fd8e92"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Begin package", "Section",ExpressionUUID->"1d265d06-facd-400e-9e1d-62dd4fc80256"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"BeginPackage", "[", "\"\<CustomTicks`\>\"", "]"}], ";"}]], "Input",\
+
+ InitializationCell->True,
+ CellChangeTimes->{{3.497222760296875*^9, 3.49722276228125*^9}, {
+   3.51481887890625*^9, 3.51481888025*^9}, {3.51482161584375*^9, 
+   3.514821619765625*^9}, 3.5152738965*^9},
+ CellLabel->
+  "In[518]:=",ExpressionUUID->"b151e4c0-85f7-4ffe-96b6-a173a2a43685"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Unprotect", "[", 
+   RowBox[{"Evaluate", "[", 
+    RowBox[{"$Context", "<>", "\"\<*\>\""}], "]"}], "]"}], ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[519]:=",ExpressionUUID->"41b69801-601a-46d0-8d65-9cc2062434cb"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Messages", "Section",ExpressionUUID->"0b8c24ea-dc02-4123-9281-25059a89c261"],
+
+Cell[CellGroupData[{
+
+Cell["Usage messages", "Subsection",ExpressionUUID->"c8e80a88-4b9f-444e-8b53-c02fa590ab61"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"CustomTicks", "::", "usage"}], "=", 
+   "\"\<Reserved symbol for CustomTicks package.\>\""}], ";"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.516129428234375*^9, 3.51612944584375*^9}},
+ CellLabel->
+  "In[520]:=",ExpressionUUID->"6530b51f-cecb-4935-9166-5c308c7677b1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"LinTicks", "::", "usage"}], "=", 
+   "\"\<LinTicks[x1,x2,spacing,subdivisions] or LinTicks[x1,x2] or \
+LinTicks[majorlist,minorlist] produces linear or custom rescaled tick \
+marks.\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"LogTicks", "::", "usage"}], "=", 
+    "\"\<LogTicks[power1,power2] or LogTicks[base,power1,power2] produces \
+logarithmic tick marks.\>\""}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ExtraTicks", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickPreTransformation", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.  Mapping from given coordinate value to value \
+used for range tests labeling.\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickPostTransformation", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.  Mapping from tick values to actual coordinates \
+used for positioning tick mark, applied after all range tests and labeling.\>\
+\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickRange", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickTest", "::", "usage"}], "=", "\"\<Option for LinTicks.\>\""}],
+   ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"TickLabelTest", "::", "usage"}], "=", 
+    "\"\<Option for LinTicks.\>\""}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ShowTickLabels", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ShowMinorTickLabels", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickLabelRange", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ShowFirst", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ShowLast", "::", "usage"}], "=", "\"\<Option for LinTicks.\>\""}],
+   ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ShowMinorTicks", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickLabelStart", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickLabelStep", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickLabelFunction", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"DecimalDigits", "::", "usage"}], "=", 
+    "\"\<Option for LinTicks.\>\""}], ";"}], "\n"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"MajorTickLength", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"MinorTickLength", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickLengthScale", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickDirection", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickReverse", "::", "usage"}], "=", 
+   "\"\<Legacy option for LinTicks (v1.63).  Use TickDirection (v1.80) \
+instead.\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"MajorTickStyle", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"MinorTickStyle", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"MinorTickIndexRange", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"MinorTickIndexTransformation", "::", "usage"}], "=", 
+    "\"\<Option for LinTicks.\>\""}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickLabelStyle", "::", "usage"}], "=", 
+   "\"\<Option for LinTicks.  (NOT IMPLEMENTED)\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"MinorTickLabelStyle", "::", "usage"}], "=", 
+    "\"\<Option for LinTicks.\>\""}], ";"}], "\n"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"FixedPointForm", "::", "usage"}], "=", 
+   "\"\<FixedPointForm[x,r] formats x with r digits to the right of the \
+decimal point.  It allows as many digits as necessary to the left of the \
+decimal point, thereby avoiding the rounding problem associated with \
+PaddedForm[x,{n,f}] when n is specified too small (PaddedForm zeros out some \
+of the rightmost digits of the number).  It also suppresses any trailing \
+decimal point when r=0.  FixedPointForm[x,{l,r}] formats x as a fixed-point \
+number with l digits (or spaces) to the left and r to the right of the \
+decimal point.  FixedPointForm respects the standard Mathematica numerical \
+formatting options NumberSigns, NumberPoint, and SignPadding.  By default, \
+for positive numbers a blank padding space appears at left (where a minus \
+sign would be for negative numbers), but with NumberSigns->Automatic this \
+space is suppressed.\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"FractionDigits", "::", "usage"}], "=", 
+   "\"\<FractionDigits[x] returns the number of digits to the right of the \
+point in the decimal representation of x.  It will return large values, \
+determined by Precision, for some numbers, e.g., non-terminating rationals.\>\
+\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"FractionDigitsBase", "::", "usage"}], "=", 
+    "\"\<Option for FractionDigits.\>\""}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"LimitTickRange", "::", "usage"}], "=", 
+   "\"\<LimitTickRange[{x1,x2},ticks] selects those ticks with coordinates in \
+the range x1...x2.  (The range check on the coordinate allows a tolerance, of \
+10^-10, so that legitimate ticks at the edge of the range are not cut off due \
+to roundoff error.)\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"LimitTickLabelRange", "::", "usage"}], "=", 
+   "\"\<LimitTickLabelRange[{x1,x2},ticks] retains the labels on those ticks \
+with coordinates approximately in the range x1...x2, stripping the labels \
+from all others.  (The range check on the coordinate allows a tolerance, of \
+10^-10, so that legitimate ticks at the edge of the range are not cut off due \
+to roundoff error.)\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"StripTickLabels", "::", "usage"}], "=", 
+   "\"\<StripTickLabels[ticks] removes any text labels from ticks.\>\""}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"TransformTicks", "::", "usage"}], "=", 
+    "\"\<StripTickLabels[positionfcn,lengthfcn,ticks] transforms the \
+positions and lengths of all tick marks in a list.  Tick marks must be \
+specified in full form, or at least with an explicit pair of in and out \
+lengths.\>\""}], ";"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AugmentTicks", "::", "usage"}], "=", 
+   "\"\<AugmentTicks[labelfunction,lengthlist,stylelist,ticks] augments any \
+ticks in ticklist to full form.\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AugmentAxisTickOptions", "::", "usage"}], "=", 
+   "\"\<AugmentAxisTickOptions[numaxes,list] replaces any None entries with \
+null lists and appends additional null lists as needed to make numaxes \
+entries.  AugmentAxisTickOptions[numaxes,None] returns a list of null lists.  \
+Note that this differs from the behavior of the Mathematica plotting \
+functions with FrameTicks, for which an unspecified upper or right axis \
+duplicates the given lower or left axis.\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickQ", "::", "usage"}], "=", 
+   "\"\<TickQ[x] returns True if x is a valid tick specification.\>\""}], " ",
+   ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"TickListQ", "::", "usage"}], "=", 
+    "\"\<TickListQ[x] returns True if x is a list of valid tick \
+specifications.  This is not a general test for a valid axis tick option \
+specification, as None, Automatic, and a function can also be valid axis tick \
+option specifications.\>\""}], ";"}], " "}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.456517713734375*^9, 3.456517722890625*^9}, {
+  3.463957834843286*^9, 3.4639578401401615`*^9}, {3.464877149*^9, 
+  3.4648772659375*^9}, {3.4648777149375*^9, 3.464877848015625*^9}, {
+  3.464877937265625*^9, 3.464878011609375*^9}, {3.464878104*^9, 
+  3.4648781070625*^9}, {3.465725402515625*^9, 3.46572540709375*^9}, {
+  3.526419571578125*^9, 3.526419581046875*^9}, {3.52642059775*^9, 
+  3.5264206438125*^9}, {3.614196382370495*^9, 3.6141964182349577`*^9}, {
+  3.634228590352705*^9, 3.6342285971231165`*^9}, {3.634228983660596*^9, 
+  3.634228995828617*^9}, {3.6342290337678833`*^9, 3.6342290384478917`*^9}},
+ CellLabel->
+  "In[521]:=",ExpressionUUID->"25518f62-85fb-4ddc-85b2-1fc240ae483c"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Begin private context", "Section",ExpressionUUID->"42a0a98d-cfe7-4683-960e-41b9b25621eb"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Begin", "[", "\"\<`Private`\>\"", "]"}], ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[561]:=",ExpressionUUID->"db139852-36dd-4e57-9e6e-bcc7d3349e18"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Private range testing and manipulation utilities", "Section",ExpressionUUID->"33c464bb-7b7d-4033-b65f-e4765e40d727"],
+
+Cell[BoxData[
+ RowBox[{"(*", " ", 
+  RowBox[{
+   RowBox[{
+   "range", " ", "testing", " ", "and", " ", "manipulation", " ", 
+    "utilities"}], ",", " ", 
+   RowBox[{"from", " ", "package", " ", "MCGraphics"}]}], " ", 
+  "*)"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[562]:=",ExpressionUUID->"9965e824-23c5-4388-ac5f-cb8fb0b79ddf"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"InRange", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"x1_", ",", "x2_"}], "}"}], ",", "x_"}], "]"}], ":=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"x1", "\[LessEqual]", "x"}], ")"}], "&&", 
+    RowBox[{"(", 
+     RowBox[{"x", "\[LessEqual]", "x2"}], ")"}]}]}], ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[563]:=",ExpressionUUID->"ae57abd1-9595-4ba8-a148-eb2c6ea285c8"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"InRange", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"x1_", ",", "x2_"}], "}"}], ",", "x_"}], "]"}], ":=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"x1", "\[LessEqual]", "x"}], ")"}], "&&", 
+    RowBox[{"(", 
+     RowBox[{"x", "\[LessEqual]", "x2"}], ")"}]}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"InRangeProper", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"x1_", ",", "x2_"}], "}"}], ",", "x_"}], "]"}], ":=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"x1", "<", "x"}], ")"}], "&&", 
+    RowBox[{"(", 
+     RowBox[{"x", "<", "x2"}], ")"}]}]}], ";"}]}], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[564]:=",ExpressionUUID->"e604cb20-63c9-4bca-922b-4c101afd30eb"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"InRegion", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"x1_", ",", "x2_"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"y1_", ",", "y2_"}], "}"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x_", ",", "y_"}], "}"}]}], "]"}], ":=", 
+   RowBox[{
+    RowBox[{"InRange", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"x1", ",", "x2"}], "}"}], ",", "x"}], "]"}], "&&", 
+    RowBox[{"InRange", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"y1", ",", "y2"}], "}"}], ",", "y"}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"InRegion", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"x1_", ",", "y1_"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x2_", ",", "y2_"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x_", ",", "y_"}], "}"}]}], "]"}], ":=", 
+   RowBox[{
+    RowBox[{"InRange", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"x1", ",", "x2"}], "}"}], ",", "x"}], "]"}], "&&", 
+    RowBox[{"InRange", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"y1", ",", "y2"}], "}"}], ",", "y"}], "]"}]}]}], 
+  ";"}]}], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[566]:=",ExpressionUUID->"109abf61-025a-4053-ab66-7f289bf8589f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ExtendRange", "[", 
+    RowBox[{
+     RowBox[{"PRange", ":", 
+      RowBox[{"{", 
+       RowBox[{"x1_", ",", "x2_"}], "}"}]}], ",", 
+     RowBox[{"PFrac", ":", 
+      RowBox[{"{", 
+       RowBox[{"fx1_", ",", "fx2_"}], "}"}]}]}], "]"}], ":=", 
+   RowBox[{"PRange", "+", 
+    RowBox[{"PFrac", "*", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "1"}], ",", 
+       RowBox[{"+", "1"}]}], "}"}], "*", 
+     RowBox[{"-", 
+      RowBox[{"Subtract", "@@", "PRange"}]}]}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ExtendRegion", "[", 
+    RowBox[{
+     RowBox[{"PRange", ":", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"x1_", ",", "x2_"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"y1_", ",", "y2_"}], "}"}]}], "}"}]}], ",", 
+     RowBox[{"PFrac", ":", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"fx1_", ",", "fx2_"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"fy1_", ",", "fy2_"}], "}"}]}], "}"}]}]}], "]"}], ":=", 
+   RowBox[{"PRange", "+", 
+    RowBox[{"PFrac", "*", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"-", "1"}], ",", 
+         RowBox[{"+", "1"}]}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"-", "1"}], ",", 
+         RowBox[{"+", "1"}]}], "}"}]}], "}"}], "*", 
+     RowBox[{"-", 
+      RowBox[{"Subtract", "@@@", "PRange"}]}]}]}]}], ";"}]}], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[568]:=",ExpressionUUID->"19837419-d024-4e13-bb6e-1f4d97689b7b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"approximate", " ", "equality", " ", "testing", " ", "utility"}], 
+    ",", " ", 
+    RowBox[{"from", " ", "package", " ", "MCArithmetic"}]}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "patched", " ", "to", " ", "accept", " ", "reversed", " ", "range", " ", 
+    "limits"}], "*)"}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.551355497171875*^9, 3.55135550915625*^9}},
+ CellLabel->
+  "In[570]:=",ExpressionUUID->"5705aa8e-5f24-4d50-9ac8-ed275db28477"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "ApproxEqual", "]"}], "=", 
+   RowBox[{"{", 
+    RowBox[{"Chop", "\[Rule]", "1*^-10"}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ApproxEqual", "[", 
+    RowBox[{
+     RowBox[{"x_", "?", "NumericQ"}], ",", 
+     RowBox[{"y_", "?", "NumericQ"}], ",", 
+     RowBox[{"Opts___", "?", "OptionQ"}]}], "]"}], ":=", 
+   RowBox[{"Module", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"FullOpts", "=", 
+       RowBox[{"Flatten", "[", 
+        RowBox[{"{", 
+         RowBox[{"Opts", ",", 
+          RowBox[{"Options", "[", "ApproxEqual", "]"}]}], "}"}], "]"}]}], 
+      "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"Chop", "[", 
+       RowBox[{
+        RowBox[{"x", "-", "y"}], ",", 
+        RowBox[{"Chop", "/.", "FullOpts"}]}], "]"}], "\[Equal]", "0"}]}], 
+    "\[IndentingNewLine]", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ApproxEqual", "[", 
+    RowBox[{
+     RowBox[{"x_", "?", "NumericQ"}], ",", "_DirectedInfinity"}], "]"}], ":=",
+    "False"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ApproxEqual", "[", 
+    RowBox[{"_DirectedInfinity", ",", 
+     RowBox[{"x_", "?", "NumericQ"}]}], "]"}], ":=", "False"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ApproxInRange", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"x1p_", ",", "x2p_"}], "}"}], ",", "x_", ",", 
+     RowBox[{"Opts___", "?", "OptionQ"}]}], "]"}], ":=", 
+   RowBox[{"With", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"x1", "=", 
+        RowBox[{"Min", "[", 
+         RowBox[{"x1p", ",", "x2p"}], "]"}]}], ",", 
+       RowBox[{"x2", "=", 
+        RowBox[{"Max", "[", 
+         RowBox[{"x1p", ",", "x2p"}], "]"}]}]}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"ApproxEqual", "[", 
+       RowBox[{"x", ",", "x1", ",", "Opts"}], "]"}], "||", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"x1", "\[LessEqual]", "x"}], ")"}], "&&", 
+        RowBox[{"(", 
+         RowBox[{"x", "\[LessEqual]", "x2"}], ")"}]}], ")"}], "||", 
+      RowBox[{"ApproxEqual", "[", 
+       RowBox[{"x", ",", "x2", ",", "Opts"}], "]"}]}]}], 
+    "\[IndentingNewLine]", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ApproxIntegerQ", "[", 
+    RowBox[{
+     RowBox[{"x_", "?", "NumericQ"}], ",", 
+     RowBox[{"Opts___", "?", "OptionQ"}]}], "]"}], ":=", 
+   RowBox[{"ApproxEqual", "[", 
+    RowBox[{
+     RowBox[{"Round", "[", "x", "]"}], ",", "x", ",", "Opts"}], "]"}]}], 
+  ";"}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.55135552725*^9, 3.55135556003125*^9}},
+ CellLabel->
+  "In[571]:=",ExpressionUUID->"d733ce07-e479-4a38-afad-02e90c349ade"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tick label formatting utilities", "Section",ExpressionUUID->"77651f7f-a7c9-47dc-ba29-f9d33baa63aa"],
+
+Cell[CellGroupData[{
+
+Cell["Digit counting", "Subsection",ExpressionUUID->"e75053fa-1574-4f3e-96fe-07b59324a02e"],
+
+Cell["\<\
+FractionDigits -- returns number of digits to right of point in \
+arbitrary-base representation of x, up to specified limit
+Not based on RealDigits since too easily fooled by 0.9999... roundoff.
+Effective limit in some cases is given implicity by chop value.  Chop value \
+is chosen coarser than usual default 10^-10 to avoid occasionally failing to \
+recognize terminating decimal.
+
+Algorithm:
+\tMake sure x is floating point.
+\tKeep shifting x left until it is approximately an integer.
+\tThe number of digits by which x had to be shifted is the number of digits \
+originally to the left of the decimal point.\
+\>", "Text",ExpressionUUID->"ba0f75b5-d413-4777-9ca8-43fd9b907611"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "FractionDigits", "]"}], "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"FractionDigitsBase", "\[Rule]", "10"}], ",", 
+     RowBox[{"Limit", "\[Rule]", "Infinity"}], ",", 
+     RowBox[{"Chop", "\[Rule]", "1*^-8"}]}], "}"}]}], ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[577]:=",ExpressionUUID->"c9d094a3-38ec-439a-a6ef-2a0b7e19d178"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"FractionDigits", "[", 
+    RowBox[{
+     RowBox[{"x_", "?", "NumericQ"}], ",", 
+     RowBox[{"Opts___", "?", "OptionQ"}]}], "]"}], ":=", 
+   RowBox[{"Module", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"FullOpts", "=", 
+        RowBox[{"Flatten", "[", 
+         RowBox[{"{", 
+          RowBox[{"Opts", ",", 
+           RowBox[{"Options", "[", "FractionDigits", "]"}]}], "}"}], "]"}]}], 
+       ",", "\[IndentingNewLine]", "Value", ",", "NumToRight", ",", 
+       "OptFractionDigitsBase", ",", "OptLimit"}], "\[IndentingNewLine]", 
+      "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"Value", "=", 
+       RowBox[{"N", "[", "x", "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"OptFractionDigitsBase", "=", 
+       RowBox[{"FractionDigitsBase", "/.", "FullOpts"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"OptLimit", "=", 
+       RowBox[{"Limit", "/.", "FullOpts"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"NumToRight", "=", "0"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"While", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"!", 
+          RowBox[{"ApproxIntegerQ", "[", 
+           RowBox[{"Value", ",", 
+            RowBox[{"Chop", "\[Rule]", 
+             RowBox[{"(", 
+              RowBox[{"Chop", "/.", "FullOpts"}], ")"}]}]}], "]"}]}], "&&", 
+         RowBox[{"(", 
+          RowBox[{"NumToRight", "<", "OptLimit"}], ")"}]}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"Value", "*=", "OptFractionDigitsBase"}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"NumToRight", "++"}]}]}], "\[IndentingNewLine]", "]"}], ";", 
+      "\[IndentingNewLine]", "NumToRight"}]}], "\[IndentingNewLine]", "]"}]}],
+   ";"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{3.42473112359375*^9},
+ CellLabel->
+  "In[578]:=",ExpressionUUID->"e1ed17ac-897b-4327-8a44-e635885bfb9f"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Fixed decimal notation", "Subsection",ExpressionUUID->"e44e7f26-16fa-4e77-aa2a-4ac96a2ec9a1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"FixedPointForm", "::", "leftdigits"}], "=", 
+   "\"\<Insufficient left digits (`1`) specified for formatting of number \
+(`2`).  Consider using automatic version FixedPointForm[x,r].\>\""}], ";", 
+  RowBox[{
+   RowBox[{"FixedPointForm", "::", "numbersigns"}], "=", 
+   "\"\<Unsupported form of NumberSigns.\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "FixedPointForm", "]"}], "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"NumberSigns", "->", 
+      RowBox[{"{", 
+       RowBox[{"\"\<-\>\"", ",", "\"\<\>\""}], "}"}]}], ",", 
+     RowBox[{"NumberPoint", "\[Rule]", "\"\<.\>\""}], ",", 
+     RowBox[{"SignPadding", "\[Rule]", "False"}], ",", 
+     RowBox[{"Debug", "\[Rule]", "False"}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"FixedPointForm", "[", 
+    RowBox[{
+     RowBox[{"x_", "?", "NumberQ"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"l_Integer", "?", "NonNegative"}], ",", 
+       RowBox[{"r_Integer", "?", "NonNegative"}]}], "}"}], ",", 
+     RowBox[{"Opts___", "?", "OptionQ"}]}], "]"}], ":=", 
+   RowBox[{"Module", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"FullOpts", "=", 
+        RowBox[{"Flatten", "[", 
+         RowBox[{"{", 
+          RowBox[{"Opts", ",", 
+           RowBox[{"Options", "[", "FixedPointForm", "]"}]}], "}"}], "]"}]}], 
+       ",", "\[IndentingNewLine]", "sx", ",", "mx", ",", "SignString", ",", 
+       "LeftDigits", ",", "RightDigits", ",", "SeparatorString", ",", 
+       "SignChars", ",", "PaddingChars", ",", "\[IndentingNewLine]", 
+       "NaturalLeftDigits", ",", "\[IndentingNewLine]", "PartialSigns", ",", 
+       "FullSigns", ",", "\[IndentingNewLine]", "AutoOpts"}], 
+      "\[IndentingNewLine]", "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"sx", "=", 
+       RowBox[{"Sign", "[", "x", "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"mx", "=", 
+       RowBox[{"Abs", "[", 
+        RowBox[{"N", "[", "x", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+        RowBox[{"LeftDigits", "=", 
+         RowBox[{"IntegerDigits", "[", 
+          RowBox[{"IntegerPart", "[", "mx", "]"}], "]"}]}], ";"}], "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+        RowBox[{"RightDigits", "=", 
+         RowBox[{"First", "[", 
+          RowBox[{"RealDigits", "[", 
+           RowBox[{"mx", ",", "10", ",", "r", ",", 
+            RowBox[{"-", "1"}]}], "]"}], "]"}]}], ";"}], "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+        RowBox[{"RightDigits", "=", 
+         RowBox[{"First", "[", 
+          RowBox[{"RealDigits", "[", 
+           RowBox[{
+            RowBox[{"FractionalPart", "[", "mx", "]"}], ",", "10", ",", "r", 
+            ",", 
+            RowBox[{"-", "1"}]}], "]"}], "]"}]}], ";"}], "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+        RowBox[{"RightDigits", "=", 
+         RowBox[{"IntegerDigits", "[", 
+          RowBox[{
+           RowBox[{"Round", "[", 
+            RowBox[{
+             RowBox[{"FractionalPart", "[", "mx", "]"}], "*", 
+             RowBox[{"10", "^", "r"}]}], "]"}], ",", "10", ",", "r"}], 
+          "]"}]}], ";"}], "*)"}], " ", "\[IndentingNewLine]", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+        RowBox[{"round", " ", "rather", " ", "than", " ", "truncate"}], ",", 
+        " ", 
+        RowBox[{"to", " ", "avoid"}], ",", " ", 
+        RowBox[{"e", ".", "g", "."}], ",", " ", 
+        RowBox[{"2.3999999999", " ", "formatting", " ", "as", " ", "2.3"}]}], 
+       " ", "*)"}], "\[IndentingNewLine]", 
+      RowBox[{"LeftDigits", "=", 
+       RowBox[{"IntegerDigits", "[", 
+        RowBox[{"IntegerPart", "[", 
+         RowBox[{
+          RowBox[{"Round", "[", 
+           RowBox[{"mx", "*", 
+            RowBox[{"10", "^", "r"}]}], "]"}], "/", 
+          RowBox[{"10", "^", "r"}]}], "]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"RightDigits", "=", 
+       RowBox[{"IntegerDigits", "[", 
+        RowBox[{
+         RowBox[{"Round", "[", 
+          RowBox[{"mx", "*", 
+           RowBox[{"10", "^", "r"}]}], "]"}], ",", "10", ",", "r"}], "]"}]}], 
+      ";", "\[IndentingNewLine]", 
+      RowBox[{"If", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"Debug", "/.", "FullOpts"}], ")"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Print", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"x", ",", "l", ",", "r"}], "}"}], ",", "\"\<: \>\"", ",", 
+          RowBox[{"{", 
+           RowBox[{"sx", ",", "mx", ",", "LeftDigits", ",", "RightDigits"}], 
+           "}"}]}], "]"}]}], "\[IndentingNewLine]", "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"SeparatorString", "=", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"r", "\[Equal]", "0"}], ",", "\"\<\>\"", ",", 
+         RowBox[{"(", 
+          RowBox[{"NumberPoint", "/.", "FullOpts"}], ")"}]}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"NaturalLeftDigits", "=", 
+       RowBox[{"Length", "[", "LeftDigits", "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"l", "<", "NaturalLeftDigits"}], ",", "\[IndentingNewLine]", 
+        RowBox[{"Message", "[", 
+         RowBox[{
+          RowBox[{"FixedPointForm", "::", "leftdigits"}], ",", "l", ",", 
+          "x"}], "]"}]}], "\[IndentingNewLine]", "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"FullSigns", "=", 
+       RowBox[{"Switch", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"NumberSigns", "/.", "FullOpts"}], ")"}], ",", 
+         "\[IndentingNewLine]", "Automatic", ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", "\"\<-\>\"", "}"}], ",", 
+           RowBox[{"{", "}"}]}], "}"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"{", 
+          RowBox[{"_String", ",", "_String"}], "}"}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"PartialSigns", "=", 
+           RowBox[{"Characters", "/@", 
+            RowBox[{"(", 
+             RowBox[{"NumberSigns", "/.", "FullOpts"}], ")"}]}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"PadLeft", "[", 
+             RowBox[{"#", ",", 
+              RowBox[{"Max", "[", 
+               RowBox[{"Length", "/@", "PartialSigns"}], "]"}], ",", 
+              "\"\< \>\""}], "]"}], "&"}], "/@", "PartialSigns"}]}], ",", 
+         "\[IndentingNewLine]", "_", ",", 
+         RowBox[{
+          RowBox[{"Message", "[", 
+           RowBox[{"FixedPointForm", "::", "numbersigns"}], "]"}], ";", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", "\"\<-\>\"", "}"}], ",", 
+            RowBox[{"{", "\"\< \>\"", "}"}]}], "}"}]}]}], 
+        "\[IndentingNewLine]", "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"SignChars", "=", 
+       RowBox[{"Switch", "[", "\[IndentingNewLine]", 
+        RowBox[{"sx", ",", "\[IndentingNewLine]", 
+         RowBox[{"-", "1"}], ",", 
+         RowBox[{"First", "[", "FullSigns", "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"+", "1"}], "|", "0"}], ",", 
+         RowBox[{"Last", "[", "FullSigns", "]"}]}], "\[IndentingNewLine]", 
+        "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"PaddingChars", "=", 
+       RowBox[{"Switch", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"SignPadding", "/.", "FullOpts"}], ",", 
+         "\[IndentingNewLine]", "False", ",", 
+         RowBox[{"PadLeft", "[", 
+          RowBox[{"SignChars", ",", 
+           RowBox[{"Max", "[", 
+            RowBox[{
+             RowBox[{"l", "+", 
+              RowBox[{"Length", "[", "SignChars", "]"}], "-", 
+              "NaturalLeftDigits"}], ",", 
+             RowBox[{"Length", "[", "SignChars", "]"}]}], "]"}], ",", 
+           "\"\< \>\""}], "]"}], ",", "\[IndentingNewLine]", "True", ",", 
+         RowBox[{"PadRight", "[", 
+          RowBox[{"SignChars", ",", 
+           RowBox[{"Max", "[", 
+            RowBox[{
+             RowBox[{"l", "+", 
+              RowBox[{"Length", "[", "SignChars", "]"}], "-", 
+              "NaturalLeftDigits"}], ",", 
+             RowBox[{"Length", "[", "SignChars", "]"}]}], "]"}], ",", 
+           "\"\< \>\""}], "]"}]}], "\[IndentingNewLine]", "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"StringJoin", "@@", 
+       RowBox[{"Join", "[", 
+        RowBox[{"PaddingChars", ",", 
+         RowBox[{"ToString", "/@", "LeftDigits"}], ",", 
+         RowBox[{"{", "SeparatorString", "}"}], ",", 
+         RowBox[{"ToString", "/@", "RightDigits"}]}], "]"}]}]}]}], 
+    "\[IndentingNewLine]", "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"FixedPointForm", "[", 
+    RowBox[{
+     RowBox[{"x_", "?", "NumberQ"}], ",", 
+     RowBox[{"RightDigits_Integer", "?", "NonNegative"}], ",", 
+     RowBox[{"Opts___", "?", "OptionQ"}]}], "]"}], ":=", 
+   RowBox[{"FixedPointForm", "[", 
+    RowBox[{"x", ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"Length", "[", 
+        RowBox[{"IntegerDigits", "[", 
+         RowBox[{"IntegerPart", "[", 
+          RowBox[{"N", "[", "x", "]"}], "]"}], "]"}], "]"}], ",", 
+       "RightDigits"}], "}"}], ",", "Opts"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"FixedPointForm", "[", 
+    RowBox[{
+     RowBox[{"x", ":", 
+      RowBox[{"Except", "[", 
+       RowBox[{"_", "?", "NumberQ"}], "]"}]}], ",", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"l_Integer", "?", "NonNegative"}], ",", 
+        RowBox[{"r_Integer", "?", "NonNegative"}]}], "}"}], "|", 
+      RowBox[{"(", 
+       RowBox[{"RightDigits_Integer", "?", "NonNegative"}], ")"}]}], ",", 
+     RowBox[{"Opts___", "?", "OptionQ"}]}], "]"}], ":=", "x"}], 
+  ";"}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{
+  3.424723602921875*^9, 3.42472364084375*^9, {3.42585518784375*^9, 
+   3.4258552558125*^9}, {3.425856216*^9, 3.4258562830625*^9}, {
+   3.4318135119375*^9, 3.431813572546875*^9}, {3.431813609640625*^9, 
+   3.431813631578125*^9}, {3.4318137043125*^9, 3.4318137076875*^9}, {
+   3.431814380234375*^9, 3.4318144036875*^9}, {3.43181465909375*^9, 
+   3.431814659953125*^9}, {3.431814700625*^9, 3.431814701046875*^9}, {
+   3.431814748*^9, 3.431814769765625*^9}, {3.431815441625*^9, 
+   3.43181546734375*^9}, {3.431818571328125*^9, 3.4318185899375*^9}, {
+   3.4318186254375*^9, 3.431818670046875*^9}, {3.4318187115*^9, 
+   3.431818713125*^9}, {3.43181874584375*^9, 3.431818777765625*^9}, {
+   3.4318188129375*^9, 3.431818813421875*^9}, {3.54049550584375*^9, 
+   3.54049554096875*^9}},
+ CellLabel->
+  "In[579]:=",ExpressionUUID->"9c211367-d418-4e45-a66b-276157e15e41"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Label formatting function", "Subsection",ExpressionUUID->"f53f3537-bceb-4191-a40c-c395f035d331"],
+
+Cell["\<\
+Always pad to left by largest abs coord.
+Choose decimal digits:
+\tIf Automatic, use max needed for specified major ticks 
+\tIf specified, use value specified
+Right padding:
+\tIf decimal digits 0,  truncate to integer
+\tIf not, pad to right by decimal digits specified. 
+Allow in all calculations for empty major coordinate list.
+Pass through options to FixedPointForm.  For positive ticks, generally want \
+space for sign suppressed in padding (by use of FixedPointForm with \
+NumberSigns->Automatic).\
+\>", "Text",
+ CellChangeTimes->{{3.6141969187306366`*^9, 3.614196940570675*^9}, {
+  3.6141971963643246`*^9, 
+  3.614197288997287*^9}},ExpressionUUID->"5ccb8013-986e-426d-9a09-\
+daa66c388d66"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"FixedTickFunction", "[", 
+    RowBox[{"ValueList_List", ",", 
+     RowBox[{"DecimalDigits", ":", 
+      RowBox[{"(", 
+       RowBox[{"Automatic", "|", 
+        RowBox[{"(", "_Integer", ")"}]}], ")"}]}], ",", 
+     RowBox[{"Opts___", "?", "OptionQ"}]}], "]"}], ":=", 
+   RowBox[{"Module", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{"LeftDigits", ",", "RightDigits", ",", "x"}], 
+      "\[IndentingNewLine]", "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"LeftDigits", "=", 
+       RowBox[{"If", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"ValueList", "===", 
+          RowBox[{"{", "}"}]}], ",", "\[IndentingNewLine]", "0", ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"Length", "[", 
+          RowBox[{"IntegerDigits", "[", 
+           RowBox[{"IntegerPart", "[", 
+            RowBox[{"Max", "[", 
+             RowBox[{"Abs", "[", "ValueList", "]"}], "]"}], "]"}], "]"}], 
+          "]"}]}], "\[IndentingNewLine]", "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"RightDigits", "=", 
+       RowBox[{"If", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"DecimalDigits", "===", "Automatic"}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"If", "[", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{"ValueList", "===", 
+            RowBox[{"{", "}"}]}], ",", "\[IndentingNewLine]", "0", ",", 
+           "\[IndentingNewLine]", 
+           RowBox[{"Max", "[", 
+            RowBox[{"FractionDigits", "/@", "ValueList"}], "]"}]}], 
+          "\[IndentingNewLine]", "]"}], ",", "\[IndentingNewLine]", 
+         "DecimalDigits"}], "\[IndentingNewLine]", "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"With", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"ld", "=", "LeftDigits"}], ",", 
+          RowBox[{"rd", "=", "RightDigits"}]}], "}"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Function", "[", 
+         RowBox[{"x", ",", 
+          RowBox[{"FixedPointForm", "[", 
+           RowBox[{"x", ",", 
+            RowBox[{"{", 
+             RowBox[{"ld", ",", "rd"}], "}"}], ",", "Opts", ",", 
+            RowBox[{"NumberSigns", "\[Rule]", "Automatic"}]}], "]"}]}], 
+         "]"}]}], "\[IndentingNewLine]", "]"}]}]}], "\[IndentingNewLine]", 
+    "]"}]}], ";"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.541622463765625*^9, 3.5416225100625*^9}, {
+  3.6141967865048046`*^9, 3.614196828453278*^9}, {3.614197178720693*^9, 
+  3.6141971793290944`*^9}},
+ CellLabel->
+  "In[584]:=",ExpressionUUID->"4d52a058-75cc-4d0e-b5c1-8ca1efab3944"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"CustomTicks`Private`FixedTickFunction", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"0", ",", "1", ",", "2", ",", "3", ",", "4.23"}], "}"}], ",", 
+   "Automatic"}], "]"}]], "Input",
+ CellChangeTimes->{{3.541622330703125*^9, 3.541622349234375*^9}, {
+  3.54162239403125*^9, 3.541622417953125*^9}, {3.54162245678125*^9, 
+  3.541622457140625*^9}, {3.541622521796875*^9, 3.541622534859375*^9}},
+ CellLabel->
+  "In[585]:=",ExpressionUUID->"0e269af0-0be3-4d3b-95e7-165c7375644b"],
+
+Cell[BoxData[
+ RowBox[{"Function", "[", 
+  RowBox[{"x$", ",", 
+   RowBox[{"FixedPointForm", "[", 
+    RowBox[{"x$", ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "2"}], "}"}], ",", 
+     RowBox[{"NumberSigns", "\[Rule]", "Automatic"}]}], "]"}]}], 
+  "]"}]], "Output",
+ CellChangeTimes->{
+  3.5416223510625*^9, {3.54162241490625*^9, 3.541622418375*^9}, {
+   3.541622457484375*^9, 3.5416224778125*^9}, {3.5416225135*^9, 
+   3.5416225351875*^9}, 3.823025540542349*^9},
+ CellLabel->
+  "Out[585]=",ExpressionUUID->"9a50c84f-9831-484e-8d50-d099631b0760"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tick length utility", "Section",
+ CellChangeTimes->{{3.526420212*^9, 
+  3.526420214640625*^9}},ExpressionUUID->"7ac52169-efa3-4205-b08e-\
+39fe171f8039"],
+
+Cell[TextData[{
+ "\nTick lengths\n\t",
+ StyleBox["Mathematica",
+  FontSlant->"Italic"],
+ " 4.1 default lengths are 0.00625 and 0.00375\n\tMCTicks default lengths \
+were 0.00750 and 0.00375\n\tCustomTicks v1.0 default lengths are 0.010 and \
+0.005 "
+}], "Text",
+ CellChangeTimes->{
+  3.526420251984375*^9},ExpressionUUID->"7b490573-a5cb-42e0-b63c-\
+b9edbefa9886"],
+
+Cell[CellGroupData[{
+
+Cell["Derive tick {in,out} length from given options", "Subsection",
+ CellChangeTimes->{{3.526420223828125*^9, 
+  3.526420232203125*^9}},ExpressionUUID->"b45e0751-6425-4f55-8536-\
+3b48cea60d8d"],
+
+Cell["\<\
+given tick length option may be either a single number or an {in,out} pair\
+\>", "Text",
+ CellChangeTimes->{{3.52642027084375*^9, 
+  3.526420286265625*^9}},ExpressionUUID->"0f07a579-98ac-4dac-befb-\
+475358737ab0"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"ResolveTickLength", "[", 
+    RowBox[{
+     RowBox[{"d_", "?", "NumericQ"}], ",", 
+     RowBox[{"TickLengthScale_", "?", "NumericQ"}], ",", 
+     RowBox[{"TickDirection", ":", 
+      RowBox[{"(", 
+       RowBox[{"In", "|", "Out", "|", "All"}], ")"}]}], ",", 
+     RowBox[{"TickReverse", ":", 
+      RowBox[{"(", 
+       RowBox[{"True", "|", "False"}], ")"}]}]}], "]"}], ":=", 
+   RowBox[{"Module", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", "LengthPair", "}"}], ",", "\[IndentingNewLine]", 
+     "\[IndentingNewLine]", 
+     RowBox[{"(*", " ", 
+      RowBox[{"upgrade", " ", "single", " ", "length", " ", "to", " ", 
+       RowBox[{"{", 
+        RowBox[{"in", ",", "out"}], "}"}], " ", "pair"}], " ", "*)"}], 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"LengthPair", "=", 
+       RowBox[{"Switch", "[", 
+        RowBox[{"TickDirection", ",", "\[IndentingNewLine]", "In", ",", 
+         RowBox[{"{", 
+          RowBox[{"d", ",", "0"}], "}"}], ",", "\[IndentingNewLine]", "Out", 
+         ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "d"}], "}"}], ",", "\[IndentingNewLine]", "All", 
+         ",", 
+         RowBox[{"{", 
+          RowBox[{"d", ",", "d"}], "}"}]}], "\[IndentingNewLine]", "]"}]}], 
+      ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+       "implement", " ", "legacy", " ", "direction", " ", "reversing", " ", 
+        "option"}], " ", "*)"}], "\[IndentingNewLine]", 
+      RowBox[{"LengthPair", "=", 
+       RowBox[{
+        RowBox[{"If", "[", 
+         RowBox[{"TickReverse", ",", "Reverse", ",", "Identity"}], "]"}], "@",
+         "LengthPair"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      
+      RowBox[{"(*", " ", 
+       RowBox[{"scale", " ", "length"}], " ", "*)"}], "\[IndentingNewLine]", 
+      RowBox[{"TickLengthScale", "*", "LengthPair"}]}]}], 
+    "\[IndentingNewLine]", "]"}]}], ";"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.526419774515625*^9, 3.526420039453125*^9}, {
+  3.526420070609375*^9, 3.52642007815625*^9}, {3.526420303609375*^9, 
+  3.526420304578125*^9}},
+ CellLabel->
+  "In[586]:=",ExpressionUUID->"0789e3cc-9015-4d15-9be5-5f4c17a403de"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"ResolveTickLength", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"d1_", "?", "NumericQ"}], ",", 
+       RowBox[{"d2_", "?", "NumericQ"}]}], "}"}], ",", 
+     RowBox[{"TickLengthScale_", "?", "NumericQ"}], ",", 
+     RowBox[{"TickDirection", ":", 
+      RowBox[{"(", 
+       RowBox[{"In", "|", "Out", "|", "All"}], ")"}]}], ",", 
+     RowBox[{"TickReverse", ":", 
+      RowBox[{"(", 
+       RowBox[{"True", "|", "False"}], ")"}]}]}], "]"}], ":=", 
+   RowBox[{"Module", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", "LengthPair", "}"}], ",", "\[IndentingNewLine]", 
+     "\[IndentingNewLine]", 
+     RowBox[{"(*", " ", 
+      RowBox[{"ignore", " ", "TickDirection", " ", "if", " ", "given", " ", 
+       RowBox[{"{", 
+        RowBox[{"in", ",", "out"}], "}"}], " ", "pair"}], " ", "*)"}], 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"LengthPair", "=", 
+       RowBox[{"{", 
+        RowBox[{"d1", ",", "d2"}], "}"}]}], ";", "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+       "implement", " ", "legacy", " ", "direction", " ", "reversing", " ", 
+        "option"}], " ", "*)"}], "\[IndentingNewLine]", 
+      RowBox[{"LengthPair", "=", 
+       RowBox[{
+        RowBox[{"If", "[", 
+         RowBox[{"TickReverse", ",", "Reverse", ",", "Identity"}], "]"}], "@",
+         "LengthPair"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      
+      RowBox[{"(*", " ", 
+       RowBox[{"scale", " ", "length"}], " ", "*)"}], "\[IndentingNewLine]", 
+      RowBox[{"TickLengthScale", "*", "LengthPair"}]}]}], 
+    "\[IndentingNewLine]", "]"}]}], ";"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.526419774515625*^9, 3.526420039453125*^9}, {
+   3.526420070609375*^9, 3.526420103765625*^9}, {3.52642013521875*^9, 
+   3.5264201461875*^9}, {3.526420176484375*^9, 3.526420188734375*^9}, 
+   3.526420307484375*^9},
+ CellLabel->
+  "In[587]:=",ExpressionUUID->"b954d5a7-abf1-4f19-925a-f45fb3d447b6"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Linear ticks", "Section",ExpressionUUID->"35cfbf58-dcca-4617-9f65-b4abb2b05e00"],
+
+Cell["\<\
+Option MinorTickIndexRange is only respected by the iterating form of \
+LinTicks.\
+\>", "Text",
+ CellChangeTimes->{{3.526420242703125*^9, 
+  3.526420243453125*^9}},ExpressionUUID->"7771b2b0-c94b-4e98-8e17-\
+5b22ae3871a9"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "LinTicks", "]"}], "=", 
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{"(*", " ", 
+     RowBox[{"tick", " ", "options"}], " ", "*)"}], "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"ExtraTicks", "\[Rule]", 
+      RowBox[{"{", "}"}]}], ",", 
+     RowBox[{"TickPreTransformation", "\[Rule]", "Identity"}], ",", 
+     RowBox[{"TickPostTransformation", "\[Rule]", "Identity"}], ",", 
+     RowBox[{"ShowFirst", "\[Rule]", "True"}], ",", 
+     RowBox[{"ShowLast", "\[Rule]", "True"}], ",", 
+     RowBox[{"ShowTickLabels", "\[Rule]", "True"}], ",", 
+     RowBox[{"ShowMinorTickLabels", "\[Rule]", "False"}], ",", 
+     RowBox[{"ShowMinorTicks", "\[Rule]", "True"}], ",", 
+     RowBox[{"TickLabelStart", "\[Rule]", "0"}], ",", 
+     RowBox[{"TickLabelStep", "\[Rule]", "1"}], ",", 
+     RowBox[{"TickRange", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "Infinity"}], ",", "Infinity"}], "}"}]}], ",", 
+     RowBox[{"TickLabelRange", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "Infinity"}], ",", "Infinity"}], "}"}]}], ",", 
+     RowBox[{"TickLabelFunction", "\[Rule]", "Automatic"}], ",", 
+     RowBox[{"DecimalDigits", "\[Rule]", "Automatic"}], ",", 
+     RowBox[{"MajorTickLength", "\[Rule]", "0.010"}], ",", 
+     RowBox[{"MinorTickLength", "\[Rule]", "0.005"}], ",", 
+     RowBox[{"MinorTickLabelStyle", "\[Rule]", "None"}], ",", 
+     RowBox[{"TickLengthScale", "\[Rule]", "1"}], ",", 
+     RowBox[{"TickDirection", "\[Rule]", "In"}], ",", 
+     RowBox[{"TickReverse", "\[Rule]", "False"}], ",", 
+     RowBox[{"MajorTickStyle", "\[Rule]", 
+      RowBox[{"{", "}"}]}], ",", 
+     RowBox[{"MinorTickStyle", "\[Rule]", 
+      RowBox[{"{", "}"}]}], ",", 
+     RowBox[{"MinorTickIndexRange", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"1", ",", "Infinity"}], "}"}]}], ",", 
+     RowBox[{"MinorTickIndexTransformation", "\[Rule]", "Identity"}], ",", 
+     RowBox[{"TickTest", "\[Rule]", 
+      RowBox[{"(", 
+       RowBox[{"True", "&"}], ")"}]}], ",", 
+     RowBox[{"TickLabelTest", "\[Rule]", 
+      RowBox[{"(", 
+       RowBox[{"True", "&"}], ")"}]}], ",", "\[IndentingNewLine]", 
+     "\[IndentingNewLine]", 
+     RowBox[{"(*", " ", 
+      RowBox[{"pass", " ", "through", " ", "to", " ", "FixedPointForm"}], " ",
+       "*)"}], "\[IndentingNewLine]", 
+     RowBox[{"NumberSigns", "\[Rule]", "Automatic"}], ",", "  ", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+      "suppress", " ", "space", " ", "before", " ", "positive", " ", 
+       "numbers"}], " ", "*)"}], "\[IndentingNewLine]", 
+     RowBox[{"NumberPoint", "\[Rule]", "\"\<.\>\""}], ",", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+       RowBox[{
+       "SignPadding", " ", "is", " ", "pretty", " ", "irrelevant", " ", "to", 
+        " ", "ticks"}], ",", " ", 
+       RowBox[{
+        RowBox[{"so", " ", "omit"}], "..."}]}], " ", "*)"}], 
+     "\[IndentingNewLine]", "\[IndentingNewLine]", 
+     RowBox[{"(*", " ", "debugging", " ", "*)"}], "\[IndentingNewLine]", 
+     RowBox[{"Debug", "\[Rule]", "False"}]}], "\[IndentingNewLine]", "}"}]}], 
+  ";"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.447272246375*^9, 3.4472722608125*^9}, {
+   3.456517337375*^9, 3.456517388421875*^9}, {3.463957849374536*^9, 
+   3.463957853937036*^9}, {3.4657254158125*^9, 3.46572541940625*^9}, {
+   3.5264205405*^9, 3.526420563734375*^9}, {3.614197105681365*^9, 
+   3.614197146678237*^9}, 3.6141984728103647`*^9, {3.634228609166338*^9, 
+   3.634228614953948*^9}, {3.6342290873227777`*^9, 3.6342290914099846`*^9}, {
+   3.634229449181013*^9, 3.6342294497582145`*^9}},
+ CellLabel->
+  "In[588]:=",ExpressionUUID->"69e2fcc1-ccb8-44a9-be79-6f185d1605af"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"LinTicks", "[", 
+    RowBox[{
+    "RawMajorCoordList_List", ",", "RawMinorCoordList_List", ",", "Opts___"}],
+     "]"}], ":=", 
+   RowBox[{"Module", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"FullOpts", "=", " ", 
+        RowBox[{"Flatten", "[", 
+         RowBox[{"{", 
+          RowBox[{"Opts", ",", 
+           RowBox[{"Options", "[", "LinTicks", "]"}]}], "}"}], "]"}]}], ",", 
+       "\[IndentingNewLine]", "MajorCoordList", ",", "\[IndentingNewLine]", 
+       "LabeledCoordList", ",", "\[IndentingNewLine]", "MinorCoordList", ",", 
+       "\[IndentingNewLine]", "MajorTickList", ",", "\[IndentingNewLine]", 
+       "MinorTickList", ",", "\[IndentingNewLine]", "UsedTickLabelFunction", 
+       ",", "\[IndentingNewLine]", "DefaultTickLabelFunction", ",", 
+       "\[IndentingNewLine]", "TickValue", ",", "\[IndentingNewLine]", 
+       "TickPosition", ",", "\[IndentingNewLine]", "TickLabel", ",", 
+       "\[IndentingNewLine]", "TickLength", ",", "\[IndentingNewLine]", 
+       "TickStyle", ",", "\[IndentingNewLine]", "TickLabelStyleWrapper", ",", 
+       "\[IndentingNewLine]", "i"}], "\[IndentingNewLine]", "}"}], ",", 
+     "\[IndentingNewLine]", "\[IndentingNewLine]", 
+     RowBox[{"(*", " ", 
+      RowBox[{"make", " ", "major", " ", "ticks"}], " ", "*)"}], 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"MajorCoordList", "=", 
+       RowBox[{"Select", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"TickPreTransformation", "/.", "FullOpts"}], ")"}], "/@", 
+          RowBox[{"Union", "[", 
+           RowBox[{"RawMajorCoordList", ",", 
+            RowBox[{"ExtraTicks", "/.", "FullOpts"}]}], "]"}]}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"ApproxInRange", "[", 
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"TickRange", "/.", "FullOpts"}], ")"}], ",", "#"}], 
+             "]"}], "&&", 
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{"TickTest", "/.", "FullOpts"}], ")"}], "[", "#", 
+             "]"}]}], ")"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"LabeledCoordList", "=", 
+       RowBox[{"Flatten", "[", 
+        RowBox[{"Table", "[", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"TickValue", "=", 
+            RowBox[{"MajorCoordList", "[", 
+             RowBox[{"[", "i", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+           RowBox[{"If", "[", "\[IndentingNewLine]", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"ShowTickLabels", "/.", "FullOpts"}], ")"}], 
+              "\[IndentingNewLine]", "&&", 
+              RowBox[{"ApproxInRange", "[", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{"TickLabelRange", "/.", "FullOpts"}], ")"}], ",", 
+                "TickValue"}], "]"}], "\[IndentingNewLine]", "&&", 
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"Mod", "[", 
+                 RowBox[{
+                  RowBox[{"i", "-", "1"}], ",", 
+                  RowBox[{"(", 
+                   RowBox[{"TickLabelStep", "/.", "FullOpts"}], ")"}]}], 
+                 "]"}], "\[Equal]", 
+                RowBox[{"(", 
+                 RowBox[{"TickLabelStart", "/.", "FullOpts"}], ")"}]}], ")"}],
+               "\[IndentingNewLine]", "&&", 
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{"i", "\[NotEqual]", "1"}], ")"}], "||", 
+                RowBox[{"(", 
+                 RowBox[{"ShowFirst", "/.", "FullOpts"}], ")"}]}], ")"}], 
+              "\[IndentingNewLine]", "&&", 
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{"i", "\[NotEqual]", 
+                  RowBox[{"Length", "[", "MajorCoordList", "]"}]}], ")"}], "||", 
+                RowBox[{"(", 
+                 RowBox[{"ShowLast", "/.", "FullOpts"}], ")"}]}], ")"}], 
+              "\[IndentingNewLine]", "&&", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{"TickLabelTest", "/.", "FullOpts"}], ")"}], "[", 
+               "TickValue", "]"}]}], ",", "\[IndentingNewLine]", "TickValue", 
+             ",", "\[IndentingNewLine]", 
+             RowBox[{"{", "}"}]}], "\[IndentingNewLine]", "]"}]}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"{", 
+           RowBox[{"i", ",", "1", ",", 
+            RowBox[{"Length", "[", "MajorCoordList", "]"}]}], "}"}]}], 
+         "\[IndentingNewLine]", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"DefaultTickLabelFunction", "=", 
+       RowBox[{"FixedTickFunction", "[", "\[IndentingNewLine]", 
+        RowBox[{"LabeledCoordList", ",", "\[IndentingNewLine]", 
+         RowBox[{"DecimalDigits", "/.", "FullOpts"}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"FilterRules", "[", 
+          RowBox[{"FullOpts", ",", 
+           RowBox[{"Options", "[", "FixedPointForm", "]"}]}], "]"}]}], 
+        "\[IndentingNewLine]", "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"UsedTickLabelFunction", "=", 
+       RowBox[{"Switch", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"TickLabelFunction", "/.", "FullOpts"}], ")"}], ",", 
+         "\[IndentingNewLine]", "Automatic", ",", 
+         RowBox[{"(", 
+          RowBox[{"#2", "&"}], ")"}], ",", "\[IndentingNewLine]", "_", ",", 
+         RowBox[{"(", 
+          RowBox[{"TickLabelFunction", "/.", "FullOpts"}], ")"}]}], 
+        "\[IndentingNewLine]", "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"TickLength", "=", 
+       RowBox[{"ResolveTickLength", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"MajorTickLength", "/.", "FullOpts"}], ")"}], ",", 
+         RowBox[{"(", 
+          RowBox[{"TickLengthScale", "/.", "FullOpts"}], ")"}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"(", 
+          RowBox[{"TickDirection", "/.", "FullOpts"}], ")"}], ",", 
+         RowBox[{"(", 
+          RowBox[{"TickReverse", "/.", "FullOpts"}], ")"}]}], 
+        "\[IndentingNewLine]", "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"TickStyle", "=", 
+       RowBox[{"(", 
+        RowBox[{"MajorTickStyle", "/.", "FullOpts"}], ")"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"MajorTickList", "=", 
+       RowBox[{"Table", "[", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+        RowBox[{"(*", " ", 
+         RowBox[{"calculate", " ", "tick", " ", "value"}], " ", "*)"}], 
+        "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"TickValue", "=", 
+           RowBox[{"MajorCoordList", "[", 
+            RowBox[{"[", "i", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", " ", 
+           RowBox[{
+           "calculate", " ", "coordinate", " ", "for", " ", "drawing", " ", 
+            "tick"}], " ", "*)"}], "\[IndentingNewLine]", 
+          RowBox[{"TickPosition", "=", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"TickPostTransformation", "/.", "FullOpts"}], ")"}], "[",
+             "TickValue", "]"}]}], ";", "\[IndentingNewLine]", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", " ", 
+           RowBox[{
+            RowBox[{"construct", " ", "label"}], ",", " ", 
+            RowBox[{
+            "or", " ", "null", " ", "string", " ", "if", " ", "it", " ", 
+             "should", " ", "be", " ", 
+             RowBox[{"suppressed", " ", "--"}], " ", 
+             RowBox[{"if", ":", " ", 
+              RowBox[{"tick", " ", "labels", " ", "shown"}]}]}], ",", "  ", 
+            RowBox[{"tick", " ", "is", " ", "in", " ", "TickLabelRange"}], 
+            ",", " ", 
+            RowBox[{
+            "in", " ", "designated", " ", "modular", " ", "cycle", " ", "if", 
+             " ", "only", " ", "a", " ", "cycle", " ", "of", " ", "major", 
+             " ", "ticks", " ", "are", " ", "to", " ", "be", " ", "labeled"}],
+             ",", " ", 
+            RowBox[{
+             RowBox[{
+             "not", " ", "explicitly", " ", "suppressed", " ", "as", " ", 
+              "first", " ", "or", " ", "last", " ", "label"}], ";", " ", 
+             RowBox[{
+             "will", " ", "only", " ", "then", " ", "be", " ", "used", " ", 
+              "if", " ", "tick", " ", "is", " ", "also", " ", "in", " ", 
+              "TickRange"}]}]}], " ", "*)"}], "\[IndentingNewLine]", 
+          RowBox[{"TickLabel", "=", 
+           RowBox[{"If", "[", "\[IndentingNewLine]", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"ShowTickLabels", "/.", "FullOpts"}], ")"}], 
+              "\[IndentingNewLine]", "&&", 
+              RowBox[{"ApproxInRange", "[", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{"TickLabelRange", "/.", "FullOpts"}], ")"}], ",", 
+                "TickValue"}], "]"}], "\[IndentingNewLine]", "&&", 
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"Mod", "[", 
+                 RowBox[{
+                  RowBox[{"i", "-", "1"}], ",", 
+                  RowBox[{"(", 
+                   RowBox[{"TickLabelStep", "/.", "FullOpts"}], ")"}]}], 
+                 "]"}], "\[Equal]", 
+                RowBox[{"(", 
+                 RowBox[{"TickLabelStart", "/.", "FullOpts"}], ")"}]}], ")"}],
+               "\[IndentingNewLine]", "&&", 
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{"i", "\[NotEqual]", "1"}], ")"}], "||", 
+                RowBox[{"(", 
+                 RowBox[{"ShowFirst", "/.", "FullOpts"}], ")"}]}], ")"}], 
+              "\[IndentingNewLine]", "&&", 
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{"i", "\[NotEqual]", 
+                  RowBox[{"Length", "[", "MajorCoordList", "]"}]}], ")"}], "||", 
+                RowBox[{"(", 
+                 RowBox[{"ShowLast", "/.", "FullOpts"}], ")"}]}], ")"}]}], 
+             ",", "\[IndentingNewLine]", 
+             RowBox[{"UsedTickLabelFunction", "[", 
+              RowBox[{"TickValue", ",", 
+               RowBox[{"DefaultTickLabelFunction", "[", "TickValue", "]"}]}], 
+              "]"}], ",", "\[IndentingNewLine]", "\"\<\>\""}], 
+            "\[IndentingNewLine]", "]"}]}], ";", "\[IndentingNewLine]", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", " ", 
+           RowBox[{"make", " ", "tick"}], " ", "*)"}], "\[IndentingNewLine]", 
+          
+          RowBox[{"{", 
+           RowBox[{
+           "TickPosition", ",", "TickLabel", ",", "TickLength", ",", 
+            "TickStyle"}], "}"}]}], ",", "\[IndentingNewLine]", 
+         "\[IndentingNewLine]", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", "1", ",", 
+           RowBox[{"Length", "[", "MajorCoordList", "]"}]}], "}"}]}], 
+        "\[IndentingNewLine]", "]"}]}], ";", "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", 
+      RowBox[{"(*", " ", 
+       RowBox[{"make", " ", "minor", " ", "ticks"}], " ", "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{"MinorCoordList", "=", 
+       RowBox[{"Select", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"TickPreTransformation", "/.", "FullOpts"}], ")"}], "/@", 
+          "RawMinorCoordList"}], ",", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"ApproxInRange", "[", 
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"TickRange", "/.", "FullOpts"}], ")"}], ",", "#"}], 
+             "]"}], "&&", 
+            RowBox[{
+             RowBox[{"(", 
+              RowBox[{"TickTest", "/.", "FullOpts"}], ")"}], "[", "#", 
+             "]"}]}], ")"}], "&"}]}], "\[IndentingNewLine]", "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"TickLength", "=", 
+       RowBox[{"ResolveTickLength", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"MinorTickLength", "/.", "FullOpts"}], ")"}], ",", 
+         RowBox[{"(", 
+          RowBox[{"TickLengthScale", "/.", "FullOpts"}], ")"}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"(", 
+          RowBox[{"TickDirection", "/.", "FullOpts"}], ")"}], ",", 
+         RowBox[{"(", 
+          RowBox[{"TickReverse", "/.", "FullOpts"}], ")"}]}], 
+        "\[IndentingNewLine]", "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"TickStyle", "=", 
+       RowBox[{"(", 
+        RowBox[{"MinorTickStyle", "/.", "FullOpts"}], ")"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"TickLabelStyleWrapper", "=", 
+       RowBox[{"With", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"UsedMinorTickLabelStyle", "=", 
+           RowBox[{"(", 
+            RowBox[{"MinorTickLabelStyle", "/.", "FullOpts"}], ")"}]}], "}"}],
+          ",", "\[IndentingNewLine]", 
+         RowBox[{"If", "[", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{"UsedMinorTickLabelStyle", "=!=", "None"}], ",", 
+           "\[IndentingNewLine]", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"Style", "[", 
+              RowBox[{"#", ",", "UsedMinorTickLabelStyle"}], "]"}], "&"}], 
+            ")"}], ",", "\[IndentingNewLine]", "Identity"}], 
+          "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "]"}]}], ";",
+       "\[IndentingNewLine]", 
+      RowBox[{"MinorTickList", "=", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"ShowMinorTicks", "/.", "FullOpts"}], ")"}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"Table", "[", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+          RowBox[{"(*", " ", 
+           RowBox[{"calculate", " ", "tick", " ", "value"}], " ", "*)"}], 
+          "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"TickValue", "=", 
+             RowBox[{"MinorCoordList", "[", 
+              RowBox[{"[", "i", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", 
+            RowBox[{"(*", " ", 
+             RowBox[{
+             "calculate", " ", "coordinate", " ", "for", " ", "drawing", " ", 
+              "tick"}], " ", "*)"}], "\[IndentingNewLine]", 
+            RowBox[{"TickPosition", "=", 
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"TickPostTransformation", "/.", "FullOpts"}], ")"}], 
+              "[", "TickValue", "]"}]}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", 
+            RowBox[{"(*", " ", 
+             RowBox[{
+              RowBox[{"construct", " ", "label"}], ",", " ", 
+              RowBox[{
+              "or", " ", "null", " ", "string", " ", "if", " ", "it", " ", 
+               "should", " ", "be", " ", 
+               RowBox[{"suppressed", " ", "--"}], " ", 
+               RowBox[{"if", ":", " ", 
+                RowBox[{"tick", " ", "labels", " ", "shown"}]}]}], ",", " ", 
+              RowBox[{
+              "*", "minor", "*", " ", "tick", " ", "labels", " ", "shown"}], 
+              ",", " ", 
+              RowBox[{
+               RowBox[{"tick", " ", "is", " ", "in", " ", "TickLabelRange"}], 
+               ";", " ", 
+               RowBox[{
+               "will", " ", "only", " ", "then", " ", "be", " ", "used", " ", 
+                "if", " ", "tick", " ", "is", " ", "also", " ", "in", " ", 
+                "TickRange"}]}]}], " ", "*)"}], "\[IndentingNewLine]", 
+            RowBox[{"TickLabel", "=", 
+             RowBox[{"If", "[", "\[IndentingNewLine]", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{"ShowTickLabels", "/.", "FullOpts"}], ")"}], "&&", 
+                RowBox[{"(", 
+                 RowBox[{"ShowMinorTickLabels", "/.", "FullOpts"}], ")"}], 
+                "\[IndentingNewLine]", "&&", 
+                RowBox[{"ApproxInRange", "[", 
+                 RowBox[{
+                  RowBox[{"(", 
+                   RowBox[{"TickLabelRange", "/.", "FullOpts"}], ")"}], ",", 
+                  "TickValue"}], "]"}]}], ",", "\[IndentingNewLine]", 
+               RowBox[{"TickLabelStyleWrapper", "[", 
+                RowBox[{"UsedTickLabelFunction", "[", 
+                 RowBox[{"TickValue", ",", 
+                  RowBox[{
+                  "DefaultTickLabelFunction", "[", "TickValue", "]"}]}], 
+                 "]"}], "]"}], ",", "\[IndentingNewLine]", "\"\<\>\""}], 
+              "\[IndentingNewLine]", "]"}]}], ";", "\[IndentingNewLine]", 
+            "\[IndentingNewLine]", 
+            RowBox[{"(*", " ", 
+             RowBox[{"make", " ", "tick"}], " ", "*)"}], 
+            "\[IndentingNewLine]", 
+            RowBox[{"{", 
+             RowBox[{
+             "TickPosition", ",", "TickLabel", ",", "TickLength", ",", 
+              "TickStyle"}], "}"}]}], ",", "\[IndentingNewLine]", 
+           "\[IndentingNewLine]", 
+           RowBox[{"{", 
+            RowBox[{"i", ",", "1", ",", 
+             RowBox[{"Length", "[", "MinorCoordList", "]"}]}], "}"}]}], 
+          "\[IndentingNewLine]", "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"{", "}"}]}], "\[IndentingNewLine]", "]"}]}], ";", 
+      "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", " ", 
+       RowBox[{"combine", " ", "tick", " ", "lists"}], "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{"If", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"Debug", "/.", "FullOpts"}], ")"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"Print", "[", "RawMajorCoordList", "]"}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"Print", "[", "RawMinorCoordList", "]"}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"Print", "[", 
+          RowBox[{"Join", "[", 
+           RowBox[{"MajorTickList", ",", "MinorTickList"}], "]"}], "]"}]}]}], 
+       "\[IndentingNewLine]", "]"}], ";", "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Join", "[", 
+       RowBox[{"MajorTickList", ",", "MinorTickList"}], "]"}]}]}], 
+    "\[IndentingNewLine]", "\[IndentingNewLine]", "]"}]}], ";"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->CompressedData["
+1:eJxTTMoPSmViYGAQBmIQzcBwJkdt/UtHBgbzQgjN2g+mG/QhNIP4dKj8XAh9
+btGJAyA6eg2YbrDbCOEfAtPGf1as+3kORPNtANEmNSI7IHQ5mGZoCD4YcQmk
+/vIJMN2g8lrG7RWQz/gZRLfJi5V0vH3lePDAvUoQHbu0uBFELzvZ3QyicxrN
+2/YKv3aUDt47HUTbKQh9ANFRthJM+4C0RuZ/DhC9c1ohL4g+onVMAUTnTGJU
+BNGOpUnqINrrXrUOiH4hIGUEoue5rzMH0V1vxBxB9JPGYGcQzfrDxwNEt9yY
+CaYBE9iQZA==
+  "],
+ CellLabel->
+  "In[589]:=",ExpressionUUID->"3f970a58-de17-4728-af09-f7b32b09a7fe"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"LinTicks", "[", 
+   RowBox[{
+    RowBox[{"x1_", "?", "NumericQ"}], ",", 
+    RowBox[{"x2_", "?", "NumericQ"}], ",", 
+    RowBox[{"Opts___", "?", "OptionQ"}]}], "]"}], ":=", 
+  RowBox[{"Module", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+     "UsedRange", ",", "DummyGraphics", ",", "TickList", ",", 
+      "MajorCoordList", ",", "MinorCoordList", ",", "x"}], "}"}], ",", 
+    "\[IndentingNewLine]", "\[IndentingNewLine]", 
+    RowBox[{"(*", " ", 
+     RowBox[{
+      RowBox[{"extend", " ", "any", " ", "round"}], "-", 
+      RowBox[{
+      "number", " ", "range", " ", "by", " ", "a", " ", "tiny", " ", 
+       "amount"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+    RowBox[{"(*", " ", 
+     RowBox[{
+      RowBox[{
+      "this", " ", "seems", " ", "to", " ", "make", " ", "Mathematica", " ", 
+       "4.1", " ", "give", " ", "a", " ", "much", " ", "cleaner"}], ",", " ", 
+      
+      RowBox[{"sparser", " ", "set", " ", "of", " ", "ticks"}]}], " ", "*)"}],
+     "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"UsedRange", "=", 
+      RowBox[{"If", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"And", "@@", 
+         RowBox[{"ApproxIntegerQ", "/@", 
+          RowBox[{"{", 
+           RowBox[{"x1", ",", "x2"}], "}"}]}]}], ",", "\[IndentingNewLine]", 
+        RowBox[{"ExtendRange", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"x1", ",", "x2"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"1*^-5", ",", "1*^-5"}], "}"}]}], "]"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{"x1", ",", "x2"}], "}"}]}], "\[IndentingNewLine]", "]"}]}], 
+     ";", " ", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+      "extract", " ", "raw", " ", "tick", " ", "coordinates", " ", "from", 
+       " ", "Mathematica"}], " ", "*)"}], "\[IndentingNewLine]", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+       RowBox[{"Line", "[", 
+        RowBox[{"{", "}"}], "]"}], " ", "primative", " ", "since", " ", 
+       "Mathematica", " ", "6", " ", "requires", " ", "nonnull", " ", 
+       "primative", " ", "list", " ", "in", " ", "Graphics", " ", "for", " ", 
+       "suitable", " ", "ticks", " ", "to", " ", "be", " ", 
+       RowBox[{"produced", " ", "--"}], " ", "reported", " ", "by", " ", 
+       RowBox[{"J", ".", " ", "Grosse"}]}], " ", "*)"}], 
+     "\[IndentingNewLine]", 
+     RowBox[{"DummyGraphics", "=", 
+      RowBox[{"Show", "[", 
+       RowBox[{
+        RowBox[{"Graphics", "[", 
+         RowBox[{"{", 
+          RowBox[{"Line", "[", 
+           RowBox[{"{", "}"}], "]"}], "}"}], "]"}], ",", 
+        RowBox[{"PlotRange", "\[Rule]", 
+         RowBox[{"{", 
+          RowBox[{"UsedRange", ",", "Automatic"}], "}"}]}], ",", 
+        RowBox[{"DisplayFunction", "\[Rule]", "Identity"}]}], "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"TickList", "=", 
+      RowBox[{"First", "[", 
+       RowBox[{"Ticks", "/.", 
+        RowBox[{"AbsoluteOptions", "[", 
+         RowBox[{"DummyGraphics", ",", "Ticks"}], "]"}]}], "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"MajorCoordList", "=", 
+      RowBox[{"Cases", "[", 
+       RowBox[{"TickList", ",", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"x_", ",", "_Real", ",", "___"}], "}"}], "\[RuleDelayed]", 
+         "x"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"MinorCoordList", "=", 
+      RowBox[{"Cases", "[", 
+       RowBox[{"TickList", ",", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"x_", ",", "\"\<\>\"", ",", "___"}], "}"}], 
+         "\[RuleDelayed]", "x"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+     "\[IndentingNewLine]", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+      "generate", " ", "formatted", " ", "tick", " ", "mark", " ", 
+       "specifications"}], " ", "*)"}], "\[IndentingNewLine]", 
+     RowBox[{"LinTicks", "[", 
+      RowBox[{"MajorCoordList", ",", "MinorCoordList", ",", "Opts"}], 
+      "]"}]}]}], "\[IndentingNewLine]", "]"}]}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[590]:=",ExpressionUUID->"b3c5840c-1d7e-4e58-bd23-41303d3427bc"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"LinTicks", "[", 
+    RowBox[{
+     RowBox[{"x1_", "?", "NumericQ"}], ",", 
+     RowBox[{"x2_", "?", "NumericQ"}], ",", 
+     RowBox[{"Spacing_", "?", "NumericQ"}], ",", 
+     RowBox[{"MinorSubdivs", ":", "_Integer"}], ",", "Opts___"}], "]"}], ":=", 
+   RowBox[{"Module", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"FullOpts", "=", " ", 
+        RowBox[{"Flatten", "[", 
+         RowBox[{"{", 
+          RowBox[{"Opts", ",", 
+           RowBox[{"Options", "[", "LinTicks", "]"}]}], "}"}], "]"}]}], ",", 
+       "\[IndentingNewLine]", "MaxMajorIndex", ",", "\[IndentingNewLine]", 
+       "MajorCoordList", ",", "MinorCoordList"}], "\[IndentingNewLine]", 
+      "}"}], ",", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+     RowBox[{"(*", " ", 
+      RowBox[{"preliminary", " ", "calculations"}], "  ", "*)"}], 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"MaxMajorIndex", "=", 
+       RowBox[{"Round", "[", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"x2", "-", "x1"}], ")"}], "/", "Spacing"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"construct", " ", "table", " ", "of", " ", 
+          RowBox[{"ticks", " ", "--"}], "indexed", " ", "by", " ", 
+          "MajorIndex"}], "=", "0"}], ",", "1", ",", "...", ",", 
+        RowBox[{
+         RowBox[{"MaxMajorTick", " ", "and", " ", "MinorIndex"}], "=", "0"}], 
+        ",", "...", ",", 
+        RowBox[{"MinorSubdivs", "-", "1"}], ",", " ", 
+        RowBox[{
+         RowBox[{"where", " ", "MinorIndex"}], "=", 
+         RowBox[{"0", " ", "gives", " ", "the", " ", "major", " ", "tick"}]}],
+         ",", " ", "\[IndentingNewLine]", 
+        RowBox[{
+        "except", " ", "no", " ", "minor", " ", "ticks", " ", "after", " ", 
+         "last", " ", "major", " ", "tick"}]}], " ", "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{"MajorCoordList", "=", 
+       RowBox[{"Flatten", "[", 
+        RowBox[{"Table", "[", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"N", "[", 
+           RowBox[{"x1", "+", 
+            RowBox[{"MajorIndex", "*", "Spacing"}], "+", 
+            RowBox[{"MinorIndex", "*", 
+             RowBox[{"Spacing", "/", "MinorSubdivs"}]}]}], "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"{", 
+           RowBox[{"MajorIndex", ",", "0", ",", "MaxMajorIndex"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"MinorIndex", ",", "0", ",", "0"}], "}"}]}], 
+         "\[IndentingNewLine]", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"MinorCoordList", "=", 
+       RowBox[{"Flatten", "[", 
+        RowBox[{"Table", "[", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"If", "[", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"InRange", "[", 
+             RowBox[{
+              RowBox[{"MinorTickIndexRange", "/.", "FullOpts"}], ",", 
+              "MinorIndex"}], "]"}], ",", "\[IndentingNewLine]", 
+            RowBox[{"N", "[", 
+             RowBox[{"x1", "+", 
+              RowBox[{"MajorIndex", "*", "Spacing"}], "+", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{"(", 
+                  RowBox[{"MinorTickIndexTransformation", "/.", "FullOpts"}], 
+                  ")"}], "@", "MinorIndex"}], ")"}], "*", 
+               RowBox[{"Spacing", "/", "MinorSubdivs"}]}]}], "]"}], ",", 
+            "\[IndentingNewLine]", 
+            RowBox[{"{", "}"}]}], "\[IndentingNewLine]", "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"{", 
+           RowBox[{"MajorIndex", ",", "0", ",", "MaxMajorIndex"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"MinorIndex", ",", "1", ",", 
+            RowBox[{"MinorSubdivs", "-", "1"}]}], "}"}]}], 
+         "\[IndentingNewLine]", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+        RowBox[{
+        "there", " ", "are", " ", "usually", " ", "ticks", " ", "to", " ", 
+         "be", " ", "suppressed", " ", "at", " ", "the", " ", "upper", " ", 
+         "end"}], ",", " ", 
+        RowBox[{
+        "since", " ", "the", " ", "major", " ", "tick", " ", "index", " ", 
+         "rounds", " ", "up", " ", "to", " ", "the", " ", "next", " ", 
+         "major", " ", "tick", " ", 
+         RowBox[{"(", 
+          RowBox[{
+          "for", " ", "safety", " ", "in", " ", "borderline", " ", "cases", 
+           " ", "where", " ", "truncation", " ", "might", " ", "fail"}], 
+          ")"}]}], ",", " ", 
+        RowBox[{
+        "and", " ", "the", " ", "loop", " ", "minor", " ", "tick", " ", 
+         "index", " ", "iterates", " ", "for", " ", "a", " ", "full", " ", 
+         "series", " ", "of", " ", "minor", " ", "ticks", " ", "even", " ", 
+         "after", " ", "the", " ", "last", " ", "major", " ", "tick"}]}], " ",
+        "*)"}], "\[IndentingNewLine]", 
+      RowBox[{"MajorCoordList", "=", 
+       RowBox[{"Select", "[", 
+        RowBox[{"MajorCoordList", ",", 
+         RowBox[{
+          RowBox[{"ApproxInRange", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"x1", ",", "x2"}], "}"}], ",", "#"}], "]"}], "&"}]}], 
+        "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"MinorCoordList", "=", 
+       RowBox[{"Select", "[", 
+        RowBox[{"MinorCoordList", ",", 
+         RowBox[{
+          RowBox[{"ApproxInRange", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"x1", ",", "x2"}], "}"}], ",", "#"}], "]"}], "&"}]}], 
+        "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"LinTicks", "[", 
+       RowBox[{"MajorCoordList", ",", "MinorCoordList", ",", "Opts"}], 
+       "]"}]}]}], "\[IndentingNewLine]", "\[IndentingNewLine]", "]"}]}], 
+  ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[591]:=",ExpressionUUID->"fa2207a9-7c0b-45b7-ba69-629f33f9135e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Log ticks", "Section",ExpressionUUID->"37f618fd-606d-467b-9980-adea09e61cf7"],
+
+Cell["\<\
+Minor tick calculation
+\ts is number of subdivisions given by user
+\ts' is number of subdivisions given to LinTicks (cancels out from \
+calculations, but serves as internal iteration max+1 for k)
+\tk is untransformed index (k = 1,...,s-1)
+\ti is transformed index
+\tp is preceding major tick's power
+\tx is plot coordinate (so b^x is true exponentiated coordinate)
+\t
+\ti = Log[b,k+1]*s'
+\tb^x = b^(p+i/s') = b^(i/s')*b^p = b^(Log[b,k+1]*s'/s')*b^p = (k+1)*b^p
+\t
+\tTherefore, any value of (k+1) from 2 to strictly less than b makes sense.
+\tWe thus bound k+1 by \[LeftCeiling]b\[RightCeiling]-1, so this is the bound \
+on s.  We arbitrarily choose s'=s, saving the need for an explicit \
+MinorTickIndexRange.
+\t
+\tGeneral numeric values are allowed for the lower and upper exponents, to \
+support arbitrary argments which arise when used as automatic tick function \
+in Ticks or FrameTicks option.\
+\>", "Text",
+ CellChangeTimes->{{3.424726999953125*^9, 
+  3.424727064734375*^9}},ExpressionUUID->"539e49ad-c3f7-448e-a837-\
+975a2648c3f6"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"Options", "[", "LogTicks", "]"}], "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"ExtraTicks", "\[Rule]", 
+      RowBox[{"{", "}"}]}], ",", 
+     RowBox[{"TickPreTransformation", "\[Rule]", "Identity"}], ",", 
+     RowBox[{"TickPostTransformation", "\[Rule]", "Identity"}], ",", 
+     RowBox[{"ShowFirst", "\[Rule]", "True"}], ",", 
+     RowBox[{"ShowLast", "\[Rule]", "True"}], ",", 
+     RowBox[{"ShowTickLabels", "\[Rule]", "True"}], ",", 
+     RowBox[{"ShowMinorTicks", "\[Rule]", "True"}], ",", 
+     RowBox[{"TickLabelStart", "\[Rule]", "0"}], ",", 
+     RowBox[{"TickLabelStep", "\[Rule]", "1"}], ",", 
+     RowBox[{"TickRange", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "Infinity"}], ",", "Infinity"}], "}"}]}], ",", 
+     RowBox[{"TickLabelRange", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "Infinity"}], ",", "Infinity"}], "}"}]}], ",", 
+     RowBox[{"DecimalDigits", "\[Rule]", "Automatic"}], ",", 
+     RowBox[{"MajorTickLength", "\[Rule]", "0.010"}], ",", 
+     RowBox[{"MinorTickLength", "\[Rule]", "0.005"}], ",", 
+     RowBox[{"TickLengthScale", "\[Rule]", "1"}], ",", 
+     RowBox[{"TickDirection", "\[Rule]", "In"}], ",", 
+     RowBox[{"TickReverse", "\[Rule]", "False"}], ",", 
+     RowBox[{"MajorTickStyle", "\[Rule]", 
+      RowBox[{"{", "}"}]}], ",", 
+     RowBox[{"MinorTickStyle", "\[Rule]", 
+      RowBox[{"{", "}"}]}], ",", 
+     RowBox[{"MinorTickIndexRange", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"1", ",", "Infinity"}], "}"}]}], ",", 
+     RowBox[{"LogPlot", "\[Rule]", "False"}]}], "}"}]}], ";"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.424728375796875*^9, 3.424728388046875*^9}, 
+   3.424728593453125*^9, 3.4247286318125*^9, {3.424728699734375*^9, 
+   3.4247287038125*^9}, {3.42472873859375*^9, 3.4247287560625*^9}, {
+   3.4639579669526615`*^9, 3.463957970749536*^9}, {3.465725517765625*^9, 
+   3.465725530125*^9}, {3.5161324951875*^9, 3.516132498234375*^9}, 
+   3.52642058303125*^9},
+ CellLabel->
+  "In[592]:=",ExpressionUUID->"f1c2ad4b-b774-491b-9825-c30eb10b7094"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"LogTicks", "::", "oldsyntax"}], "=", 
+   "\"\<The number of minor subdivisions no longer needs to be specified for \
+LogTicks (see CustomTicks manual for new syntax).\>\""}], ";", 
+  RowBox[{
+   RowBox[{"LogTicks", "::", "minorsubdivs"}], "=", 
+   "\"\<Number of minor subdivisions `1` specified for LogTicks is not 1 or \
+\[LeftCeiling]base\[RightCeiling]-1 (i.e., \
+\[LeftCeiling]base\[RightCeiling]-2 tick marks) and so is being \
+ignored.\>\""}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"LogTicks", "[", 
+    RowBox[{
+     RowBox[{"Base", ":", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"_", "?", "NumericQ"}], ")"}], ":", "10"}]}], ",", 
+     RowBox[{"p1Raw_", "?", "NumericQ"}], ",", 
+     RowBox[{"p2Raw_", "?", "NumericQ"}], ",", 
+     RowBox[{"Opts___", "?", "OptionQ"}]}], "]"}], ":=", 
+   RowBox[{"Module", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"FullOpts", "=", " ", 
+        RowBox[{"Flatten", "[", 
+         RowBox[{"{", 
+          RowBox[{"Opts", ",", 
+           RowBox[{"Options", "[", "LogTicks", "]"}]}], "}"}], "]"}]}], ",", 
+       "\[IndentingNewLine]", "p1", ",", "p2", ",", "BaseSymbol", ",", 
+       "MinorSubdivs", ",", "\[IndentingNewLine]", "UsedArgumentTransform", 
+       ",", "UsedPostTransformation"}], "\[IndentingNewLine]", "}"}], ",", 
+     "\[IndentingNewLine]", "\[IndentingNewLine]", 
+     RowBox[{"(*", " ", 
+      RowBox[{"for", " ", "use", " ", "with", " ", 
+       RowBox[{"LogPlot", ":", " ", 
+        RowBox[{
+        "scale", " ", "input", " ", "arguments", " ", "from", " ", "true", 
+         " ", "values", " ", "down", " ", "to", " ", "log"}]}]}], " ", "*)"}],
+      "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"UsedArgumentTransform", "=", 
+       RowBox[{"Switch", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"LogPlot", "/.", "FullOpts"}], ")"}], ",", 
+         "\[IndentingNewLine]", "True", ",", "\[IndentingNewLine]", " ", 
+         RowBox[{
+          RowBox[{"Log", "[", 
+           RowBox[{"Base", ",", " ", "#"}], "]"}], "&"}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"E", "|", "False"}], ",", "\[IndentingNewLine]", 
+         "Identity"}], "\[IndentingNewLine]", "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"(*", " ", 
+       RowBox[{"for", " ", "use", " ", "with", " ", 
+        RowBox[{"LogPlot", ":", " ", 
+         RowBox[{
+         "scale", " ", "coordinate", " ", "back", " ", "up", " ", "from", " ",
+           "log", " ", "to", " ", "true", " ", "value"}]}]}], " ", "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{"UsedPostTransformation", " ", "=", 
+       RowBox[{"Switch", "[", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"LogPlot", "/.", "FullOpts"}], ")"}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"(*", " ", 
+          RowBox[{"direct", " ", "use", " ", "with", " ", 
+           RowBox[{"LogPlot", " ", "--"}], " ", "will", " ", "be", " ", 
+           "rescaled", " ", "by", " ", "LogPlot"}], " ", "*)"}], 
+         "\[IndentingNewLine]", "True", ",", " ", 
+         RowBox[{"Composition", "[", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"TickPostTransformation", "/.", "FullOpts"}], ")"}], ",", 
+           
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"Base", "^", "#"}], "&"}], ")"}]}], "]"}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+          "use", " ", "with", " ", "Graphics", " ", "results", " ", "of", " ", 
+           RowBox[{"LogPlot", " ", "--"}], " ", "done", " ", "base", " ", 
+           "E"}], " ", "*)"}], "\[IndentingNewLine]", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+           RowBox[{"more", " ", "generally"}], ",", " ", 
+           RowBox[{"would", " ", "multiply", " ", "by", " ", 
+            RowBox[{"Log", "[", 
+             RowBox[{"plotbase", ",", "labelbase"}], "]"}]}]}], " ", "*)"}], 
+         "\[IndentingNewLine]", "E", ",", "\[IndentingNewLine]", 
+         RowBox[{"Composition", "[", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"TickPostTransformation", "/.", "FullOpts"}], ")"}], ",", 
+           
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Log", "[", "10", "]"}], "*", "#"}], "&"}], ")"}]}], 
+          "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+          "standard", " ", "use", " ", "on", " ", "plot", " ", "in", " ", 
+           "which", " ", "coordinates", " ", "are", " ", "logs", " ", "base", 
+           " ", "10"}], " ", "*)"}], "\[IndentingNewLine]", "False", ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"(", 
+          RowBox[{"TickPostTransformation", "/.", "FullOpts"}], ")"}]}], 
+        "\[IndentingNewLine]", "]"}]}], ";", "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", 
+      RowBox[{"p1", "=", 
+       RowBox[{"Floor", "[", 
+        RowBox[{"UsedArgumentTransform", "@", "p1Raw"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"p2", "=", 
+       RowBox[{"Ceiling", "[", 
+        RowBox[{"UsedArgumentTransform", "@", "p2Raw"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"BaseSymbol", "=", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"Base", "===", "E"}], ",", 
+         RowBox[{"Style", "[", 
+          RowBox[{"\"\<e\>\"", ",", 
+           RowBox[{"FontFamily", "->", "\"\<Italic\>\""}]}], "]"}], ",", 
+         "Base"}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"MinorSubdivs", "=", 
+       RowBox[{
+        RowBox[{"Ceiling", "[", "Base", "]"}], "-", "1"}]}], ";", " ", 
+      RowBox[{"(*", " ", 
+       RowBox[{"one", " ", "more", " ", "than", " ", "minor", " ", "ticks"}], 
+       " ", "*)"}], "\[IndentingNewLine]", 
+      RowBox[{"MinorSubdivs", "=", 
+       RowBox[{"Max", "[", 
+        RowBox[{"MinorSubdivs", ",", "1"}], "]"}]}], ";", " ", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+       "prevent", " ", "underflow", " ", "from", " ", "bases", " ", "less", 
+        " ", "than", " ", "2"}], " ", "*)"}], "\[IndentingNewLine]", 
+      RowBox[{"LinTicks", "[", 
+       RowBox[{
+       "p1", ",", "p2", ",", "1", ",", "MinorSubdivs", ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"TickPostTransformation", "->", "UsedPostTransformation"}], 
+        ",", "\[IndentingNewLine]", 
+        RowBox[{"TickLabelFunction", "\[Rule]", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"DisplayForm", "[", 
+            RowBox[{"SuperscriptBox", "[", 
+             RowBox[{"BaseSymbol", ",", 
+              RowBox[{"IntegerPart", "[", "#", "]"}]}], "]"}], "]"}], "&"}], 
+          ")"}]}], ",", "\[IndentingNewLine]", 
+        RowBox[{"MinorTickIndexTransformation", "\[Rule]", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Log", "[", 
+             RowBox[{"Base", ",", 
+              RowBox[{"#", "+", "1"}]}], "]"}], "*", "MinorSubdivs"}], "&"}], 
+          ")"}]}], ",", "\[IndentingNewLine]", "FullOpts"}], " ", 
+       RowBox[{"(*", " ", 
+        RowBox[{"pass", " ", "through", " ", "to", " ", "LinTicks"}], "*)"}], 
+       "\[IndentingNewLine]", "]"}]}]}], "\[IndentingNewLine]", 
+    "\[IndentingNewLine]", "]"}]}], ";"}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{
+  3.42472365271875*^9, {3.424726936953125*^9, 3.424726983453125*^9}, {
+   3.424727140765625*^9, 3.42472714109375*^9}, {3.42472855790625*^9, 
+   3.424728566140625*^9}, {3.424728877546875*^9, 3.424728890484375*^9}, 
+   3.516132563421875*^9, {3.516132676*^9, 3.516132803640625*^9}, {
+   3.5161328371875*^9, 3.516132880125*^9}, {3.516132911046875*^9, 
+   3.516133158671875*^9}, {3.614200479597705*^9, 3.6142006508879447`*^9}, {
+   3.6142006906080008`*^9, 3.614200691418001*^9}, {3.614200726608051*^9, 
+   3.6142007663331065`*^9}},
+ EmphasizeSyntaxErrors->True,
+ CellLabel->
+  "In[593]:=",ExpressionUUID->"001c9369-d8a5-447d-9bd9-8e9bdd834483"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{"syntax", " ", "traps", " ", "for", " ", "old", " ", 
+    RowBox[{"syntax", " ", "--"}], " ", "but", " ", "will", " ", "not", " ", 
+    "catch", " ", "usual", " ", "situation", " ", "in", " ", "which", " ", 
+    "base", " ", "was", " ", "unspecified", " ", "but", " ", "subdivs", " ", 
+    "was"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"LogTicks", "[", 
+       RowBox[{
+        RowBox[{"Base_", "?", "NumericQ"}], ",", "p1_Integer", ",", 
+        "p2_Integer", ",", "MinorSubdivs_Integer", ",", 
+        RowBox[{"Opts___", "?", "OptionQ"}]}], "]"}], "/;", 
+      RowBox[{"(", 
+       RowBox[{"MinorSubdivs", "\[Equal]", 
+        RowBox[{"Max", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Ceiling", "[", "Base", "]"}], "-", "1"}], ",", "1"}], 
+         "]"}]}], ")"}]}], ":=", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Message", "[", 
+        RowBox[{"LogTicks", "::", "oldsyntax"}], "]"}], ";", 
+       RowBox[{"LogTicks", "[", 
+        RowBox[{"Base", ",", "p1", ",", "p2", ",", 
+         RowBox[{"ShowMinorTicks", "\[Rule]", "True"}], ",", "Opts"}], 
+        "]"}]}], ")"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"LogTicks", "[", 
+       RowBox[{
+        RowBox[{"Base_", "?", "NumericQ"}], ",", "p1_Integer", ",", 
+        "p2_Integer", ",", "MinorSubdivs_Integer", ",", 
+        RowBox[{"Opts___", "?", "OptionQ"}]}], "]"}], "/;", 
+      RowBox[{"(", 
+       RowBox[{"MinorSubdivs", "==", "1"}], ")"}]}], ":=", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Message", "[", 
+        RowBox[{"LogTicks", "::", "oldsyntax"}], "]"}], ";", 
+       RowBox[{"LogTicks", "[", 
+        RowBox[{"Base", ",", "p1", ",", "p2", ",", 
+         RowBox[{"ShowMinorTicks", "\[Rule]", "False"}], ",", "Opts"}], 
+        "]"}]}], ")"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"LogTicks", "[", 
+       RowBox[{
+        RowBox[{"Base_", "?", "NumericQ"}], ",", "p1_Integer", ",", 
+        "p2_Integer", ",", "MinorSubdivs_Integer", ",", 
+        RowBox[{"Opts___", "?", "OptionQ"}]}], "]"}], "/;", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"MinorSubdivs", "!=", 
+          RowBox[{"Max", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"Ceiling", "[", "Base", "]"}], "-", "1"}], ",", "1"}], 
+           "]"}]}], ")"}], "&&", 
+        RowBox[{"(", 
+         RowBox[{"MinorSubdivs", "!=", "1"}], ")"}]}], ")"}]}], ":=", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Message", "[", 
+        RowBox[{"LogTicks", "::", "oldsyntax"}], "]"}], ";", 
+       RowBox[{"Message", "[", 
+        RowBox[{
+         RowBox[{"LogTicks", "::", "minorsubdivs"}], ",", "MinorSubdivs"}], 
+        "]"}], ";", 
+       RowBox[{"LogTicks", "[", 
+        RowBox[{"Base", ",", "p1", ",", "p2", ",", 
+         RowBox[{"ShowMinorTicks", "\[Rule]", "True"}], ",", "Opts"}], 
+        "]"}]}], ")"}]}], ";"}]}]}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[594]:=",ExpressionUUID->"a8d34f91-2b2a-4f39-914e-4f497808011e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tick augmentation", "Section",ExpressionUUID->"42edf9e0-f75a-4148-902c-4262b202f09f"],
+
+Cell["Plain coordinate is upgraded to coordinate in list", "Text",ExpressionUUID->"dcee6433-90fc-4ca2-a912-da676c48cb5a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"AugmentTick", "[", 
+    RowBox[{
+    "LabelFunction_", ",", "DefaultLength_List", ",", "DefaultStyle_List", 
+     ",", 
+     RowBox[{"x_", "?", "NumericQ"}]}], "]"}], ":=", 
+   RowBox[{"AugmentTick", "[", 
+    RowBox[{"LabelFunction", ",", "DefaultLength", ",", "DefaultStyle", ",", 
+     RowBox[{"{", "x", "}"}]}], "]"}]}], ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[597]:=",ExpressionUUID->"de2d9cc2-760e-4a6a-ae7a-8f36c4c2cd13"],
+
+Cell["Wrapped coordinate is given label", "Text",ExpressionUUID->"e1d52c15-043f-4083-aad9-6fabcda0f86f"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"AugmentTick", "[", 
+    RowBox[{
+    "LabelFunction_", ",", "DefaultLength_List", ",", "DefaultStyle_List", 
+     ",", 
+     RowBox[{"{", 
+      RowBox[{"x_", "?", "NumericQ"}], "}"}]}], "]"}], ":=", 
+   RowBox[{"AugmentTick", "[", 
+    RowBox[{"LabelFunction", ",", "DefaultLength", ",", "DefaultStyle", ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", 
+       RowBox[{"LabelFunction", "@", "x"}]}], "}"}]}], "]"}]}], 
+  ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[598]:=",ExpressionUUID->"79ed07fc-b275-4254-ba86-218a5f0e1cce"],
+
+Cell["Coordinate + label is given length list", "Text",ExpressionUUID->"5febd879-488e-47ad-b65a-73ad1dbf04e4"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"AugmentTick", "[", 
+    RowBox[{
+    "LabelFunction_", ",", "DefaultLength_List", ",", "DefaultStyle_List", 
+     ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"x_", "?", "NumericQ"}], ",", "LabelText_"}], "}"}]}], "]"}], ":=", 
+   RowBox[{"AugmentTick", "[", 
+    RowBox[{"LabelFunction", ",", "DefaultLength", ",", "DefaultStyle", ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", "LabelText", ",", "DefaultLength"}], "}"}]}], "]"}]}],
+   ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[599]:=",ExpressionUUID->"71a32c53-88d1-4543-bef5-948206fb5eb0"],
+
+Cell["\<\
+Any tick with just plength is upgraded to haveing length list\
+\>", "Text",ExpressionUUID->"ca2462f2-bfb3-47c8-9bc4-c5ba9783859c"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"AugmentTick", "[", 
+    RowBox[{
+    "LabelFunction_", ",", "DefaultLength_List", ",", "DefaultStyle_List", 
+     ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"x_", "?", "NumericQ"}], ",", "LabelText_", ",", 
+       RowBox[{"PLen_", "?", "NumericQ"}], ",", "RestSeq___"}], "}"}]}], 
+    "]"}], ":=", 
+   RowBox[{"AugmentTick", "[", 
+    RowBox[{"LabelFunction", ",", "DefaultLength", ",", "DefaultStyle", ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", "LabelText", ",", 
+       RowBox[{"{", 
+        RowBox[{"PLen", ",", "0"}], "}"}], ",", "RestSeq"}], "}"}]}], "]"}]}],
+   ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[600]:=",ExpressionUUID->"8f542d59-c902-46fe-a678-8168639e0777"],
+
+Cell["Coorindate + label + length list is given style ", "Text",ExpressionUUID->"68e82c16-83a9-429e-8242-d01a8e559107"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"AugmentTick", "[", 
+    RowBox[{
+    "LabelFunction_", ",", "DefaultLength_List", ",", "DefaultStyle_List", 
+     ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"x_", "?", "NumericQ"}], ",", "LabelText_", ",", 
+       "LengthList_List"}], "}"}]}], "]"}], ":=", 
+   RowBox[{"AugmentTick", "[", 
+    RowBox[{"LabelFunction", ",", "DefaultLength", ",", "DefaultStyle", ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", "LabelText", ",", "LengthList", ",", "DefaultStyle"}],
+       "}"}]}], "]"}]}], ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[601]:=",ExpressionUUID->"3854d737-c631-4352-b37e-c010c0ba6f17"],
+
+Cell["Release a complete tick", "Text",ExpressionUUID->"8028049a-5c79-458b-92b0-95c4a18c5e12"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"AugmentTick", "[", 
+    RowBox[{
+    "LabelFunction_", ",", "DefaultLength_List", ",", "DefaultStyle_List", 
+     ",", 
+     RowBox[{"TheTick", ":", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"x_", "?", "NumericQ"}], ",", "LabelText_", ",", 
+        "LengthList_List", ",", "Style_List"}], "}"}]}]}], "]"}], ":=", 
+   "TheTick"}], ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[602]:=",ExpressionUUID->"0bcf0b5f-b9e0-4d41-a0c8-f2b2a4e70aed"],
+
+Cell["Process full list", "Text",ExpressionUUID->"53767e03-ef4d-4289-bc74-c17e3ae090b2"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"AugmentTicks", "[", 
+    RowBox[{
+    "DefaultLength_List", ",", "DefaultStyle_List", ",", "TickList_List"}], 
+    "]"}], ":=", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"AugmentTick", "[", 
+      RowBox[{
+       RowBox[{"\"\<\>\"", "&"}], ",", "DefaultLength", ",", "DefaultStyle", 
+       ",", "#"}], "]"}], "&"}], "/@", "TickList"}]}], ";"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.4247236933125*^9, 3.42472369375*^9}, 
+   3.42472378509375*^9},
+ CellLabel->
+  "In[603]:=",ExpressionUUID->"64debc4c-f84a-4c6e-bedd-2a1530fa3a5e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Augment tick axis lists", "Section",ExpressionUUID->"f95b83a0-bc99-4f7d-83ec-a9dce9888884"],
+
+Cell["\<\
+Converts plain None to list of empty lists
+Augments list of specifications to NumAxes with empty lists, replacing None \
+with empty list
+Does not handle plain Automatic\
+\>", "Text",ExpressionUUID->"37a67bb5-70cb-48d7-b178-253ed56b0b92"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"AugmentAxisTickOptions", "::", "numaxes"}], "=", 
+   "\"\<Tick lists specified for more than `1` axes.\>\""}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AugmentAxisTickOptions", "[", 
+    RowBox[{"NumAxes_Integer", ",", 
+     RowBox[{"TickLists", ":", "None"}]}], "]"}], ":=", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", 
+     RowBox[{"{", "NumAxes", "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"AugmentAxisTickOptions", "[", 
+    RowBox[{"NumAxes_Integer", ",", "TickLists_List"}], "]"}], ":=", 
+   RowBox[{"Module", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"If", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"NumAxes", "<", 
+         RowBox[{"Length", "[", "TickLists", "]"}]}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Message", "[", 
+         RowBox[{
+          RowBox[{"AugmentAxisTickOptions", "::", "numaxes"}], ",", 
+          "NumAxes"}], "]"}]}], "\[IndentingNewLine]", "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Join", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Replace", "[", 
+         RowBox[{"TickLists", ",", 
+          RowBox[{"{", 
+           RowBox[{"None", "\[Rule]", 
+            RowBox[{"{", "}"}]}], "}"}], ",", 
+          RowBox[{"{", "1", "}"}]}], "]"}], ",", "\[IndentingNewLine]", 
+        RowBox[{"Table", "[", 
+         RowBox[{
+          RowBox[{"{", "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"NumAxes", "-", 
+            RowBox[{"Length", "[", "TickLists", "]"}]}], "}"}]}], "]"}]}], 
+       "\[IndentingNewLine]", "]"}]}]}], "\[IndentingNewLine]", "]"}]}], 
+  ";"}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.424723770078125*^9, 3.42472377059375*^9}},
+ CellLabel->
+  "In[604]:=",ExpressionUUID->"247b3f48-04b6-49ae-94cd-9de8eb37adfd"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tick testing", "Section",ExpressionUUID->"9071a802-4428-495f-a818-f27b95972d92"],
+
+Cell["\<\
+Valid tick is coordinate or {coordinate,label,length/pair,style}, with all \
+contents after first optional, where coordinate and length or the components \
+of pair must be numeric and style must be a list.
+Ambiguity arises in that, e.g., {1,2,3} could either be a single tick mark or \
+a list of very simple tick marks.  Thus, it produces True as an argument to \
+either TickQ or TickListQ.\
+\>", "Text",ExpressionUUID->"181797c9-9494-4f6d-bee4-42736455cefe"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"TickPattern", "=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"_", "?", "NumericQ"}], ")"}], "|", 
+    RowBox[{"{", 
+     RowBox[{"_", "?", "NumericQ"}], "}"}], "|", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"_", "?", "NumericQ"}], ",", "_"}], "}"}], "|", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"_", "?", "NumericQ"}], ",", "_", ",", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"_", "?", "NumericQ"}], ")"}], "|", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"_", "?", "NumericQ"}], ",", 
+         RowBox[{"_", "?", "NumericQ"}]}], "}"}]}]}], "}"}], "|", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"_", "?", "NumericQ"}], ",", "_", ",", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"_", "?", "NumericQ"}], ")"}], "|", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"_", "?", "NumericQ"}], ",", 
+         RowBox[{"_", "?", "NumericQ"}]}], "}"}]}], ",", "_List"}], "}"}]}]}],
+   ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[607]:=",ExpressionUUID->"38237802-9f0c-4e97-b81a-2e83bfae9092"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickQ", "[", "x_", "]"}], ":=", 
+   RowBox[{"MatchQ", "[", 
+    RowBox[{"x", ",", "TickPattern"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"TickListQ", "[", "x_", "]"}], ":=", 
+   RowBox[{"MatchQ", "[", 
+    RowBox[{"x", ",", 
+     RowBox[{
+      RowBox[{"{", "}"}], "|", 
+      RowBox[{"{", 
+       RowBox[{"TickPattern", ".."}], "}"}]}]}], "]"}]}], ";"}]}], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[608]:=",ExpressionUUID->"212b6f53-b79b-4407-b6d4-f75653e3c64d"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"TickQ", "/@", 
+  RowBox[{"{", 
+   RowBox[{"1", ",", 
+    RowBox[{"{", "1", "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "\"\<a\>\""}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "\"\<a\>\"", ",", "2"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "\"\<a\>\"", ",", 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "3"}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "\"\<a\>\"", ",", 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "3"}], "}"}], ",", 
+      RowBox[{"{", "Red", "}"}]}], "}"}]}], "}"}]}], "\[IndentingNewLine]", 
+ RowBox[{"TickQ", "/@", 
+  RowBox[{"{", 
+   RowBox[{"x", ",", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "\"\<a\>\"", ",", 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "\"\<a\>\""}], "}"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "\"\<a\>\"", ",", 
+      RowBox[{"{", 
+       RowBox[{"2", ",", "3"}], "}"}], ",", "Red"}], "}"}]}], 
+   "}"}]}]}], "Input",
+ CellLabel->
+  "In[610]:=",ExpressionUUID->"6ec61abc-99bb-4b06-a8cc-fe29621bb453"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+  "True", ",", "True", ",", "True", ",", "True", ",", "True", ",", "True"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.8230255408744*^9},
+ CellLabel->
+  "Out[610]=",ExpressionUUID->"58b6406e-c89a-4f30-844d-400687cb968d"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"False", ",", "False", ",", "False"}], "}"}]], "Output",
+ CellChangeTimes->{3.823025540890026*^9},
+ CellLabel->
+  "Out[611]=",ExpressionUUID->"3b1ef6bd-4490-43c4-bc68-d9d216b216b5"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"TickListQ", "/@", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"{", "}"}], ",", 
+    RowBox[{"LinTicks", "[", 
+     RowBox[{"1", ",", "5", ",", "1", ",", "2"}], "]"}]}], 
+   "}"}]}], "\[IndentingNewLine]", 
+ RowBox[{"TickListQ", "/@", 
+  RowBox[{"{", "None", "}"}]}]}], "Input",
+ CellLabel->
+  "In[612]:=",ExpressionUUID->"b8cfa6aa-f990-49b1-8553-fe38c869a592"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"True", ",", "True"}], "}"}]], "Output",
+ CellChangeTimes->{3.823025540921278*^9},
+ CellLabel->
+  "Out[612]=",ExpressionUUID->"33358c89-b07a-473a-9fa8-238aa2523512"],
+
+Cell[BoxData[
+ RowBox[{"{", "False", "}"}]], "Output",
+ CellChangeTimes->{3.823025540921278*^9},
+ CellLabel->
+  "Out[613]=",ExpressionUUID->"c201a6af-48b7-4a87-85eb-5f676dc4967a"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tick list manipulation", "Section",ExpressionUUID->"10427fad-9f69-42e8-94a8-c4ba28e60741"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"LimitTickRange", "[", 
+    RowBox[{
+     RowBox[{"Range", ":", 
+      RowBox[{"{", 
+       RowBox[{"x1_", ",", "x2_"}], "}"}]}], ",", "TickList_List"}], "]"}], ":=", 
+   RowBox[{"Cases", "[", 
+    RowBox[{"TickList", ",", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"x_", "?", "NumericQ"}], ")"}], "|", 
+        RowBox[{"{", 
+         RowBox[{"x_", ",", "___"}], "}"}]}], ")"}], "/;", 
+      RowBox[{"ApproxInRange", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"x1", ",", "x2"}], "}"}], ",", "x"}], "]"}]}]}], "]"}]}], 
+  ";"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.4648776748125*^9, 3.464877696859375*^9}, 
+   3.46488172975*^9},
+ CellLabel->
+  "In[614]:=",ExpressionUUID->"504b97dd-aeb3-4c48-972b-37708567ac12"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"LimitTickLabelRange", "[", 
+    RowBox[{
+     RowBox[{"Range", ":", 
+      RowBox[{"{", 
+       RowBox[{"x1_", ",", "x2_"}], "}"}]}], ",", "TickList_List"}], "]"}], ":=", 
+   RowBox[{"Union", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"Cases", "[", 
+      RowBox[{"TickList", ",", 
+       RowBox[{"x_", "?", "NumericQ"}]}], "]"}], ",", "  ", 
+     RowBox[{"(*", " ", 
+      RowBox[{"bare", " ", "number"}], " ", "*)"}], "\[IndentingNewLine]", 
+     RowBox[{"Cases", "[", 
+      RowBox[{"TickList", ",", 
+       RowBox[{"{", "x_", "}"}]}], "]"}], ",", "  ", 
+     RowBox[{"(*", " ", 
+      RowBox[{"no", " ", "label", " ", "given"}], " ", "*)"}], 
+     "\[IndentingNewLine]", 
+     RowBox[{"Cases", "[", 
+      RowBox[{"TickList", ",", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"x_", ",", "l_", ",", "r___"}], "}"}], "/;", 
+        RowBox[{"ApproxInRange", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"x1", ",", "x2"}], "}"}], ",", "x"}], "]"}]}]}], "]"}], 
+     ",", " ", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+       RowBox[{"label", " ", "--"}], " ", "retain"}], " ", "*)"}], 
+     "\[IndentingNewLine]", 
+     RowBox[{"Cases", "[", 
+      RowBox[{"TickList", ",", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"x_", ",", "l_", ",", "r___"}], "}"}], "/;", 
+         RowBox[{"!", 
+          RowBox[{"ApproxInRange", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"x1", ",", "x2"}], "}"}], ",", "x"}], "]"}]}]}], 
+        "\[RuleDelayed]", 
+        RowBox[{"{", 
+         RowBox[{"x", ",", "\"\<\>\"", ",", "r"}], "}"}]}]}], "]"}]}], "  ", 
+    RowBox[{"(*", " ", 
+     RowBox[{
+      RowBox[{"label", " ", "--"}], " ", "strip"}], " ", "*)"}], 
+    "\[IndentingNewLine]", "]"}]}], ";"}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{{3.464877294546875*^9, 3.464877303390625*^9}, {
+   3.464877335140625*^9, 3.46487745284375*^9}, {3.46487761528125*^9, 
+   3.464877624296875*^9}, 3.46488172365625*^9},
+ CellLabel->
+  "In[615]:=",ExpressionUUID->"6d39c680-9534-4e90-8386-65d4a143d4be"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"LimitTickLabelRange", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"0", ",", "1"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", 
+     RowBox[{"{", "0", "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0.5", ",", "\"\<a\>\""}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1.5", ",", "\"\<b\>\""}], "}"}]}], "}"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.464881597765625*^9, 3.4648816350625*^9}},
+ CellLabel->
+  "In[616]:=",ExpressionUUID->"adbbc170-fc7b-411f-9af6-dddf3e65328c"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"0", ",", 
+   RowBox[{"{", "0", "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"0.5`", ",", "\<\"a\"\>"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"1.5`", ",", "\<\"\"\>"}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.464881636984375*^9, 3.46488169946875*^9, 
+  3.464881742921875*^9, 3.8230255409744983`*^9},
+ CellLabel->
+  "Out[616]=",ExpressionUUID->"1a7b6d71-c9ba-4b15-a0bb-5e5f9f6bd24c"]
+}, Open  ]],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"StripTickLabels", "[", "TickList_List", "]"}], ":=", 
+   RowBox[{"Replace", "[", 
+    RowBox[{"TickList", ",", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"x_", ",", "l_", ",", "r___"}], "}"}], "\[RuleDelayed]", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", "\"\<\>\"", ",", "r"}], "}"}]}], ",", 
+     RowBox[{"{", "1", "}"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"StripTickLabels", "[", "f_Symbol", "]"}], ":=", 
+   RowBox[{"Composition", "[", 
+    RowBox[{"StripTickLabels", ",", "f"}], "]"}]}], ";"}]}], "Input",
+ InitializationCell->True,
+ CellChangeTimes->{3.4247295879375*^9, {3.464877473*^9, 3.46487748846875*^9}},
+ 
+ CellLabel->
+  "In[617]:=",ExpressionUUID->"cdea578b-db9c-46b9-874f-256e73dbd14a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"TransformTicks", "[", 
+    RowBox[{
+    "PosnTransformation_", ",", "LengthTransformation_", ",", 
+     "TickList_List"}], "]"}], ":=", 
+   RowBox[{"Replace", "[", 
+    RowBox[{"TickList", ",", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"x_", ",", "t_", ",", 
+        RowBox[{"l", ":", 
+         RowBox[{"{", 
+          RowBox[{"_", ",", "_"}], "}"}]}], ",", "RestSeq___"}], "}"}], 
+      "\[RuleDelayed]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"PosnTransformation", "@", "x"}], ",", "t", ",", 
+        RowBox[{"LengthTransformation", "/@", "l"}], ",", "RestSeq"}], 
+       "}"}]}], ",", 
+     RowBox[{"{", "1", "}"}]}], "]"}]}], ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[619]:=",ExpressionUUID->"5322c2a5-c4d3-43f7-8ceb-83dea38d4f67"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["End private context", "Section",ExpressionUUID->"a751ecf8-34f2-47f5-bd1a-c7ea7767213c"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"End", "[", "]"}], ";"}]], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[620]:=",ExpressionUUID->"e97dd837-dd88-43f6-9a1e-b24adce71ee2"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["End package", "Section",ExpressionUUID->"9989f932-20b9-4483-8558-40a2e744e3e8"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Protect", "[", 
+   RowBox[{"Evaluate", "[", 
+    RowBox[{"$Context", "<>", "\"\<*\>\""}], "]"}], "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"EndPackage", "[", "]"}], ";"}]}], "Input",
+ InitializationCell->True,
+ CellLabel->
+  "In[621]:=",ExpressionUUID->"8f9841da-cd74-4899-8516-7b148b598f57"]
+}, Open  ]]
+},
+AutoGeneratedPackage->Automatic,
+WindowToolbars->"RulerBar",
+WindowSize->{1264, 902},
+WindowMargins->{{-6, Automatic}, {Automatic, 4}},
+PageHeaders->{{
+   Cell[
+    TextData[{
+      CounterBox["Page"]}], "PageNumber"], Inherited, 
+   Cell[
+    TextData[{
+      ValueBox["FileName"]}], "Header"]}, {
+   Cell[
+    TextData[{
+      ValueBox["FileName"]}], "Header"], Inherited, 
+   Cell[
+    TextData[{
+      CounterBox["Page"]}], "PageNumber"]}},
+PageHeaderLines->{False, Inherited},
+PrintingOptions->{"FirstPageHeader"->False,
+"PrintingMargins"->{{36, 36}, {36, 36}}},
+ShowSelection->True,
+Magnification->1.25,
+FrontEndVersion->"12.2 for Microsoft Windows (64-bit) (December 12, 2020)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"ac4bad91-c05f-4f3d-9c4d-f202230bd589"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[567, 22, 89, 0, 83, "Section",ExpressionUUID->"887c7061-f43f-4366-a273-6ddd4562e050"],
+Cell[659, 24, 9824, 201, 872, "Input",ExpressionUUID->"705e08a4-a059-4635-80bb-6d7fd0fd8e92",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10520, 230, 87, 0, 83, "Section",ExpressionUUID->"1d265d06-facd-400e-9e1d-62dd4fc80256"],
+Cell[10610, 232, 390, 9, 55, "Input",ExpressionUUID->"b151e4c0-85f7-4ffe-96b6-a173a2a43685",
+ InitializationCell->True],
+Cell[11003, 243, 267, 7, 55, "Input",ExpressionUUID->"41b69801-601a-46d0-8d65-9cc2062434cb",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11307, 255, 82, 0, 83, "Section",ExpressionUUID->"0b8c24ea-dc02-4123-9281-25059a89c261"],
+Cell[CellGroupData[{
+Cell[11414, 259, 91, 0, 67, "Subsection",ExpressionUUID->"c8e80a88-4b9f-444e-8b53-c02fa590ab61"],
+Cell[11508, 261, 332, 8, 55, "Input",ExpressionUUID->"6530b51f-cecb-4935-9166-5c308c7677b1",
+ InitializationCell->True],
+Cell[11843, 271, 9390, 227, 1976, "Input",ExpressionUUID->"25518f62-85fb-4ddc-85b2-1fc240ae483c",
+ InitializationCell->True]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[21282, 504, 95, 0, 83, "Section",ExpressionUUID->"42a0a98d-cfe7-4683-960e-41b9b25621eb"],
+Cell[21380, 506, 202, 5, 55, "Input",ExpressionUUID->"db139852-36dd-4e57-9e6e-bcc7d3349e18",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[21619, 516, 122, 0, 83, "Section",ExpressionUUID->"33c464bb-7b7d-4033-b65f-e4765e40d727"],
+Cell[21744, 518, 348, 10, 55, "Input",ExpressionUUID->"9965e824-23c5-4388-ac5f-cb8fb0b79ddf",
+ InitializationCell->True],
+Cell[22095, 530, 447, 14, 55, "Input",ExpressionUUID->"ae57abd1-9595-4ba8-a148-eb2c6ea285c8",
+ InitializationCell->True],
+Cell[22545, 546, 774, 26, 80, "Input",ExpressionUUID->"e604cb20-63c9-4bca-922b-4c101afd30eb",
+ InitializationCell->True],
+Cell[23322, 574, 1292, 44, 80, "Input",ExpressionUUID->"109abf61-025a-4053-ab66-7f289bf8589f",
+ InitializationCell->True],
+Cell[24617, 620, 1594, 53, 104, "Input",ExpressionUUID->"19837419-d024-4e13-bb6e-1f4d97689b7b",
+ InitializationCell->True],
+Cell[26214, 675, 574, 15, 80, "Input",ExpressionUUID->"5705aa8e-5f24-4d50-9ac8-ed275db28477",
+ InitializationCell->True],
+Cell[26791, 692, 2766, 82, 320, "Input",ExpressionUUID->"d733ce07-e479-4a38-afad-02e90c349ade",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[29594, 779, 105, 0, 83, "Section",ExpressionUUID->"77651f7f-a7c9-47dc-ba29-f9d33baa63aa"],
+Cell[CellGroupData[{
+Cell[29724, 783, 91, 0, 67, "Subsection",ExpressionUUID->"e75053fa-1574-4f3e-96fe-07b59324a02e"],
+Cell[29818, 785, 690, 13, 265, "Text",ExpressionUUID->"ba0f75b5-d413-4777-9ca8-43fd9b907611"],
+Cell[30511, 800, 416, 11, 55, "Input",ExpressionUUID->"c9d094a3-38ec-439a-a6ef-2a0b7e19d178",
+ InitializationCell->True],
+Cell[30930, 813, 1987, 49, 392, "Input",ExpressionUUID->"e1ed17ac-897b-4327-8a44-e635885bfb9f",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[32954, 867, 99, 0, 67, "Subsection",ExpressionUUID->"e44e7f26-16fa-4e77-aa2a-4ac96a2ec9a1"],
+Cell[33056, 869, 10915, 264, 1354, "Input",ExpressionUUID->"9c211367-d418-4e45-a66b-276157e15e41",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[44008, 1138, 102, 0, 67, "Subsection",ExpressionUUID->"f53f3537-bceb-4191-a40c-c395f035d331"],
+Cell[44113, 1140, 704, 16, 293, "Text",ExpressionUUID->"5ccb8013-986e-426d-9a09-daa66c388d66"],
+Cell[44820, 1158, 2717, 64, 585, "Input",ExpressionUUID->"4d52a058-75cc-4d0e-b5c1-8ca1efab3944",
+ InitializationCell->True],
+Cell[CellGroupData[{
+Cell[47562, 1226, 498, 10, 35, "Input",ExpressionUUID->"0e269af0-0be3-4d3b-95e7-165c7375644b"],
+Cell[48063, 1238, 551, 14, 40, "Output",ExpressionUUID->"9a50c84f-9831-484e-8d50-d099631b0760"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[48675, 1259, 158, 3, 83, "Section",ExpressionUUID->"7ac52169-efa3-4205-b08e-39fe171f8039"],
+Cell[48836, 1264, 362, 10, 154, "Text",ExpressionUUID->"7b490573-a5cb-42e0-b63c-b9edbefa9886"],
+Cell[CellGroupData[{
+Cell[49223, 1278, 194, 3, 67, "Subsection",ExpressionUUID->"b45e0751-6425-4f55-8536-3b48cea60d8d"],
+Cell[49420, 1283, 223, 5, 43, "Text",ExpressionUUID->"0f07a579-98ac-4dac-befb-475358737ab0"],
+Cell[49646, 1290, 2252, 54, 441, "Input",ExpressionUUID->"0789e3cc-9015-4d15-9be5-5f4c17a403de",
+ InitializationCell->True],
+Cell[51901, 1346, 2052, 50, 346, "Input",ExpressionUUID->"b954d5a7-abf1-4f19-925a-f45fb3d447b6",
+ InitializationCell->True]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[54002, 1402, 86, 0, 83, "Section",ExpressionUUID->"35cfbf58-dcca-4617-9f65-b4abb2b05e00"],
+Cell[54091, 1404, 231, 6, 43, "Text",ExpressionUUID->"7771b2b0-c94b-4e98-8e17-5b22ae3871a9"],
+Cell[54325, 1412, 3717, 79, 440, "Input",ExpressionUUID->"69e2fcc1-ccb8-44a9-be79-6f185d1605af",
+ InitializationCell->True],
+Cell[58045, 1493, 18938, 420, 3272, "Input",ExpressionUUID->"3f970a58-de17-4728-af09-f7b32b09a7fe",
+ InitializationCell->True],
+Cell[76986, 1915, 4164, 102, 560, "Input",ExpressionUUID->"b3c5840c-1d7e-4e58-bd23-41303d3427bc",
+ InitializationCell->True],
+Cell[81153, 2019, 6061, 139, 896, "Input",ExpressionUUID->"fa2207a9-7c0b-45b7-ba69-629f33f9135e",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[87251, 2163, 83, 0, 83, "Section",ExpressionUUID->"37f618fd-606d-467b-9980-adea09e61cf7"],
+Cell[87337, 2165, 1048, 24, 460, "Text",ExpressionUUID->"539e49ad-c3f7-448e-a837-975a2648c3f6"],
+Cell[88388, 2191, 2129, 46, 176, "Input",ExpressionUUID->"f1c2ad4b-b774-491b-9825-c30eb10b7094",
+ InitializationCell->True],
+Cell[90520, 2239, 8118, 183, 1185, "Input",ExpressionUUID->"001c9369-d8a5-447d-9bd9-8e9bdd834483",
+ InitializationCell->True],
+Cell[98641, 2424, 3192, 83, 296, "Input",ExpressionUUID->"a8d34f91-2b2a-4f39-914e-4f497808011e",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[101870, 2512, 91, 0, 83, "Section",ExpressionUUID->"42edf9e0-f75a-4148-902c-4262b202f09f"],
+Cell[101964, 2514, 121, 0, 43, "Text",ExpressionUUID->"dcee6433-90fc-4ca2-a912-da676c48cb5a"],
+Cell[102088, 2516, 498, 13, 80, "Input",ExpressionUUID->"de2d9cc2-760e-4a6a-ae7a-8f36c4c2cd13",
+ InitializationCell->True],
+Cell[102589, 2531, 104, 0, 43, "Text",ExpressionUUID->"e1d52c15-043f-4083-aad9-6fabcda0f86f"],
+Cell[102696, 2533, 595, 17, 80, "Input",ExpressionUUID->"79ed07fc-b275-4254-ba86-218a5f0e1cce",
+ InitializationCell->True],
+Cell[103294, 2552, 110, 0, 43, "Text",ExpressionUUID->"5febd879-488e-47ad-b65a-73ad1dbf04e4"],
+Cell[103407, 2554, 622, 17, 80, "Input",ExpressionUUID->"71a32c53-88d1-4543-bef5-948206fb5eb0",
+ InitializationCell->True],
+Cell[104032, 2573, 140, 2, 43, "Text",ExpressionUUID->"ca2462f2-bfb3-47c8-9bc4-c5ba9783859c"],
+Cell[104175, 2577, 759, 21, 104, "Input",ExpressionUUID->"8f542d59-c902-46fe-a678-8168639e0777",
+ InitializationCell->True],
+Cell[104937, 2600, 119, 0, 43, "Text",ExpressionUUID->"68e82c16-83a9-429e-8242-d01a8e559107"],
+Cell[105059, 2602, 676, 18, 80, "Input",ExpressionUUID->"3854d737-c631-4352-b37e-c010c0ba6f17",
+ InitializationCell->True],
+Cell[105738, 2622, 94, 0, 43, "Text",ExpressionUUID->"8028049a-5c79-458b-92b0-95c4a18c5e12"],
+Cell[105835, 2624, 514, 15, 80, "Input",ExpressionUUID->"0bcf0b5f-b9e0-4d41-a0c8-f2b2a4e70aed",
+ InitializationCell->True],
+Cell[106352, 2641, 88, 0, 43, "Text",ExpressionUUID->"53767e03-ef4d-4289-bc74-c17e3ae090b2"],
+Cell[106443, 2643, 617, 17, 80, "Input",ExpressionUUID->"64debc4c-f84a-4c6e-bedd-2a1530fa3a5e",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[107097, 2665, 97, 0, 83, "Section",ExpressionUUID->"f95b83a0-bc99-4f7d-83ec-a9dce9888884"],
+Cell[107197, 2667, 247, 5, 99, "Text",ExpressionUUID->"37a67bb5-70cb-48d7-b178-253ed56b0b92"],
+Cell[107447, 2674, 1980, 52, 344, "Input",ExpressionUUID->"247b3f48-04b6-49ae-94cd-9de8eb37adfd",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[109464, 2731, 86, 0, 83, "Section",ExpressionUUID->"9071a802-4428-495f-a818-f27b95972d92"],
+Cell[109553, 2733, 469, 7, 127, "Text",ExpressionUUID->"181797c9-9494-4f6d-bee4-42736455cefe"],
+Cell[110025, 2742, 1093, 34, 82, "Input",ExpressionUUID->"38237802-9f0c-4e97-b81a-2e83bfae9092",
+ InitializationCell->True],
+Cell[111121, 2778, 561, 18, 81, "Input",ExpressionUUID->"212b6f53-b79b-4407-b6d4-f75653e3c64d",
+ InitializationCell->True],
+Cell[CellGroupData[{
+Cell[111707, 2800, 1050, 31, 60, "Input",ExpressionUUID->"6ec61abc-99bb-4b06-a8cc-fe29621bb453"],
+Cell[112760, 2833, 260, 7, 40, "Output",ExpressionUUID->"58b6406e-c89a-4f30-844d-400687cb968d"],
+Cell[113023, 2842, 220, 5, 40, "Output",ExpressionUUID->"3b1ef6bd-4490-43c4-bc68-d9d216b216b5"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[113280, 2852, 382, 11, 60, "Input",ExpressionUUID->"b8cfa6aa-f990-49b1-8553-fe38c869a592"],
+Cell[113665, 2865, 204, 5, 40, "Output",ExpressionUUID->"33358c89-b07a-473a-9fa8-238aa2523512"],
+Cell[113872, 2872, 179, 4, 40, "Output",ExpressionUUID->"c201a6af-48b7-4a87-85eb-5f676dc4967a"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[114100, 2882, 96, 0, 83, "Section",ExpressionUUID->"10427fad-9f69-42e8-94a8-c4ba28e60741"],
+Cell[114199, 2884, 844, 26, 81, "Input",ExpressionUUID->"504b97dd-aeb3-4c48-972b-37708567ac12",
+ InitializationCell->True],
+Cell[115046, 2912, 2145, 58, 176, "Input",ExpressionUUID->"6d39c680-9534-4e90-8386-65d4a143d4be",
+ InitializationCell->True],
+Cell[CellGroupData[{
+Cell[117216, 2974, 512, 14, 35, "Input",ExpressionUUID->"adbbc170-fc7b-411f-9af6-dddf3e65328c"],
+Cell[117731, 2990, 431, 11, 40, "Output",ExpressionUUID->"1a7b6d71-c9ba-4b15-a0bb-5e5f9f6bd24c"]
+}, Open  ]],
+Cell[118177, 3004, 780, 21, 80, "Input",ExpressionUUID->"cdea578b-db9c-46b9-874f-256e73dbd14a",
+ InitializationCell->True],
+Cell[118960, 3027, 825, 24, 80, "Input",ExpressionUUID->"5322c2a5-c4d3-43f7-8ceb-83dea38d4f67",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[119822, 3056, 93, 0, 83, "Section",ExpressionUUID->"a751ecf8-34f2-47f5-bd1a-c7ea7767213c"],
+Cell[119918, 3058, 179, 5, 55, "Input",ExpressionUUID->"e97dd837-dd88-43f6-9a1e-b24adce71ee2",
+ InitializationCell->True]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[120134, 3068, 85, 0, 83, "Section",ExpressionUUID->"9989f932-20b9-4483-8558-40a2e744e3e8"],
+Cell[120222, 3070, 327, 9, 80, "Input",ExpressionUUID->"8f9841da-cd74-4899-8516-7b148b598f57",
+ InitializationCell->True]
+}, Open  ]]
+}
+]
+*)
+

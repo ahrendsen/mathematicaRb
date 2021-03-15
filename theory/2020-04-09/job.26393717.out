@@ -1,0 +1,29 @@
+Wed Apr  8 16:12:51 CDT 2020
+>> Starting Part 2
+
+NIntegrate::slwcon: Numerical integration converging too slowly; suspect one of the following: singularity, value of the integration is 0, highly oscillatory integrand, or WorkingPrecision too small.
+
+                                                                                                                                                               -15               -15
+NIntegrate::ncvb: NIntegrate failed to converge to prescribed accuracy after 9 recursive bisections in θ near {θ} = {3.3992}. NIntegrate obtained -3.60476 10    and 1.17585 10    for the integral and error estimates.
+
+                                                                                                                                                                     -16               -15
+NIntegrate::ncvb: NIntegrate failed to converge to prescribed accuracy after 9 recursive bisections in θ near {θ} = {0.0000241858}. NIntegrate obtained -3.46077 10    and 2.95947 10    for the integral and error estimates.
+
+NIntegrate::slwcon: Numerical integration converging too slowly; suspect one of the following: singularity, value of the integration is 0, highly oscillatory integrand, or WorkingPrecision too small.
+
+                                                                                                                                                                -15               -15
+NIntegrate::ncvb: NIntegrate failed to converge to prescribed accuracy after 9 recursive bisections in θ near {θ} = {2.96969}. NIntegrate obtained -4.94049 10    and 1.75961 10    for the integral and error estimates.
+
+General::stop: Further output of NIntegrate::ncvb will be suppressed during this calculation.
+
+NIntegrate::slwcon: Numerical integration converging too slowly; suspect one of the following: singularity, value of the integration is 0, highly oscillatory integrand, or WorkingPrecision too small.
+
+General::stop: Further output of NIntegrate::slwcon will be suppressed during this calculation.
+
+NIntegrate::izero: Integral and error estimates are 0 on all integration subregions. Try increasing the value of the MinRecursion option. If value of integral may be 0, specify a finite value for the AccuracyGoal option.
+>> Finished Part 2, Time Elapsed:
+>>                     9
+3.795386592397150 10  - start
+Thu Apr  9 02:03:14 CDT 2020
+Current memory usage for job 26393717 is: 99.25 MBs
+Maximum memory usage for job 26393717 is: 8693.86 MBs
