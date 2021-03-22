@@ -1,0 +1,238 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      8933,        230]
+NotebookOptionsPosition[      7506,        195]
+NotebookOutlinePosition[      8268,        219]
+CellTagsIndexPosition[      8165,        214]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Deflector Data Processing", "Title",
+ CellChangeTimes->{{3.824806496635028*^9, 3.824806501416706*^9}, {
+  3.825408739830469*^9, 
+  3.825408741314907*^9}},ExpressionUUID->"b29e004c-dce5-4a3f-ab95-\
+29871bd704c6"],
+
+Cell[CellGroupData[{
+
+Cell["2021-03-22", "Chapter",
+ CellChangeTimes->{{3.824806574097508*^9, 3.824806576732547*^9}, {
+  3.825408776441794*^9, 
+  3.825408779988862*^9}},ExpressionUUID->"1113c055-4874-4ff7-b39b-\
+f1dab3dd593c"],
+
+Cell["\<\
+Rule number 1: Press ctrl-s obsessively.
+
+This is a Mathematica Notebook but I\[CloseCurlyQuote]m treating it more like \
+a notebook in the traditional \[OpenCurlyDoubleQuote]lab notebook\
+\[CloseCurlyDoubleQuote] sense. Text that I write here will remain after it \
+is written. Cells will be edited only if they result in insignificant errors. \
+If it\[CloseCurlyQuote]s a learning opportunity, I\[CloseCurlyQuote]ll leave \
+the error in there and write about why it occurred and how I think I\
+\[CloseCurlyQuote]ll fix it.
+
+As I reach usable code, the code will be transferred to a separate script or \
+package file that I will use version control on. This way, I can always be \
+sure to be able to analyze the data in exactly the same way that I did \
+initially, even if I change the code later to improve it in some way, or \
+change the way that the data is recorded, or something. 
+
+I\[CloseCurlyQuote]ve developed Deflector Data Processing code in the past, \
+so I\[CloseCurlyQuote]ll start by copying that data over to the script file.\
+\>", "Text",
+ CellChangeTimes->{{3.8248065096787653`*^9, 3.824806920565362*^9}, {
+  3.825408761816008*^9, 3.8254087714571514`*^9}, {3.8254088043651695`*^9, 
+  3.8254088545866175`*^9}},ExpressionUUID->"c1f75a2a-5324-4c7f-9153-\
+ba0bdd04873f"],
+
+Cell[BoxData[
+ RowBox[{"<<", "deflectorProcessing`"}]], "Input",
+ CellChangeTimes->{{3.8254094632678423`*^9, 3.8254094770723143`*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"0da45b50-963a-4fc4-85f4-484e314bc892"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "\"\<deflectorProcessing`*\>\""}]], "Input",
+ CellChangeTimes->{{3.825409573160664*^9, 3.825409583543583*^9}},
+ CellLabel->"In[2]:=",ExpressionUUID->"1db1fe03-2527-4d95-bb3a-0e56c0c68b39"],
+
+Cell[BoxData[
+ StyleBox[
+  FrameBox[GridBox[{
+     {
+      DynamicModuleBox[{Typeset`open$$ = True}, 
+       PaneSelectorBox[{False->
+        ButtonBox[
+         RowBox[{
+          
+          DynamicBox[FEPrivate`FrontEndResource[
+           "FEBitmaps", "RightPointerOpener"],
+           ImageSizeCache->{10., {2., 8.}}], " ", 
+          StyleBox["deflectorProcessing`", "InformationGridGroupHeader"]}],
+         Appearance->None,
+         BaseStyle->"InformationGridLink",
+         ButtonFunction:>FEPrivate`Set[Typeset`open$$, True],
+         Evaluator->Automatic,
+         Method->"Preemptive"], True->
+        PaneBox[GridBox[{
+           {
+            ButtonBox[
+             RowBox[{
+              
+              DynamicBox[FEPrivate`FrontEndResource[
+               "FEBitmaps", "DownPointerOpener"],
+               ImageSizeCache->{10., {2., 8.}}], " ", 
+              StyleBox["deflectorProcessing`", "InformationGridGroupHeader"]}],
+             Appearance->None,
+             BaseStyle->"InformationGridLink",
+             ButtonFunction:>FEPrivate`Set[Typeset`open$$, False],
+             Evaluator->Automatic,
+             Method->"Preemptive"]},
+           {
+            PaneBox[GridBox[{
+               {
+                ButtonBox[
+                 StyleBox["DataExclude", "InformationGridButton"],
+                 Appearance->None,
+                 BaseStyle->"InformationGridLink",
+                 
+                 ButtonData:>{
+                  "Info-47001a37-71f6-4722-85cc-7541843a345e", {
+                   "DataExclude", "deflectorProcessing`"}, False},
+                 ButtonNote->"deflectorProcessing`",
+                 Evaluator->Automatic], 
+                ButtonBox[
+                 StyleBox["OrganizeDeflectorData", "InformationGridButton"],
+                 Appearance->None,
+                 BaseStyle->"InformationGridLink",
+                 
+                 ButtonData:>{
+                  "Info-47001a37-71f6-4722-85cc-7541843a345e", {
+                   "OrganizeDeflectorData", "deflectorProcessing`"}, False},
+                 ButtonNote->"deflectorProcessing`",
+                 Evaluator->Automatic], 
+                ButtonBox[
+                 StyleBox["PlotDeflectorData", "InformationGridButton"],
+                 Appearance->None,
+                 BaseStyle->"InformationGridLink",
+                 
+                 ButtonData:>{
+                  "Info-47001a37-71f6-4722-85cc-7541843a345e", {
+                   "PlotDeflectorData", "deflectorProcessing`"}, False},
+                 ButtonNote->"deflectorProcessing`",
+                 Evaluator->Automatic]}
+              },
+              DefaultBaseStyle->"Text",
+              
+              GridBoxAlignment->{
+               "Columns" -> {{Left}}, "Rows" -> {{Baseline}}},
+              GridBoxItemSize->{"Columns" -> {{
+                   Scaled[0.31666666666666665`]}}}],
+             ImageMargins->{{10, 0}, {0, 2}}]}
+          },
+          GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}}],
+         FrameMargins->{{0, 0}, {8, 0}}]}, Dynamic[Typeset`open$$],
+        ImageSize->Automatic]]}
+    },
+    GridBoxAlignment->{"Columns" -> {{Left}}, "Rows" -> {{Baseline}}},
+    GridBoxDividers->{"ColumnsIndexed" -> {{False}}, "RowsIndexed" -> {}},
+    GridBoxSpacings->{"Columns" -> {
+        Offset[0.27999999999999997`], {
+         Offset[0.5599999999999999]}, 
+        Offset[0.27999999999999997`]}, "Rows" -> {
+        Offset[0.2], {
+         Offset[0.8]}, 
+        Offset[0.2]}}],
+   BaseStyle->"InformationTitleFrame"], "InformationGridPlain"]], "Output",
+ CellChangeTimes->{
+  3.825409583891959*^9, {3.8254098261368*^9, 3.82540983993412*^9}},
+ CellLabel->"Out[2]=",ExpressionUUID->"3358d256-f771-4591-92b5-4d98968167b8"]
+}, Open  ]],
+
+Cell["\<\
+Okay, so I learned a bunch of stuff here. Firstly, the syntax of importing a \
+package, second, the command to list the functions that are in a package. \
+Third, how to ACTUALLY MAKE A PACKAGE. 
+
+BeginPackage[\[OpenCurlyDoubleQuote]deflectorProcessing`\
+\[CloseCurlyDoubleQuote]];
+EndPackage[];
+
+But then all the variables you use in the pacakge will be included in the \
+above output, so you want to make some pieces private, like so:
+
+Begin[\[OpenCurlyDoubleQuote]`Private`\[CloseCurlyDoubleQuote]];
+End[];
+
+Then make sure to put the Function::usage=\[CloseCurlyDoubleQuote]Text \
+explaining how to use function\[CloseCurlyDoubleQuote] OUTSIDE of the private \
+bit.
+\
+\>", "Text",
+ GeneratedCell->False,
+ CellAutoOverwrite->False,
+ CellChangeTimes->{{3.82540986806577*^9, 3.825410072790167*^9}},
+ CellTags->
+  "Info-47001a37-71f6-4722-85cc-7541843a345e",ExpressionUUID->"7250bdcd-0d32-\
+40e6-84e8-3c4c8c4356b5"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1584, 801},
+WindowMargins->{{1280, Automatic}, {Automatic, 0}},
+TaggingRules->{
+ "WelcomeScreenSettings" -> {"FEStarting" -> False}, "TryRealOnly" -> False},
+FrontEndVersion->"12.2 for Microsoft Windows (64-bit) (December 12, 2020)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"f7b10624-dacb-4200-b738-7e064122b207"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "Info-47001a37-71f6-4722-85cc-7541843a345e"->{
+  Cell[6555, 166, 923, 25, 276, "Text",ExpressionUUID->"7250bdcd-0d32-40e6-84e8-3c4c8c4356b5",
+   CellTags->"Info-47001a37-71f6-4722-85cc-7541843a345e"]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"Info-47001a37-71f6-4722-85cc-7541843a345e", 7987, 208}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 217, 4, 96, "Title",ExpressionUUID->"b29e004c-dce5-4a3f-ab95-29871bd704c6"],
+Cell[CellGroupData[{
+Cell[822, 30, 204, 4, 67, "Chapter",ExpressionUUID->"1113c055-4874-4ff7-b39b-f1dab3dd593c"],
+Cell[1029, 36, 1295, 23, 210, "Text",ExpressionUUID->"c1f75a2a-5324-4c7f-9153-ba0bdd04873f"],
+Cell[2327, 61, 212, 3, 28, "Input",ExpressionUUID->"0da45b50-963a-4fc4-85f4-484e314bc892"],
+Cell[CellGroupData[{
+Cell[2564, 68, 216, 3, 28, "Input",ExpressionUUID->"1db1fe03-2527-4d95-bb3a-0e56c0c68b39"],
+Cell[2783, 73, 3757, 90, 90, "Output",ExpressionUUID->"3358d256-f771-4591-92b5-4d98968167b8"]
+}, Open  ]],
+Cell[6555, 166, 923, 25, 276, "Text",ExpressionUUID->"7250bdcd-0d32-40e6-84e8-3c4c8c4356b5",
+ CellTags->"Info-47001a37-71f6-4722-85cc-7541843a345e"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
