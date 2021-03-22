@@ -39,7 +39,6 @@ sig["he"]=sig["he"]*-1*^-9;
 sig=Map[Flatten[Riffle[vp,#]]&,sig]; (* Combine signal and voltage pairs *)
 sig= Map[Partition[#,3]&,sig] (* Organize the signal and voltage pairs into {east voltage, west voltage, signal} *)];
 
-Clear[PlotDeflectorData]
 PlotDeflectorData[sig_(* signal *),sc_(* scale *),
 pl_(*Plot Label*),minMax_:None,ft_:{True,True}(*frame ticks*)]:=Module[
 {vEast,vWest,temp,tempSig,
@@ -97,6 +96,59 @@ ColorFunctionScaling->False
 graphs
 ]
 
+PlotDeflectorDataPosNeg[sig_(* signal *),sc_(* scale *),
+pl_(*Plot Label*),minMax_:None,ft_:{True,True}(*frame ticks*)]:=Module[
+{vEast,vWest,temp,tempSig,
+vMax(*voltage max*),
+vMin(*voltage min *),
+arr(* The list of arrays of values we ultimately plot *),
+m (* a single array (matrix) *),s (* The signal in the for loop*),
+i,j(* iteration variables *),
+mm (* The min and max of the signal *),
+me (* The mantissa and exponent of the maximum value.*),
+scale,(*factor to scale the data by so the legend can bemore compact.*)
+colorFunc,colors,func,
+graphs},
+
+(* The quirk of the array plot is that its for integers, so we have to convert our array of values to an integer so that they can fit into a table. *)
+(* It's much easier to think about rescaling data when the max is the furthest number away from 0 and the min is the closest number to zero, so I make our negative currents into positive. *)
+tempSig=Transpose[{Transpose[sig][[1]],Transpose[sig][[2]],Transpose[sig][[3]]}];
+temp=Transpose[tempSig];
+vMax=Max[Catenate[temp[[;;2]]]];
+vMin=Min[Catenate[temp[[;;2]]]];
+mm=MinMax[temp[[3]]];
+(* These lines are for the better bar legend which has the exponent above the bar *)
+me=MantissaExponent[mm[[2]]]*{10,1}+{0,-1}; (* Move the mantissa to be a value between 10 and 1/10, shift the exponent accordingly *)
+scale=Power[10,me[[2]]];
+
+
+func=ColorData["GreenPinkTones"];
+colors= Map[func,Range[0,1,.1]];
+
+(*colorFunc=Blend[Reverse[viridisColors],(Abs[#]+1*^-16-mm[[1]])/(mm[[2]]-mm[[1]])]&; Trying out auto scaling, if uncommenting this, add the option ColorFunctionScaling\[Rule]False to the plotting function.*)
+colorFunc=Blend[colors,(#-mm[[1]])/(mm[[2]]-mm[[1]])]&;
+
+arr=Table[None,{i,(vMax-vMin)*sc+1},{j,(vMax-vMin)*sc+1}]; (* The array (or matrix) of signal values to plot *)
+For[i=1, i<= Length[tempSig],i++,
+arr=ReplacePart[arr,
+{Floor[(tempSig[[i]][[2]]-vMin)*sc+1],
+Floor[(tempSig[[i]][[1]]-vMin)*sc+1]}->tempSig[[i]][[3]]];
+];
+
+
+graphs=ArrayPlot[Reverse[arr],
+(* Graph Exterior *)
+PlotLabel->pl,
+FrameLabel->{"West Deflector (V)","East Deflector (V)"},
+FrameTicks->ft,
+PlotLegends->Automatic,
+DataRange->ConstantArray[{vMin,vMax},2],
+ColorFunction->colorFunc,
+ColorFunctionScaling->False
+];
+
+graphs
+]
 
 
 End[];

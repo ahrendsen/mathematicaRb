@@ -1,6 +1,7 @@
 (* ::Package:: *)
 
 $PACKAGES=FileNameJoin[{$HomeDirectory,"Box Sync","Gay Group","Project - Rb Spin Filter","karl","mathematicaRb","packages"}]
+BeginPackage["colors`"]
 Clear[w,x,y]
 ConvertMKBrewerLineToColors[name_]:=
 Apply[RGBColor,Map[ToExpression,StringCases[raw,StartOfLine~~name~~"-"~~Except["\n"]..~~"-"~~Except["\n"]..~~" = "~~values:Except["\n"]..->"{"~~values~~"}"]]/255,{1}];
@@ -43,3 +44,6 @@ colors=Map[NumbersToColors,colorNumbers];
 strings=Map[ToString,Flatten[Take[raw,{2,-1}]]];
 paletteNames=Flatten[StringCases[strings,"#"~~x___->x]];
 colorPalettes=AssociationThread[paletteNames,colors];
+
+
+EndPackage[];
