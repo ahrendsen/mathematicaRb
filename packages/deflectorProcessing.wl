@@ -8,12 +8,10 @@
 (*2021-03-22*)
 
 
-
-
-
 BeginPackage["deflectorProcessing`"];
 
 PlotDeflectorData::usage="PlotDeflectorData[data,scale,plotLabel] Plots data of the form {{v1_1,v1_2,sig1},{v2_1,v2_2,sig2},...}, in an array plot";
+PlotDeflectorDataPosNeg::usage="PlotDeflectorData[data,scale,plotLabel] Plots data of the form {{v1_1,v1_2,sig1},{v2_1,v2_2,sig2},...}, in an array plot";
 OrganizeDeflectorData::usage="OrganizeDeflectorData[filename,voltagePairs] Returns voltage pairs list with third item, the current";
 DataExclude::usage="DataExclude[dat_,eastLowerBound_,westLowerBound_]";
 
