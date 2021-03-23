@@ -97,8 +97,11 @@ graphs
 PlotDeflectorDataPosNeg[sig_(* signal *),sc_(* scale *),
 pl_(*Plot Label*),minMax_:None,ft_:{True,True}(*frame ticks*)]:=Module[
 {vEast,vWest,temp,tempSig,
-vMax(*voltage max*),
-vMin(*voltage min *),
+eastMax(*voltage max*),
+eastMin(*voltage min *),
+westMax(*voltage max*),
+westMin(*voltage min *),
+scEast,scWest,
 arr(* The list of arrays of values we ultimately plot *),
 m (* a single array (matrix) *),s (* The signal in the for loop*),
 i,j(* iteration variables *),
@@ -112,8 +115,11 @@ graphs},
 (* It's much easier to think about rescaling data when the max is the furthest number away from 0 and the min is the closest number to zero, so I make our negative currents into positive. *)
 tempSig=Transpose[{Transpose[sig][[1]],Transpose[sig][[2]],Transpose[sig][[3]]}];
 temp=Transpose[tempSig];
-vMax=Max[Catenate[temp[[;;2]]]];
-vMin=Min[Catenate[temp[[;;2]]]];
+
+eastMax=Max[temp[[1]]];
+westMax=Max[temp[[2]]];
+eastMin=Min[temp[[1]]];
+westMin=Min[temp[[2]]];
 mm=MinMax[temp[[3]]];
 (* These lines are for the better bar legend which has the exponent above the bar *)
 me=MantissaExponent[mm[[2]]]*{10,1}+{0,-1}; (* Move the mantissa to be a value between 10 and 1/10, shift the exponent accordingly *)
@@ -126,11 +132,15 @@ colors= Map[func,Range[0,1,.1]];
 (*colorFunc=Blend[Reverse[viridisColors],(Abs[#]+1*^-16-mm[[1]])/(mm[[2]]-mm[[1]])]&; Trying out auto scaling, if uncommenting this, add the option ColorFunctionScaling\[Rule]False to the plotting function.*)
 colorFunc=Blend[colors,(#-mm[[1]])/(mm[[2]]-mm[[1]])]&;
 
-arr=Table[None,{i,(vMax-vMin)*sc+1},{j,(vMax-vMin)*sc+1}]; (* The array (or matrix) of signal values to plot *)
+(* The user can either specify a single value for the scale, or a scale for both axis. 
+This checks to see if they gave one value or two and assigns the variables appropriately.*)
+scEast=scWest=sc;
+If[ListQ[sc],scEast=sc[[1]];scWest=sc[[2]],scEast=scWest=sc];
+arr=Table[None,{i,(westMax-westMin)*scWest+1},{j,(eastMax-eastMin)*scEast+1}]; (* The array (or matrix) of signal values to plot *)
 For[i=1, i<= Length[tempSig],i++,
 arr=ReplacePart[arr,
-{Floor[(tempSig[[i]][[2]]-vMin)*sc+1],
-Floor[(tempSig[[i]][[1]]-vMin)*sc+1]}->tempSig[[i]][[3]]];
+{Floor[(tempSig[[i]][[2]]-westMin)*scWest+1],
+Floor[(tempSig[[i]][[1]]-eastMin)*scEast+1]}->tempSig[[i]][[3]]];
 ];
 
 
@@ -138,15 +148,15 @@ graphs=ArrayPlot[Reverse[arr],
 (* Graph Exterior *)
 PlotLabel->pl,
 FrameLabel->{"West Deflector (V)","East Deflector (V)"},
-FrameTicks->ft,
+FrameTicks->{True,True},
 PlotLegends->Automatic,
-DataRange->ConstantArray[{vMin,vMax},2],
+DataRange->{{eastMin,eastMax},{westMin,westMax}},
 ColorFunction->colorFunc,
 ColorFunctionScaling->False
 ];
 
 graphs
-]
+];
 
 
 End[];
