@@ -5,7 +5,7 @@
 
 
 Clear[DFT];
-DFT[list_,rev_:1]:=Module[{numItems,i,k,j,reconstructionCos,reconstructionSin,returnCos,errorsCos,returnSin,errorsSin,intensity},
+DFT[list_,rev_:1]:=Module[{numItems,numItemsSin,numItemsCos,i,k,j,reconstructionCos,reconstructionSin,returnCos,errorsCos,returnSin,errorsSin,intensity},
 returnCos=<||>;
 errorsCos=<||>;
 returnSin=<||>;
@@ -32,27 +32,43 @@ returnSin[k]=N[returnSin[k]+2/numItems*intensity*Sin[2*\[Pi] *k* rev *(i-1)/numI
 ];
 ];
 (*
-
+(* For Fourier frequency j..., only going up to frequencies that we have at least 2 
+periods of data for. *)
+numItemsSin=numItems;
+numItemsCos=numItems;
 For[j=0,j<numItems/2,j++,
 AppendTo[errorsSin,0];
 AppendTo[errorsCos,0];
+
+(* This is calculating the error as described in Eq. (14) of Berry - 1977 *)
+(* For each position on the polarimeter i...*)
 For[i=1,i<=numItems,i++,
-intensity=list[[i]];
-AppendTo[reconstructionCos,0];
-AppendTo[reconstructionSin,0];
-reconstructionCos[[i]]=intensity/Cos[2*\[Pi]*j*rev*(i)/numItems] ;
-If[j\[Equal]0,reconstructionSin[[i]]=0,reconstructionSin[[i]]=intensity/Sin[2*\[Pi]*1.0001*j*rev*(i)/numItems];];
-For [k=0,k<numItems/2,k++,
-If[k\[NotEqual]j,
-reconstructionCos[[i]]-=(returnCos[[k+1]]*Cos[2*\[Pi]*k*rev*(i)/numItems] +returnSin[[k+1]]*Sin[2*\[Pi]*k*rev*(i)/numItems] )/Cos[2*\[Pi]*j*rev*(i)/numItems];
-If[j\[Equal]0,reconstructionSin[[i]]=0,reconstructionSin[[i]]-=(returnCos[[k+1]]*Cos[2*\[Pi]*k*rev*(i)/numItems] +returnSin[[k+1]]*Sin[2*\[Pi]*k*rev*(1)/numItems] )/Sin[2*\[Pi]*1.0001*j*rev*(i)/numItems]];
+	intensity=list[[i]];
+	AppendTo[reconstructionCos,0];
+	AppendTo[reconstructionSin,0];
+	(* ***The reconstruction starts with the measured intensity.*** *)
+	(* C_j^i, where j is the frequency we are analyzing *)
+	reconstructionCos[[i]]=intensity/Cos[2.*\[Pi]*j*rev*(i)/numItems];
+    
+    (* If j is zero, There can be no intensity of Sin *)
+	If[j\[Equal]0,reconstructionSin[[i]]=0,
+	reconstructionSin[[i]]=intensity/Sin[2.*\[Pi]*j*rev*(i)/numItems];];
+	
+	(* ***We then subtract the contributions from other fourier components. *** *)
+	For[k=0,k<numItems/2,k++,
+	    (* We exclude the j frequency we are calculating, since it is on the other side of the equation *)
+		If[k\[NotEqual]j,
+		reconstructionCos[[i]]-=(returnCos[[k+1]]*Cos[2*\[Pi]*k*rev*(i)/numItems] +returnSin[[k+1]]*Sin[2*\[Pi]*k*rev*(i)/numItems] )/Cos[2.*\[Pi]*j*rev*(i)/numItems];
+		If[j\[Equal]0,reconstructionSin[[i]]=0,
+		reconstructionSin[[i]]-=(returnCos[[k+1]]*Cos[2*\[Pi]*k*rev*(i)/numItems] +returnSin[[k+1]]*Sin[2*\[Pi]*k*rev*(1)/numItems] )/Sin[2.*\[Pi]*j*rev*(i)/numItems]];
+		];
+
+	];
+	errorsSin[[j+1]]+=Power[reconstructionSin[[i]]-returnSin[[j+1]],2];
+	errorsCos[[j+1]]+=Power[reconstructionCos[[i]]-returnCos[[j+1]],2];
 ];
-];
-errorsSin[[j+1]]+=Power[reconstructionSin[[i]]-returnSin[[j+1]],2];
-errorsCos[[j+1]]+=Power[reconstructionCos[[i]]-returnCos[[j+1]],2];
-];
-errorsSin[[j+1]]=Sqrt[errorsSin[[j+1]]/numItems];
-errorsCos[[j+1]]=Sqrt[errorsCos[[j+1]]/numItems];
+errorsSin[[j+1]]=Sqrt[errorsSin[[j+1]]/numItemsSin];
+errorsCos[[j+1]]=Sqrt[errorsCos[[j+1]]/numItemsCos];
 ];
 *)
 <|"Sin Coefficients"->returnSin,"Cos Coefficients"->returnCos,"Sin Coefficients Error"->errorsSin,"Cos Coefficients Error"->errorsCos|>

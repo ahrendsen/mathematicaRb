@@ -353,7 +353,7 @@ datasets=importedFiles;
 fileNames=Map[FileNameTake,Normal[Dataset[Map[#[[1]]&,datasets]][All,"File"]]];
 dataTable=Map[Normal[#[[2]]]&,datasets];
 normalizedDataTables=Map[Normal[NormalizeProfileWithWings[Dataset[#],"DET",ordColName]]&,dataTable];
-ListPlot[Dataset[normalizedDataTables][All,All,{#["DET"]-wavemeterOffset&,ordColName<>"NORMWW"}],Joined->True,PlotRange->{{-5,6},{-.1,1.1}},,PlotLegends->Placed[LineLegend[fileNames,LegendFunction->legendFrame],Right],
+ListPlot[Dataset[normalizedDataTables][All,All,{#["DET"]-wavemeterOffset&,ordColName<>"NORMWW"}],Joined->True,PlotRange->{{-5,6},{-.1,1.1}},PlotLegends->Placed[LineLegend[fileNames,LegendFunction->legendFrame],Right],
 FrameLabel->{"Detuning (GHz)","Intensity (Normalized with Wings)"}]
 ];
 

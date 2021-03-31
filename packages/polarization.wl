@@ -13,7 +13,6 @@ Import["dataManipulation.wl"];
 Import["generalPlottingFunctions.wl"];
 Import["apparatus.wl"];
 Import["physicalConstants.wl"];
-ResetDirectory[];
 
 
 (* ::Chapter:: *)
@@ -111,7 +110,7 @@ stokesNames={"p0","p1","p2","p3"};
 stokesErrNames={"p0_err","p1_err","p2_err","p3_err"};
 nA=1*^-9;
 mTorr=1*^-3;
-(*
+(* These are defined in the physicalConstansts.wl file now.
 alpha=20.4*\[Pi]/180;
 beta=68.7*\[Pi]/180;
 deltaAB=alpha-beta;
@@ -119,9 +118,11 @@ delta=94.54*\[Pi]/180 (*Munir's reported 1.66 rad plus or minus .01*);
 *)
 
 
+(* These are defined in the physicalConstants.wl file now.
 alphaOld=3.2*\[Pi]/180;
 betaOld=-6.95*\[Pi]/180;
 rev=1;
+*)
 
 
 (* ::Section:: *)
@@ -446,7 +447,7 @@ results
 (*Public Functions *)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Single File*)
 
 
@@ -583,14 +584,14 @@ GetCountRateError[counts_,dwellTime_,darkCountsSubtract_:True]:=Module[
 	Normal[r]/Sqrt[Length[r]]
 ];
 
-CalculateStokesFromDFT[dftOutput_]:=Module[{c,s},
+CalculateStokesFromDFT[dftOutput_,rev_:rev,alpha_:alpha,beta0_:beta,delta_:delta]:=Module[{c,s},
 c=dftOutput["Cos Coefficients"];
 s=dftOutput["Sin Coefficients"];
-CalculateStokesFromFourierCoefficients[c[0],c[2],c[4],s[2],s[4],1]
+CalculateStokesFromFourierCoefficients[c[0],c[2],c[4],s[2],s[4],rev,alpha,beta0,delta]
 ];
 
 Clear[CalculateStokesFromFourierCoefficients];
-CalculateStokesFromFourierCoefficients[c0_,c2_,c4_,s2_,s4_,rev_:rev,alpha_:20.4*\[Pi]/180+shift,beta0_:68.7*\[Pi]/180+shift,delta_:delta]:=Module[
+CalculateStokesFromFourierCoefficients[c0_,c2_,c4_,s2_,s4_,rev_:rev,alpha_:alpha,beta0_:beta,delta_:delta]:=Module[
 {stokes},
 	stokes=<||>;
 	AppendTo[stokes,stokesNames[[1]]->c0-(1+Cos[delta])/(1-Cos[delta])*(c4*Cos[4 alpha+4 beta0]+s4*Sin[4 alpha+4 beta0])];
@@ -651,7 +652,7 @@ ProcessElectronPolarizationFromStokesParameters[stokes_Association]:=Module[
 (*Multiple Files*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Obtaining Count Rates*)
 
 
@@ -757,6 +758,10 @@ ProcessElectronPolarizationFileAverageSUM[fn_List,darkCountsSubtract_:True,cn_:T
 	<|FileNameTake[fn[[1]]]->results|>
 ];
 
+(* This takes as input a list of file names, and outputs a single electron polarization with the
+errors calculated by computing the Fourier Coefficients for each dataset and taking the average of 
+these values as well as the standard deviation of the mean, which will then be used as the error of
+the Fourier Coefficients and will be propogated to calculate the error in the polarization. *)
 Clear[ProcessElectronPolarizationFileAverageFOURIER];
 ProcessElectronPolarizationFileAverageFOURIER[fn_List,cn_:True,darkCountsSubtract_:True]:=Module[
 	{signals,i,f,header,dataset,
@@ -765,7 +770,7 @@ ProcessElectronPolarizationFileAverageFOURIER[fn_List,cn_:True,darkCountsSubtrac
 	fcTitles,res,errors,avgFourierComponents,
 	irResults (*individual run results*),iri(* invidual run info *),r},
 	results=<||>;
-irResults=<||>;
+	irResults=<||>;
 
 	r=ProcessElectronPolarizationFileAverageSUM[fn,darkCountsSubtract,cn];
 
@@ -784,7 +789,6 @@ irResults=<||>;
 	AppendTo[irResults,AssociationThread[fn,Map[irResultsMapper,Transpose[{dfts}]]]];
 	AppendTo[results,"averagedFiles"->fn];
 	
-
 	For[i=1,i<=Length[iri],i++,
 		AppendTo[iri[[i]],irResults[[i]]];
 	];
@@ -898,7 +902,7 @@ newVector
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Background Subtraction Methods*)
 
 
@@ -1003,7 +1007,7 @@ results
 ];
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*Operations On Completed Datasets*)
 
 

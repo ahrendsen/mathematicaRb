@@ -8,7 +8,8 @@
 (*Plot Formatting Settings*)
 
 
-imageSize=Small;
+(* All of this code has been moved to my init.m file. *)
+(*
 wongColorNames={"Black","Orange","Light Blue","Teal","Yellow","Royal Blue","Vermillion","Pink"};
 wongColors={RGBColor[0/255,0/255,0/255], (* Black *)
 					RGBColor[230/255,159/255,0], (*Orange*)
@@ -42,6 +43,7 @@ SetOptions[BarChart,BaseStyle->{FontSize->fs,PointSize[Large]},ImageSize->imageS
 $WORK=FileNameJoin[{$HomeDirectory,"Box Sync","Gay Group","Project - Rb Spin Filter","karl"}];
 $DATARUNS=FileNameJoin[{$HomeDirectory,"Box Sync","Gay Group","Project - Rb Spin Filter","karl","DataRuns"}];
 $PACKAGES=FileNameJoin[{$HomeDirectory,"Box Sync","Gay Group","Project - Rb Spin Filter","karl","mathematicaRb","packages"}];
+*)
 
 
 (* ::Chapter::Closed:: *)
@@ -128,7 +130,7 @@ x=xValues;
 y=yValues;
 yWithErr=Apply[Around[#1,#2]&,Transpose[{y,errorValues}],{1}];
 op=Partition[Riffle[x,yWithErr],2];(*Ordered Pairs*)
-ListPlot[op,PlotRange->{{Min[x],Max[x]},{Min[y-errorValues]*.995,Max[y+errorValues]*1.005}},plotOptions]
+ListPlot[{op},PlotRange->{{Min[x],Max[x]},{Min[y-errorValues]*.995,Max[y+errorValues]*1.005}},plotOptions]
 ];
 
 
