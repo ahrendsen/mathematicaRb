@@ -231,7 +231,7 @@ AverageStokes[stokesValues]
 ]
 
 
-NormalizeStokes[stokesVector_]:=Module[{intensity,newVector,i},
+StokesNormalize[stokesVector_]:=Module[{intensity,newVector,i},
 newVector=stokesVector;
 intensity=stokesVector[[1]];
 For[i=2,i<=Length[stokesVector],i++,
@@ -240,7 +240,7 @@ newVector[[i]]=stokesVector[[i]]/intensity;
 newVector
 ];
 
-UnNormalizeStokes[stokesVector_]:=Module[{intensity,newVector,i},
+StokesUnNormalize[stokesVector_]:=Module[{intensity,newVector,i},
 newVector=stokesVector;
 intensity=stokesVector[[1]];
 For[i=2,i<=Length[stokesVector],i++,
@@ -249,11 +249,21 @@ newVector[[i]]=stokesVector[[i]]*intensity;
 newVector
 ];
 
-SubtractStokes[addedStokes_,subtractedStokes_]:=Module[
+StokesSubtract[addedStokes_,subtractedStokes_]:=Module[
 {unNormAdd,unNormSub},
 unNormAdd=UnNormalizeStokes[addedStokes];
 unNormSub=UnNormalizeStokes[subtractedStokes];
 NormalizeStokes[unNormAdd-unNormSub]
+];
+
+StokesDummyCheck[stokesVector_]:=Module[
+{polarizedFraction,
+linearFraction,
+circularFraction},
+polarizedFraction=Norm[Values[stokesVector][[2;;]]];
+linearFraction=Norm[Values[stokesVector][[2;;3]]];
+circularFraction=Norm[Values[stokesVector][[4;;4]]];
+<|"polarizedFraction"->polarizedFraction,"linearFraction"->linearFraction,"circularFraction"->circularFraction|>
 ];
 
 GetIntensityArrayFromFileName[fileName_]:=Module[{f,intensityArray},
@@ -447,7 +457,7 @@ results
 (*Public Functions *)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Single File*)
 
 
@@ -518,7 +528,7 @@ f,dataset,results,background,d},
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Multiple Files*)
 
 
@@ -594,12 +604,12 @@ Clear[CalculateStokesFromFourierCoefficients];
 CalculateStokesFromFourierCoefficients[c0_,c2_,c4_,s2_,s4_,rev_:rev,alpha_:alpha,beta0_:beta,delta_:delta]:=Module[
 {stokes},
 	stokes=<||>;
-	AppendTo[stokes,stokesNames[[1]]->c0-(1+Cos[delta])/(1-Cos[delta])*(c4*Cos[4 alpha+4 beta0]+s4*Sin[4 alpha+4 beta0])];
-	AppendTo[stokes,stokesNames[[2]]->2/(1-Cos[delta])*(c4*Cos[2*alpha + 4 *beta0]+s4*Sin[2*alpha + 4 *beta0])/stokes[[1]]];
-	AppendTo[stokes,stokesNames[[3]]->2/(1-Cos[delta])*(s4*Cos[2*alpha + 4 *beta0]-c4*Sin[2*alpha + 4 *beta0])/stokes[[1]]];
+	AppendTo[stokes,stokesNames[[1]]->c0-(1+Cos[delta])/(1-Cos[delta])*(c4*Cos[4 alpha-4 beta0]+s4*Sin[4 alpha-4 beta0])];
+	AppendTo[stokes,stokesNames[[2]]->2/(1-Cos[delta])*(c4*Cos[2*alpha - 4 *beta0]+s4*Sin[2*alpha - 4 *beta0])/stokes[[1]]];
+	AppendTo[stokes,stokesNames[[3]]->2/(1-Cos[delta])*(s4*Cos[2*alpha - 4 *beta0]-c4*Sin[2*alpha - 4 *beta0])/stokes[[1]]];
 	(*AppendTo[stokes,stokesNames[[4]]->Sqrt[c2^2+s2^2]/(Sin[delta]^2stokes[[1]])];
-	AppendTo[stokes,stokesNames[[5]]->c2/(Sin[delta]Sin[2 alpha + 2 beta0]stokes[[1]])]; *)
-	AppendTo[stokes,stokesNames[[4]]->-s2/(Sin[delta]Cos[2 alpha + 2beta0]stokes[[1]])];
+	AppendTo[stokes,stokesNames[[5]]->c2/(Sin[delta]Sin[2 alpha - 2 beta0]stokes[[1]])]; *)
+	AppendTo[stokes,stokesNames[[4]]->-s2/(Sin[delta]Cos[2 alpha - 2beta0]stokes[[1]])];
 	stokes
 ];
 
@@ -754,7 +764,7 @@ ProcessElectronPolarizationFileAverageSUM[fn_List,darkCountsSubtract_:True,cn_:T
 	];
 
 	AppendTo[results,ProcessElectronPolarizationFromSignal[r["avgSignal"],r["error"]]];
-	AppendTo[results,"IndividualRunInfo"->Dataset[Dataset[r]["IndividualRunInfo"] ,MaxItems->{3,3,3}]];
+	AppendTo[results,"IndividualRunInfo"->Dataset[r]["IndividualRunInfo"]];
 	<|FileNameTake[fn[[1]]]->results|>
 ];
 
