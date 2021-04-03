@@ -528,7 +528,7 @@ f,dataset,results,background,d},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Multiple Files*)
 
 
@@ -613,6 +613,7 @@ CalculateStokesFromFourierCoefficients[c0_,c2_,c4_,s2_,s4_,rev_:rev,alpha_:alpha
 	stokes
 ];
 
+
 ProcessElectronPolarizationFromSignal[signal_List,signalErr_List:{}]:=Module[
 {fc,s,c,plot,ePlot,fourierFit,fourierFitFunction,
 stokes,electronPolarization,dataPts,
@@ -662,7 +663,7 @@ ProcessElectronPolarizationFromStokesParameters[stokes_Association]:=Module[
 (*Multiple Files*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Obtaining Count Rates*)
 
 
@@ -912,7 +913,7 @@ newVector
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Background Subtraction Methods*)
 
 
@@ -960,7 +961,7 @@ SubtractElectronPolarizationBackgroundELECTRON[signal_,background_]:=Module[
 ];
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*DataRun Processing*)
 
 
@@ -1017,7 +1018,7 @@ results
 ];
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Operations On Completed Datasets*)
 
 
