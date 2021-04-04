@@ -483,7 +483,7 @@ f,dataset,results,error},
 	];
 	AppendTo[results,"signal"->signal];
 	AppendTo[results,"error"->error];
-	AppendTo[results,ProcessElectronPolarizationFromSignal[signal,error]](* See Private Functions for the rest of processing. *)
+	AppendTo[results,ProcessElectronPolarizationFromSignal[signal]](* See Private Functions for the rest of processing. *)
 ];
 
 ProcessElectronPolarizationFileSubtractBackground[fn_String,fnBack_]:=Module[
@@ -613,32 +613,29 @@ CalculateStokesFromFourierCoefficients[c0_,c2_,c4_,s2_,s4_,rev_:rev,alpha_:alpha
 	stokes
 ];
 
-
-ProcessElectronPolarizationFromSignal[signal_List,signalErr_List:{}]:=Module[
+ProcessElectronPolarizationFromSignal[signal_List]:=Module[
 {fc,s,c,plot,ePlot,fourierFit,fourierFitFunction,
 stokes,electronPolarization,dataPts,
 results,err},
-test=signal;
-	If[Length[signalErr]==0,err=ConstantArray[0,Length[signal]],err=signalErr];
-	results=<||>;
-	fc=DFT[signal];
-	dataPts=Length[signal];
-	s=fc["Sin Coefficients"];
-	c=fc["Cos Coefficients"];
-	ePlot=ListEPlot[Range[0,2\[Pi],2\[Pi]/dataPts],signal,err,
-	{PlotLegends->{"Data"},
-	FrameTicks->{{Automatic,None},{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},None}},
-	GridLines->{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},Automatic}}];
-	fourierFitFunction=c[0]+c[2]*Cos[2#]+s[2]*Sin[2#]+c[4]*Cos[4#]+s[4]*Sin[4#]&;
-	plot=Plot[fourierFitFunction[\[Theta]],{\[Theta],0,2\[Pi]},PlotRange->Full,PlotLegends->{"Fourier Coefficient Fit"},FrameTicks->{{Automatic,None},{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},None}},
-	GridLines->{Automatic,{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]}}];
-	fourierFit=Show[ePlot,plot,ImageSize->{UpTo[3*72],UpTo[2*72]}];
-	AppendTo[results,"rawAverageSignal"->ListPlot[signal,ImageSize->{UpTo[3*72],UpTo[2*72]}]];
-	AppendTo[results,"fourierFit"->fourierFit];
-	AppendTo[results,"fourierFitFunction"->fourierFitFunction];
-	AppendTo[results,"fc"->fc];
-	AppendTo[results,"fcBarChart"->FourierCoefficientBarChart[fc]];
-	AppendTo[results,ProcessElectronPolarizationFromFourierCoefficients[fc]]
+results=<||>;
+fc=DFT[signal];
+dataPts=Length[signal];
+s=fc["Sin Coefficients"]
+c=fc["Cos Coefficients"]
+ePlot=ListPlot[{Partition[Riffle[Range[0,2\[Pi]-2\[Pi]/dataPts,2\[Pi]/dataPts],signal],2]},
+{PlotLegends->{"Data"},
+FrameTicks->{{Automatic,None},{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},None}},
+GridLines->{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},Automatic}}];
+fourierFitFunction=c[0]+c[2]*Cos[2#]+s[2]*Sin[2#]+c[4]*Cos[4#]+s[4]*Sin[4#]&;
+plot=Plot[{fourierFitFunction[\[Theta]]["Value"],fourierFitFunction[\[Theta]]["Value"]+fourierFitFunction[\[Theta]]["Uncertainty"],fourierFitFunction[\[Theta]]["Value"]-fourierFitFunction[\[Theta]]["Uncertainty"]},{\[Theta],0,2\[Pi]},PlotRange->Full,PlotLegends->{"Fourier Coefficient Fit"},FrameTicks->{{Automatic,None},{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},None}},
+GridLines->{Automatic,{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]}},Filling->{1->{2},1->{3}},FillingStyle->RGBColor["#6699CC"],PlotStyle->{RGBColor["#004488"],{Opacity[0],White},{Opacity[0],White}}];
+fourierFit=Show[plot,ePlot,ImageSize->{UpTo[3*72],UpTo[2*72]}];
+AppendTo[results,"rawAverageSignal"->ListPlot[{signal},ImageSize->{UpTo[3*72],UpTo[2*72]}]];
+AppendTo[results,"fourierFit"->fourierFit];
+AppendTo[results,"fourierFitFunction"->fourierFitFunction];
+AppendTo[results,"fc"->fc];
+AppendTo[results,"fcBarChart"->FourierCoefficientBarChart[fc]];
+AppendTo[results,ProcessElectronPolarizationFromFourierCoefficients[fc]]
 ];
 
 ProcessElectronPolarizationFromFourierCoefficients[fc_]:=Module[
@@ -704,9 +701,9 @@ GetAverageCurrentNormalizedCountRateFromFilenames[fn_,darkCountsSubtract_:True]:
 	];
 
 	signal=Mean[signals];
-	AppendTo[results,"avgSignal"->signal];
 	signalStdm=StandardDeviation[signals]/Sqrt[Length[signals]];
-	AppendTo[results,"error"->signalStdm];
+	signal=Apply[Around[#1,#2]&,Partition[Riffle[signal,signalStdm],2],{1}];
+	AppendTo[results,"avgSignal"->signal];
 	AppendTo[results,"Time"->GetTimeInfoFromFileNameString[fn[[1]]]];
 	
 	AppendTo[results,"IndividualRunInfo"->Dataset[singleRunInfo]]
@@ -764,7 +761,7 @@ ProcessElectronPolarizationFileAverageSUM[fn_List,darkCountsSubtract_:True,cn_:T
 	AppendTo[results,r=GetAverageCountRateFromFilenames[fn,darkCountsSubtract]];
 	];
 
-	AppendTo[results,ProcessElectronPolarizationFromSignal[r["avgSignal"],r["error"]]];
+	AppendTo[results,ProcessElectronPolarizationFromSignal[r["avgSignal"]]];
 	AppendTo[results,"IndividualRunInfo"->Dataset[r]["IndividualRunInfo"]];
 	<|FileNameTake[fn[[1]]]->results|>
 ];
@@ -926,7 +923,7 @@ GetAverageElectronPolarizationWithBackgroudSubtractionSUM[fn_,fnBack_,cn_:True]:
 		beamBackgroundSignal=GetAverageCountRateFromFilenames[fnBack];
 	];
 	AppendTo[return,"beamBackground"->beamBackgroundSignal];
-	processedSignal=ProcessElectronPolarizationFromSignal[rawSignal["avgSignal"]-beamBackgroundSignal["avgSignal"],Sqrt[rawSignal["error"]^2+beamBackgroundSignal["error"]^2]];
+	processedSignal=ProcessElectronPolarizationFromSignal[rawSignal["avgSignal"]-beamBackgroundSignal["avgSignal"]];
 	AppendTo[return,"processedSignal"->processedSignal]
 ];
 
@@ -961,7 +958,7 @@ SubtractElectronPolarizationBackgroundELECTRON[signal_,background_]:=Module[
 ];
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*DataRun Processing*)
 
 
@@ -1044,7 +1041,7 @@ prb=Dataset[dr][All,"P_Rb_2",{"S+ Pump","S- Pump"},"P_Rb"]//Values//Normal//Flat
 measurements in the set to use in the calculation of Subscript[P, Rb]. *)
 slopes=Dataset[dr][All,"P_Rb_2",{"S+ Pump","S- Pump"},"Model Fit"]//Values//Normal;
 densities=Dataset[dr][All,"n_Rb","n_Rbx10^12"]//Normal//Mean;
-prb=CalculateRubidiumPolarizationOnePump[s lopes,Mean[densities]*1*^12];
+prb=CalculateRubidiumPolarizationOnePump[slopes,Mean[densities]*1*^12];
 a=Total[(prb*allValues)/(allErrors)^2]/Total[prb^2/allErrors^2];
 sa=1/Sqrt[Total[prb^2/allErrors^2]];
 data=Transpose[{prb,pe}];
