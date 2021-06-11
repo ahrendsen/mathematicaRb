@@ -1,6 +1,5 @@
 (* ::Package:: *)
 
-$PACKAGES=FileNameJoin[{$HomeDirectory,"Box Sync","Gay Group","Project - Rb Spin Filter","karl","mathematicaRb","packages"}]
 BeginPackage["colors`"]
 Clear[w,x,y]
 ConvertMKBrewerLineToColors[name_]:=

@@ -7,7 +7,9 @@ ExtractXPSData[fn_String(*fileName *), sn_String(* Sheet name *)] :=
         lds = 17;(* The (l)ine the (d)ata (s)tarts on *)
         jd = ri[[lds ;; ]];(* jd = (J)ust (D)ata *)
         dc = {1, 3};(* (d)ata (c)olumns  *)
-        op = jd[[All, dc]] (* op= (O)rdered (P)airs *)
+        op = jd[[All, dc]];(* op= (O)rdered (P)airs *)
+       (* <|sn->op|>*)
+       op
     ]
 SetAttributes[ExtractXPSData, Listable]
 

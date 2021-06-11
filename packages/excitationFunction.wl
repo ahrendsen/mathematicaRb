@@ -48,7 +48,7 @@ d=rawImport[[2]];
 h=rawImport[[1]];
 
 exp=ToExpression[h["MagnitudeOfCurrent(*10^-X)"]];
-newDat=d[All,<|#,dCT["I_f"]-> Around[#[dCT["I_f"]],Max[#["I_fStDev"],1/1024]]*10^(-exp)|>&];
+newDat=d[All,<|#,dCT["I_f"]-> Around[#[dCT["I_f"]],#["I_fStDev"]]*10^(-exp)|>&];
 
 PlotExFnFromDataset[newDat,primaryAbcissa]
 ];
@@ -65,7 +65,7 @@ rawImport=ImportFile[fileName];
 	h=rawImport[[1]];
 
 	exp=ToExpression[h["MagnitudeOfCurrent(*10^-X)"]];
-	newDat=d[All,<|#,dCT["I_f"]-> Around[#[dCT["I_f"]],Max[#["I_fStDev"],1/1024]]*10^(-exp)|>&];
+	newDat=d[All,<|#,dCT["I_f"]-> Around[#[dCT["I_f"]],#["I_fStDev"]]*10^(-exp)|>&];
 	PlotExFnRawFromDataset[newDat,primaryAbcissa]
 ];
 SetAttributes[PlotExFnRaw,Listable];
@@ -82,7 +82,9 @@ rawImport=ImportFile[fileName];
 	h=rawImport[[1]];
 
 	exp=ToExpression[h["MagnitudeOfCurrent(*10^-X)"]];
-	newDat=d[All,<|#,dCT["I_f"]-> Around[#[dCT["I_f"]],Max[#["I_fStDev"],1/1024]]*10^(-exp)|>&];
+	(* When using the analog out on the meter, the error can only be as small as the digital to analog conversions *)
+	(*newDat=d[All,<|#,dCT["I_f"]-> Around[#[dCT["I_f"]],Max[#["I_fStDev"],1/1024]]*10^(-exp)|>&];*)
+	newDat=d[All,<|#,dCT["I_f"]-> Around[#[dCT["I_f"]],#["I_fStDev"]]*10^(-exp)|>&];
 
 	PlotRFAFromDataset[newDat]
 ];
@@ -396,7 +398,7 @@ Line[{
 };
 	(* It would be really nice to plot the bottom axis with the total He offset, and the top axis with the secondary electron energy. What follows is attempting to accomplish that *)
 
-vPR={.1,30}; (*Vertical Plot Range *)
+vPR=Full; (*Vertical Plot Range *)
 dataPoints=d[All,{primaryAbcissa,(#[dCT["I_f"]])/nA &}];
 maxCurrent=Max[Transpose[dataPoints][[2]]];
 	plot=ListLogPlot[dataPoints,

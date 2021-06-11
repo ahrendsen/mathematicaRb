@@ -121,19 +121,6 @@ GridLines\[Rule]oneRevolutionGridlines};
 *)
 
 
-(* ::Chapter:: *)
-(*Error Plotting Helpers*)
-
-
-ListEPlot[xValues_,yValues_,errorValues_,plotOptions_:{}]:=Module[{x,y,yWithErr,eb,op,ope},
-x=xValues;
-y=yValues;
-yWithErr=Apply[Around[#1,#2]&,Transpose[{y,errorValues}],{1}];
-op=Partition[Riffle[x,yWithErr],2];(*Ordered Pairs*)
-ListPlot[{op},PlotRange->{{Min[x],Max[x]},{Min[y-errorValues]*.995,Max[y+errorValues]*1.005}},plotOptions]
-];
-
-
 (* ::Chapter::Closed:: *)
 (*Linear Plotting Helpers*)
 

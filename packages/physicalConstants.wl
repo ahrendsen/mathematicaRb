@@ -12,6 +12,13 @@ beta=68.7*\[Pi]/180+shift;
 deltaAB=alpha-beta;
 delta=94.54*\[Pi]/180 (*Munir's reported 1.66 plus or minus .01*);
 
+(* These are the constants I calculated after a more extensive polarimeter analysis (Rb9 pg. 48-69), I'm choosing to use the 
+previously determined ones because they give me a P2 closer to zero. *)
+alpha=-25.292*\[Pi]/180;
+deltaAB=-13.06*\[Pi]/180;
+beta=alpha-deltaAB;
+delta=111.3*\[Pi]/180;
+
 (*Physical constants *)
 \[CapitalGamma]=5750056; (* Hz *)
 fge=0.34231; (* dimensionless *)
@@ -35,6 +42,12 @@ BdotL; (* G*cm *)
 Q; (* Constant factors in Faraday Rotation which won't change from model to model, basically anything but numerical constants and \[Pi]s *)
 nDensC;(*The single constant that is multiplied by the fitting parameter and divided by the integrated magnetic field to give the number density.*)
 nDensCLitaker;(*Litaker's version of the single constant that is multiplied by the fitting parameter and divided by the integrated magnetic field to give the number density.*)
+
+
+
+
+
+
 
 
 

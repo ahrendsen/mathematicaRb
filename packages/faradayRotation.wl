@@ -33,7 +33,7 @@ m1CT="magnet1Voltage(V)"; (* magnet 1 Column Title *)
 m2CT="magnet2Voltage(V)"; (* magnet 2 Column Title *)
 pdCT="PUMP"; (* Photodiode Column Title *)
 wavelengthCT="WAV";
-\[Delta]Cut=15;
+\[Delta]Cut=4;
 \[Delta]lowCut=\[Delta]Cut;(* The lowest detuning that we want to keep from the dataset (default: 6, number density dependent) *)
 \[Delta]highCut=-\[Delta]Cut;(* The lowest detuning that we want to keep from the dataset (default: 6, number density dependent) *)
 wavelengthLowestReasonable=793;
@@ -53,10 +53,10 @@ GetAngleFromFaradayRotationFile[fileName_]:=Module[
 f=ImportFile[fileName];
 h=f[[1]];
 d=f[[2]];
-fc=DFT[d[All,"HORIZ"]];
+fc=DFT[d[All,"HORIZ"]//Normal];
 s=fc["Sin Coefficients"];
 c=fc["Cos Coefficients"];
-angle=-.5*ArcTan[s[4]/c[4]]
+angle=-.5*ArcTan[s[4],c[4]]
 ];
 SetAttributes[GetAngleFromFaradayRotationFile,Listable];
 
@@ -308,12 +308,15 @@ plot,viz,graphNoLabel},
 	AppendTo[return,<|"n_Rbx10^12"->n/(1*^12),"n_RbPercentErr"->n[[2]]/n[[1]]|>];
 
 
-	lp=ListPlot[Legended[ordPair,"Data"],PlotRange->Full,FrameLabel->{"Detuning (GHz)","\[CapitalDelta]\[Theta](rad)"}];
-	plot=Plot[Legended[nlmFit[\[Delta]]/.nlmFit["BestFitParameters"],"Fit"],{\[Delta],-60,60}];
-	viz=Show[{lp,plot}];
-	lp=ListPlot[ordPair,PlotRange->Full];
+	lp=ListPlot[{Legended[ordPair,"Data"]},PlotRange->Full,FrameLabel->{"Detuning (GHz)","\[CapitalDelta]\[Theta](rad)"}];
+	plot=Plot[Legended[nlmFit[\[Delta]]/.nlmFit["BestFitParameters"],"Fit"],
+	{\[Delta]}\[Element]Interval[{-45,-10},{10,45}],
+	FrameLabel->{"Detuning (GHz)","Rotation Angle (rad)"}
+	];
+	viz=Show[{plot,lp}];
+	lp=ListPlot[{ordPair},PlotRange->Full];
 	plot=Plot[nlmFit[\[Delta]]/.nlmFit["BestFitParameters"],{\[Delta],-60,60}];
-	graphNoLabel=Show[{lp,plot}];
+	graphNoLabel=Show[{plot,lp}];
 
 	AppendTo[return,<|"graph"->viz,"graphNoLabel"->graphNoLabel|>];
 	AppendTo[return,"best fit function"->nlmFit["Function"][x]];
@@ -477,7 +480,7 @@ workingDataset
 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Equations to Organize Data*)
 
 
@@ -487,9 +490,7 @@ CalculateAngleDifferenceOrdPairsFromFileNames[fileNameFinal_,fileNameInitial_,da
 		detuningLimit,det,a1,a2,frequencyComponent,return},
 		return=<||>;
 		
-		detuningLimit=15;
-		detuningLimitUpper=detuningLimit;
-		detuningLimitLower=detuningLimit;
+		detuningLimit=\[Delta]Cut;
 		frequencyComponent=4;
 		det="DETUNING";
 		d=ConvertSectionedFaradayDataFileToDatasets[fileNameFinal][[2]];
@@ -535,7 +536,7 @@ Apply[Export[FileBaseName[#1]<>"_rbPol.csv",#2]&,fileNamesAndData,1]
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*One File, One Function*)
 
 
@@ -573,6 +574,7 @@ Module[{fileResults,return,lm,
 	results=CalculateRubidiumPolarizationFromOrderedPairs[orderedPairs,numberDensity];
 	AppendTo[polarizationResults,results];
 	AppendTo[polarizationResults,"Time"->GetTimeInfoFromFileNameString[unPumped]];
+	AppendTo[polarizationResults,"File"->sPlusPump];
 	AppendTo[return,"S+ Pump"->polarizationResults];
 	
 	fileResults=CalculateAngleDifferenceOrdPairsFromFileNames[sMinusPump,unPumped,dataColumnName];
@@ -585,6 +587,7 @@ Module[{fileResults,return,lm,
 	results=CalculateRubidiumPolarizationFromOrderedPairs[orderedPairs,numberDensity];
 	AppendTo[polarizationResults,results];
 	AppendTo[polarizationResults,"Time"->GetTimeInfoFromFileNameString[unPumped]];
+	AppendTo[polarizationResults,"File"->sMinusPump];
 	AppendTo[return,"S- Pump"->polarizationResults];
 	
 	return
@@ -670,16 +673,16 @@ CalculateRubidiumPolarizationFromOrderedPairs[ordPair_,numDensity_Around]:=
 		polErr=pol[[2]]/pol[[1]];
 		AppendTo[return,"P_Rb"->pol];
 		AppendTo[return,"P_RbPercentErr"->polErr];
-		viz=Show[ListPlot[TransformPolDataForPlotting[ordPair]],Plot[lm["Value"]*x,{x,-.1,.1}],FrameLabel->{"1/\[Delta](\!\(\*SuperscriptBox[\(GHz\), \(-1\)]\))","\[CapitalDelta]\[Theta](rad)"}];
+		viz=Show[ListPlot[{TransformPolDataForPlotting[ordPair]}],Plot[lm["Value"]*x,{x,-.1,.1}],FrameLabel->{"1/\[Delta](\!\(\*SuperscriptBox[\(GHz\), \(-1\)]\))","\[CapitalDelta]\[Theta](rad)"}];
 		AppendTo[return,"Graph"->viz];
-		viz=Show[ListPlot[TransformPolDataForPlotting[ordPair]],Plot[lm["Value"]*x,{x,-.1,.1}]];
+		viz=Show[ListPlot[{TransformPolDataForPlotting[ordPair]}],Plot[lm["Value"]*x,{x,-.1,.1}]];
 		AppendTo[return,"GraphNoLabel"->viz];
 		AppendTo[return,"Dataset Notes"->"The ordered pairs are the detuning (GHz) and difference in angle (rad) between the two pump types."];
 		return
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Folder Based Processing*)
 
 
@@ -689,6 +692,16 @@ nVals,nAvg,nStdm,
 polarizationArgs,r2,return,r3},
 SetDirectory[folder];
 fn=FileNames[RegularExpression["FDayScan.*_[0-9]*.dat"]];
+return = ProcessRbPolarizationSequence[fn,numberOfPumps];
+ResetDirectory[];
+return
+];
+
+
+ProcessRbPolarizationSequence[fn_,numberOfPumps_:3]:=Module[
+{density,piPump,sPlus,sMinus,r,
+nVals,nAvg,nStdm,
+polarizationArgs,r2,return,r3},
 density=Take[fn,{1,-1,numberOfPumps}];
 
 If[numberOfPumps==3,
@@ -703,7 +716,6 @@ sMinus=Take[fn,{4,-1,numberOfPumps}];
 r=ProcessFaradayRotationNumberDensityFile[density];
 nVals=Dataset[r][All,"n_Rbx10^12"]//Normal;
 nAvg=Dataset[r][Mean,"n_Rbx10^12"]//Normal;
-Echo[nAvg];
 polarizationArgs=Partition[Flatten[Riffle[Partition[fn,numberOfPumps],nVals]],numberOfPumps+1]; 
 If[numberOfPumps==3,
 r2=Apply[ProcessFaradayRotationPolarizationFilesThreePumps[#1,#2,#3,"PUMP",nAvg]&,polarizationArgs,1];
@@ -711,13 +723,12 @@ r3=Apply[ProcessFaradayRotationPolarizationFilesThreePumps[#1,#2,#3,"PUMP",#4]&,
 ,
 r2=Apply[ProcessFaradayRotationPolarizationFilesThreePumps[#1,#3,#4,"PUMP",#5]&,polarizationArgs,1];
 ];
-return=<|"n_Rb"->r[[1]],"P_Rb"->r2[[1]],"P_Rb_2"->r3[[1]]|>;
-ResetDirectory[];
+return=<|"n_Rb"->r,"P_Rb_nAvg"->r2,"P_Rb"->r3|>;
 return
 ];
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Functions For Datasets*)
 
 
