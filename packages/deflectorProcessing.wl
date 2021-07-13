@@ -13,11 +13,43 @@ BeginPackage["deflectorProcessing`"];
 PlotDeflectorData::usage="PlotDeflectorData[data,scale,plotLabel] Plots data of the form {{v1_1,v1_2,sig1},{v2_1,v2_2,sig2},...}, in an array plot";
 PlotDeflectorDataPosNeg::usage="PlotDeflectorData[data,scale,plotLabel] Plots data of the form {{v1_1,v1_2,sig1},{v2_1,v2_2,sig2},...}, in an array plot";
 OrganizeDeflectorData::usage="OrganizeDeflectorData[filename,voltagePairs] Returns voltage pairs list with third item, the current";
+OrganizeDeflectorDataWithTime::usage="OrganizeDeflectorDataWithTime[filename,voltagePairs,numberOfMeasurements,'Slope' or 'Mean'] Returns voltage pairs list with third item, the current";
+DeflectorConvertToPlateDifference::usage="DeflectorConvertToPlateDifference[organizedDeflectorData]:: Converts the first and second entry in each line of the dataset to a single entry which is the difference between values.";
 DataExclude::usage="DataExclude[dat_,eastLowerBound_,westLowerBound_]";
 
 
 Begin["`Private`"];
-DataExclude[dat_,eastLowerBound_,westLowerBound_]:=Select[dat,Abs[#[[1]]]>=eastLowerBound && Abs[#[[2]]] >= westLowerBound&]
+
+
+OrganizeDeflectorDataWithTime[fn_(*filename*),vp_(*voltage pairs*),measurementsAtPoint_:1,type_String:"Mean"]:=Module[{sr=11(*startRow*),
+er(*endRow*),
+ri=Import[fn](* raw import*),
+v (*values*), 
+sig(*signal*),
+graphs,
+SevenSecondSlope},
+SevenSecondSlope[list_List]:=(Abs[list[[-1]]]-Abs[list[[1]]]);
+er=sr+Length[vp]*measurementsAtPoint-1;
+v=ri[[sr;;er]]; (* (v)alues *)
+sig=Transpose[v];(* There are columns for error, but currently they aren't populated. So we only take the odd columns *)
+sig=<|"fd"->sig[[1]],(*fd=faraday collector*)
+"ct"->sig[[3]],(* ct=chiral top *)
+"cb"->sig[[5]], (* cb=chiral bottom *)
+"he"->sig[[7]]|>; (* he=helium target*)
+sig["he"]=sig["he"];
+sig=Map[Partition[#,measurementsAtPoint]&,sig];
+Switch[type,
+"Mean",sig=Map[Mean,sig,{2}];,
+"Slope",sig=Map[SevenSecondSlope,sig,{2}];
+];
+
+
+sig=Map[Flatten[Riffle[vp,#]]&,sig]; (* Combine signal and voltage pairs *)
+sig= Map[Partition[#,3]&,sig] (* Organize the signal and voltage pairs into {east voltage, west voltage, signal} *)
+]
+
+
+DataExclude[dat_,eastLowerBound_,eastUpperBound_,westLowerBound_,westUpperBound_]:=Select[dat,eastUpperBound>=Abs[#[[1]]]>=eastLowerBound && westUpperBound>=Abs[#[[2]]] >= westLowerBound&]
 
 OrganizeDeflectorData[fn_(*filename*),vp_(*voltage pairs*)]:=Module[{sr=11(*startRow*),
 er(*endRow*),
@@ -36,13 +68,19 @@ sig["he"]=sig["he"];
 
 
 sig=Map[Flatten[Riffle[vp,#]]&,sig]; (* Combine signal and voltage pairs *)
-sig= Map[Partition[#,3]&,sig] (* Organize the signal and voltage pairs into {east voltage, west voltage, signal} *)];
+sig= Map[Partition[#,3]&,sig] (* Organize the signal and voltage pairs into {east voltage, west voltage, signal} *)
+];
+
+
+DeflectorConvertToPlateDifference[deflectorDataset_]:=Apply[{Subtract[#2,#1],#3}&,deflectorDataset,{1}]
 
 PlotDeflectorData[sig_(* signal *),sc_(* scale *),
 pl_(*Plot Label*),minMax_:None,ft_:{True,True}(*frame ticks*)]:=Module[
 {vEast,vWest,temp,tempSig,
-vMax(*voltage max*),
-vMin(*voltage min *),
+eastMax(*voltage max*),
+eastMin(*voltage min *),
+westMax(*voltage max*),
+westMin(*voltage min *),
 arr(* The list of arrays of values we ultimately plot *),
 m (* a single array (matrix) *),s (* The signal in the for loop*),
 i,j(* iteration variables *),
@@ -56,8 +94,11 @@ graphs},
 (* It's much easier to think about rescaling data when the max is the furthest number away from 0 and the min is the closest number to zero, so I make our negative currents into positive. *)
 tempSig=Transpose[{Transpose[sig][[1]],Transpose[sig][[2]],-Transpose[sig][[3]]}];
 temp=Transpose[tempSig];
-vMax=Max[Catenate[temp[[;;2]]]];
-vMin=Min[Catenate[temp[[;;2]]]];
+eastMax=Max[temp[[1]]];
+westMax=Max[temp[[2]]];
+eastMin=Min[temp[[1]]];
+westMin=Min[temp[[2]]];
+
 mm=MinMax[temp[[3]]];
 If[mm[[1]]>0,mm[[1]]=1*^-16];
 (* These lines are for the better bar legend which has the exponent above the bar *)
@@ -82,11 +123,11 @@ RGBColor[0.3024574616405568, 0.05292448251262403, 0.39888773777233144`],RGBColor
 (*colorFunc=Blend[Reverse[viridisColors],(Abs[#]+1*^-16-mm[[1]])/(mm[[2]]-mm[[1]])]&; Trying out auto scaling, if uncommenting this, add the option ColorFunctionScaling\[Rule]False to the plotting function.*)
 colorFunc=If[#<0,0,Blend[Reverse[viridisColors],(#-mm[[1]])/mm[[2]]]]&;
 
-arr=Table[None,{i,(vMax-vMin)*sc+1},{j,(vMax-vMin)*sc+1}]; (* The array (or matrix) of signal values to plot *)
+arr=Table[None,{i,(westMax-westMin)*sc+1},{j,(eastMax-eastMin)*sc+1}]; (* The array (or matrix) of signal values to plot *)
 For[i=1, i<= Length[tempSig],i++,
 arr=ReplacePart[arr,
-{Floor[(tempSig[[i]][[2]]-vMin)*sc+1],
-Floor[(tempSig[[i]][[1]]-vMin)*sc+1]}->If[tempSig[[i]][[3]]<0,Pink,tempSig[[i]][[3]]/scale]];
+{Floor[(tempSig[[i]][[2]]-westMin)*sc+1],
+Floor[(tempSig[[i]][[1]]-eastMin)*sc+1]}->If[tempSig[[i]][[3]]<0,Pink,tempSig[[i]][[3]]/scale]];
 ];
 
 
@@ -100,7 +141,7 @@ PlotLegends->BarLegend[{colorFunc,{0,mm[[2]]}},LegendLabel->Superscript["x (-1)1
 (*
 PlotLegends\[Rule]Automatic,
 *)
-DataRange->ConstantArray[{vMin,vMax},2],
+DataRange->{{eastMin,eastMax},{westMin,westMax}},
 ColorFunction->colorFunc,
 ColorFunctionScaling->False
 (*,
@@ -138,7 +179,7 @@ eastMax=Max[temp[[1]]];
 westMax=Max[temp[[2]]];
 eastMin=Min[temp[[1]]];
 westMin=Min[temp[[2]]];
-mm=Echo[MinMax[temp[[3]]]];
+mm=MinMax[temp[[3]]];
 absMax=Max[Abs[mm]];
 If[mm[[1]]==0,mm[[1]]=1*^-16]; (* Straight zero causes plotting difficulties. Make any 0 signals into a very small number. *)
 If[mm[[2]]==0,mm[[2]]=1*^-16]; (* Straight zero causes plotting difficulties. Make any 0 signals into a very small number. *)
@@ -169,7 +210,6 @@ arr=ReplacePart[arr,
 Floor[(tempSig[[i]][[1]]-eastMin)*scEast+1]}->tempSig[[i]][[3]]/scale];
 ];
 
-Echo[arr];
 graphs=ArrayPlot[Reverse[arr],
 (* Graph Exterior *)
 PlotLabel->pl,

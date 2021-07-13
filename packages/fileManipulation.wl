@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Just like general stuff, or whatever*)
 
 
@@ -23,7 +23,7 @@ Clear[GetFileHeaderInfo];
 GetFileHeaderInfo[dataFileName_]:=
 Module[{rawFile,data,association,
 k,rawImport,removedNulls,
-joinedWithSpaces,variableAssociations,as},
+joinedWithSpaces,variableAssociations,as,keys,values},
 rawFile=Import[dataFileName,"tsv"];
 data={};
 association=Association[];
@@ -63,11 +63,14 @@ variableAssociations=StringCases[association[["Comments"]],RegularExpression["[^
 If[Length[variableAssociations]>0,
 (* Then each association statement is made into a list where the first item is the variable, and the second is the value. *)
 variableAssociations=StringSplit[variableAssociations,"->"];
-(* Each item is converted to an expression, so numbers will be numbers, not strings of text.*)
+(* Each item is converted to an expression, so numbers will be numbers, not strings of text.
+  Update 2021-07-12: No longer using ToExpression, because it turns strings into symbols. Conversion
+  of a variable into a number should be done after importing into a database-like structure.*)
 (* 2019-05-10: Removing this line and putting it instead only on the value not the key (see next line) *)
 (*variableAssociations=ToExpression[variableAssociations];*)
 (* Then we need to convert the variable names into strings. We simulataneously make the list of lists into an associations.*)
-variableAssociations=AssociationThread[Map[ToString,Transpose[variableAssociations][[1]]]->ToString[Transpose[variableAssociations][[2]]]];
+{keys,values}=Transpose[variableAssociations];
+variableAssociations=Apply[AssociationThread,{keys,values}];
 (* We append the associations to the existing collections of associations for the header.*)
 AppendTo[association,variableAssociations];
 ];
@@ -258,3 +261,6 @@ Map[CopyFile[#,FileNameJoin[{laserOnDirectory,FileNameTake[#]}]]&,pumpOn];
   MovePolarimeterGasOffBackground::usage=
   "MovePolarimeterGasOffBackground[] transfers the beam off background data from a run by providing just the timestamp of the first file.
 	The timestamp is the only required argument. The other options are: [timestamp, date (if other than today), iterations (if other than standard 5), pumpsList (if other than no, S+,S-)]"
+
+
+

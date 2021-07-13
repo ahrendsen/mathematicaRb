@@ -4,7 +4,7 @@
 (*Electron Polarization Functions*)
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*Import other needed functions*)
 
 
@@ -387,7 +387,7 @@ do=DateObject[{Interpreter["Number"][year],Interpreter["Number"][month],Interpre
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Quick Polarization*)
 
 
@@ -399,8 +399,7 @@ p0,p3,pe,peErr,results},
 results=<||>;
 f=ImportFile[fileName];
 t=ToExpression[f[[1]]["DWELL(s)"]];
-p=ToExpression[f[[1]]["CVGauge(He)(Torr)"]];
-normCounts=f[[2]][All,<|"COUNT+45"->#["COUNT+45"]/#["CURRENT+45"]/(t*p),"COUNT-45"->#["COUNT-45"]/#["CURRENT-45"]/(t*p)|>&];
+normCounts=f[[2]][All,<|"COUNT+45"->#["COUNT+45"]/#["CURRENT+45"]/(t),"COUNT-45"->#["COUNT-45"]/#["CURRENT-45"]/(t)|>&];
 p3=Normal[Flatten[normCounts[All,{(#["COUNT+45"]-#["COUNT-45"])/(#["COUNT+45"]+#["COUNT-45"])}&]]];
 p0=Normal[Flatten[normCounts[All,{(#["COUNT+45"]-#["COUNT-45"])/(#["COUNT+45"]+#["COUNT-45"])}&]]];
 pe=CalculateElectronPolarization[polConstxxunPolP1,Mean[p3]];
@@ -423,8 +422,7 @@ t=ToExpression[fNoBeam[[1]]["DWELL(s)"]];
 avgNoBeam=fNoBeam[[2]][Mean,<|"COUNT+45"->#["COUNT+45"]/t,"COUNT-45"->#["COUNT-45"]/t|>&];
 f=ImportFile[fileName];
 t=ToExpression[f[[1]]["DWELL(s)"]];
-p=ToExpression[f[[1]]["CVGauge(He)(Torr)"]];
-bnc=f[[2]][All,<|"COUNT+45"->(#["COUNT+45"]/t-avgNoBeam["COUNT+45"])/(#["CURRENT+45"]*p),"COUNT-45"->(#["COUNT-45"]/t-avgNoBeam["COUNT-45"])/(#["CURRENT-45"]*p)|>&];
+bnc=f[[2]][All,<|"COUNT+45"->(#["COUNT+45"]/t-avgNoBeam["COUNT+45"])/(#["CURRENT+45"]),"COUNT-45"->(#["COUNT-45"]/t-avgNoBeam["COUNT-45"])/(#["CURRENT-45"])|>&];
 p3=Normal[Flatten[bnc[All,{(#["COUNT+45"]-#["COUNT-45"])/(#["COUNT+45"]+#["COUNT-45"])}&]]];
 pe=CalculateElectronPolarization[polConstxxunPolP1,Mean[p3]];
 peErr=CalculateElectronPolarization[polConstxxunPolP1,StandardDeviation[p3]/Sqrt[Length[p3]]];
@@ -440,17 +438,19 @@ t=ToExpression[fNoBeam[[1]]["DWELL(s)"]];
 avgNoBeam=fNoBeam[[2]][Mean,<|"COUNT+45"->#["COUNT+45"]/t,"COUNT-45"->#["COUNT-45"]/t|>&];
 btf=ImportFile[belowThresholdFileName];
 t=ToExpression[btf[[1]]["DWELL(s)"]];
-p=ToExpression[btf[[1]]["CVGauge(He)(Torr)"]];
-avgBT=btf[[2]][Mean,<|"COUNT+45"->(#["COUNT+45"]/t-avgNoBeam["COUNT+45"])/(#["CURRENT+45"]*p),"COUNT-45"->(#["COUNT-45"]/t-avgNoBeam["COUNT-45"])/(#["CURRENT-45"]*p)|>&];
+avgBT=btf[[2]][Mean,<|"COUNT+45"->(#["COUNT+45"]/t-avgNoBeam["COUNT+45"])/(#["CURRENT+45"]),"COUNT-45"->(#["COUNT-45"]/t-avgNoBeam["COUNT-45"])/(#["CURRENT-45"])|>&];
 f=ImportFile[fileName];
 t=ToExpression[f[[1]]["DWELL(s)"]];
-p=ToExpression[f[[1]]["CVGauge(He)(Torr)"]];
-bnc=f[[2]][All,<|"COUNT+45"->(#["COUNT+45"]/t-avgNoBeam["COUNT+45"])/(#["CURRENT+45"]*p)-avgBT["COUNT+45"],"COUNT-45"->(#["COUNT-45"]/t-avgNoBeam["COUNT-45"])/(#["CURRENT-45"]*p)-avgBT["COUNT+45"]|>&];
+bnc=f[[2]][All,<|"COUNT+45"->(#["COUNT+45"]/t-avgNoBeam["COUNT+45"])/(#["CURRENT+45"])-avgBT["COUNT+45"],"COUNT-45"->(#["COUNT-45"]/t-avgNoBeam["COUNT-45"])/(#["CURRENT-45"])-avgBT["COUNT+45"]|>&];
 avg=bnc[Mean,{"COUNT+45","COUNT-45"}];
 p3=Normal[Flatten[bnc[All,{(#["COUNT+45"]-#["COUNT-45"])/(#["COUNT+45"]+#["COUNT-45"])}&]]];
 pe=CalculateElectronPolarization[polConstxxunPolP1,Mean[p3]];
 peErr=CalculateElectronPolarization[polConstxxunPolP1,StandardDeviation[p3]/Sqrt[Length[p3]]];
 AppendTo[results,<|"P_e"->pe,"P_eerr"->peErr,"rawP3"->p3,"averageP3"->Mean[p3],"stdDevP3"->StandardDeviation[p3],"p1"->polConstxxunPolP1|>];
+AppendTo[results,<|"AvgCurrent+45"->f[[2]][Mean,#["CURRENT+45"]&],
+					"AvgCurrent-45"->f[[2]][Mean,#["CURRENT-45"]&],
+					"AvgCount+45"->N[f[[2]][Mean,#["COUNT+45"]&]],
+					"AvgCount-45"->N[f[[2]][Mean,#["COUNT-45"]&]]|>];
 results
 ]
 
@@ -483,6 +483,7 @@ f,dataset,results,error},
 		signal=GetCountRate[counts,dwellTime,subtractDarkCounts];
 		error=GetCountRateError[counts,dwellTime,subtractDarkCounts];
 	];
+	
 	AppendTo[results,"signal"->signal];
 	AppendTo[results,"error"->error];
 	AppendTo[results,ProcessElectronPolarizationFromSignal[signal]](* See Private Functions for the rest of processing. *)
@@ -530,7 +531,7 @@ f,dataset,results,background,d},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Multiple Files*)
 
 
@@ -554,6 +555,8 @@ GetAverageElectronPolarizationWithBackgroudSubtractionSUM[fn,fnBack,cn]
 
 
 (* The "helper functions" that the public functions will access to make their job easier. Won't typically be called from the notebook.*)
+
+(* The old way. Abandoned in favor of adding in an uncertainty in the counts. 
 GetCurrentNormalizedCountRate[counts_,current_,dwellTime_,darkCountsSubtract_:True]:=Module[
 {countRate,r},
 	If[darkCountsSubtract==True,
@@ -564,6 +567,20 @@ GetCurrentNormalizedCountRate[counts_,current_,dwellTime_,darkCountsSubtract_:Tr
 	r=countRate/current; (* r= Count rate *)
 	Normal[r]
 ];
+*)
+
+GetCurrentNormalizedCountRate[counts_,current_,dwellTime_,darkCountsSubtract_:True]:=Module[
+{countRate,r,cts,nA=1*^-9},
+	cts=Apply[Around,{#,Sqrt[#]}&/@counts,{1}];
+	If[darkCountsSubtract==True,
+		countRate=(cts/dwellTime)-darkCountRate;,
+	
+		countRate=(cts/dwellTime);
+	];
+	r=countRate/current; (* r= Count rate *)
+	Normal[r]
+];
+
 
 GetCurrentNormalizedCountRateError[counts_,current_,dwellTime_,darkCountsSubtract_:True]:=Module[
 {countRateError,r},
@@ -576,11 +593,11 @@ GetCurrentNormalizedCountRateError[counts_,current_,dwellTime_,darkCountsSubtrac
 ];
 
 GetCountRate[counts_,dwellTime_,darkCountsSubtract_:True]:=Module[
-{countRate,r},
+{countRate,cts,r},
+	cts=Apply[Around,{#,Sqrt[#]}&/@counts,{1}];
 	If[darkCountsSubtract==True,
-		countRate=(counts/dwellTime)-darkCountRate;,
-		
-		countRate=(counts/dwellTime);
+		countRate=(cts/dwellTime)-darkCountRate;,
+		countRate=(cts/dwellTime);
 	];
 	r=countRate; (* r= Count rate *)
 	N[Normal[r]]
@@ -667,7 +684,7 @@ ProcessElectronPolarizationFromStokesParameters[stokes_Association]:=Module[
 (*Multiple Files*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Obtaining Count Rates*)
 
 
@@ -757,7 +774,7 @@ GetAverageCountRateFromFilenames[fn_,darkCountsSubtract_:True]:=Module[{signals,
 ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Averaging Methods of Files*)
 
 
@@ -970,7 +987,7 @@ SubtractElectronPolarizationBackgroundELECTRON[signal_,background_]:=Module[
 ];
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*DataRun Processing*)
 
 
@@ -984,7 +1001,6 @@ ProcessElectronPolarizationRun[folder_,noBeamBackground_,beamOnBackground_,pumpT
 Module[
 {fn,fnCategorized,
 i,
-darkCountRate,
 pumpType,
 return},
 SetDirectory[folder];
@@ -1027,7 +1043,7 @@ results
 ];
 
 
-(* ::Chapter:: *)
+(* ::Chapter::Closed:: *)
 (*Operations On Completed Datasets*)
 
 
