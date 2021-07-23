@@ -41,40 +41,40 @@ assume the data is in the first sheet
 *)
 If[FileExtension[dataFileName]=="xlsx",rawFile=rawFile[[1]]];
 While[StringPart[rawFile[[k]][[1]],1]=="#",
-If[Length[rawFile[[k]]]> 2,
-rawImport=Take[rawFile[[k]],{2,-1}];
-removedNulls=DeleteCases[rawImport,Null];
-joinedWithSpaces=StringRiffle[removedNulls];
-association=Append[association,StringReplace[rawFile[[k]][[1]],{"#"-> "",":"->""}]->joinedWithSpaces];
-,
-association=Append[association,StringReplace[rawFile[[k]][[1]],{"#"->"",":"->""}]->rawFile[[k]][[2]]];
-];
-(* This block of code converts the comments to associations. 
-It recognizes patterns of <someText>\[Rule]<otherText>, comma
-separated, and makes them into associations that are then 
-included in the header of the dataset. It's really handy
-when you're changing a variable that isn't usually recorded
-in the file. 
-*)
-If[StringMatchQ[Keys[association][[-1]],"Comments"],
-(* This makes a list of each association statement*)
-variableAssociations=StringCases[association[["Comments"]],RegularExpression["[^ =,]*->[^,]*"]];
-(* If there are any associations to add to the dataset *)
-If[Length[variableAssociations]>0,
-(* Then each association statement is made into a list where the first item is the variable, and the second is the value. *)
-variableAssociations=StringSplit[variableAssociations,"->"];
-(* Each item is converted to an expression, so numbers will be numbers, not strings of text.
-  Update 2021-07-12: No longer using ToExpression, because it turns strings into symbols. Conversion
-  of a variable into a number should be done after importing into a database-like structure.*)
-(* 2019-05-10: Removing this line and putting it instead only on the value not the key (see next line) *)
-(*variableAssociations=ToExpression[variableAssociations];*)
-(* Then we need to convert the variable names into strings. We simulataneously make the list of lists into an associations.*)
-{keys,values}=Transpose[variableAssociations];
-variableAssociations=Apply[AssociationThread,{keys,values}];
-(* We append the associations to the existing collections of associations for the header.*)
-AppendTo[association,variableAssociations];
-];
-];
+	If[Length[rawFile[[k]]]> 2,
+	rawImport=Take[rawFile[[k]],{2,-1}];
+	removedNulls=DeleteCases[rawImport,Null];
+	joinedWithSpaces=StringRiffle[removedNulls];
+	association=Append[association,StringReplace[rawFile[[k]][[1]],{"#"-> "",":"->""}]->joinedWithSpaces];
+	,
+	association=Append[association,StringReplace[rawFile[[k]][[1]],{"#"->"",":"->""}]->rawFile[[k]][[2]]];
+	];
+	(* This block of code converts the comments to associations. 
+	It recognizes patterns of <someText>\[Rule]<otherText>, comma
+	separated, and makes them into associations that are then 
+	included in the header of the dataset. It's really handy
+	when you're changing a variable that isn't usually recorded
+	in the file. 
+	*)
+	If[StringMatchQ[Keys[association][[-1]],"Comments"],
+	(* This makes a list of each association statement*)
+	variableAssociations=StringCases[association[["Comments"]],RegularExpression["[^=,]*->[^,]*"]];
+	(* If there are any associations to add to the dataset *)
+	If[Length[variableAssociations]>0,
+		(* Then each association statement is made into a list where the first item is the variable, and the second is the value. *)
+		variableAssociations=StringSplit[variableAssociations,RegularExpression["->"]];
+		(* Each item is converted to an expression, so numbers will be numbers, not strings of text.
+		  Update 2021-07-12: No longer using ToExpression, because it turns strings into symbols. Conversion
+		  of a variable into a number should be done after importing into a database-like structure.*)
+		(* 2019-05-10: Removing this line and putting it instead only on the value not the key (see next line) *)
+		(*variableAssociations=ToExpression[variableAssociations];*)
+		(* Then we need to convert the variable names into strings. We simulataneously make the list of lists into an associations.*)
+		{keys,values}=Transpose[variableAssociations];
+		variableAssociations=Apply[AssociationThread,{Map[StringTrim,keys],values}];
+		(* We append the associations to the existing collections of associations for the header.*)
+		AppendTo[association,variableAssociations];
+	];
+	];
 
 (* End comments to associations.
 *)
@@ -115,7 +115,7 @@ For[j=2,j<=Length[headerStrippedData],j++,
 	ass=Association[];
 	If[Length[headerStrippedData[[j]]]>1, (*If there are at least two columns*)
 		(*Read the data in like normal*)
-		For[k=1,k<=Length[headerStrippedData[[j]]],k++,
+		For[k=1,k<=Length[headerStrippedData[[1]]],k++,
 			If[dataSections==True,
 				ass=Append[ass,"WAV"->ToExpression[wavelength]];
 				ass=Append[ass,"VOLT"->ToExpression[voltage]];
@@ -124,7 +124,6 @@ For[j=2,j<=Length[headerStrippedData],j++,
 		];
 		tabularData=Append[tabularData,ass];
 		,
-		
 		(* IF there is one column, it's either a blank line or a data header *)
 		If[Length[headerStrippedData[[j]]]>0 ,(* If it has an octothorpe at the beginning of the line *)
 			(* It's a header, add it to the dataset *)
@@ -261,6 +260,15 @@ Map[CopyFile[#,FileNameJoin[{laserOnDirectory,FileNameTake[#]}]]&,pumpOn];
   MovePolarimeterGasOffBackground::usage=
   "MovePolarimeterGasOffBackground[] transfers the beam off background data from a run by providing just the timestamp of the first file.
 	The timestamp is the only required argument. The other options are: [timestamp, date (if other than today), iterations (if other than standard 5), pumpsList (if other than no, S+,S-)]"
+
+
+
+
+
+
+
+
+
 
 
 

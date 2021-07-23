@@ -37,7 +37,7 @@ wavelengthCT="WAV";
 \[Delta]lowCut=\[Delta]Cut;(* The lowest detuning that we want to keep from the dataset (default: 6, number density dependent) *)
 \[Delta]highCut=-\[Delta]Cut;(* The lowest detuning that we want to keep from the dataset (default: 6, number density dependent) *)
 wavelengthLowestReasonable=793;
-wavemeterOffset=1.06; (* This value is subtracted from all wavelengths read in from data files.*) 
+wavemeterOffset=.25; (* This value is subtracted from all wavelengths read in from data files.*) 
 
 
 (* ::Chapter:: *)
@@ -69,7 +69,7 @@ SetAttributes[GetAngleFromFaradayRotationFile,Listable];
 (*Density*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Equations to work with Data*)
 
 
@@ -228,7 +228,7 @@ ProcessFaradayRotationNumberDensityFile[fileName_]:=Module[{importedFile,header,
 	
 	workingDataset=importedFile[[2]];
 	fullRotationDataset=workingDataset[Values,All,{"PUMP"}][Values]//Flatten;
-	allRawDataPlot=ListPlot[fullRotationDataset,PlotRange->{{0,500},Automatic}];
+	allRawDataPlot=ListPlot[fullRotationDataset,PlotRange->{{0,Length[fullRotationDataset]},Automatic}];
 	d=Dataset[FourierAnalyzeSectionedFaradayDatasets[workingDataset,pdCT]];
 	a=AppendAnglesToFourierDataset[d,4];
 	datasetNoAbs=Select[Dataset[a],Abs[#[detCT]]>\[Delta]lowCut&];
@@ -271,7 +271,8 @@ ProcessFaradayRotationNumberDensityDataset[dataset_,magneticField_]:=Module[
 workingDataset,d,a,a2Val,a2PosInPar,
 datasetNoAbs,minAngle,ordPair,nlmFit,nlmFit2,
 a2err,n,nerr,return,lp,
-plot,viz,graphNoLabel},
+plot,viz,graphNoLabel,
+densityWrapFixer},
 	return=<||>;
 
 
@@ -282,10 +283,11 @@ plot,viz,graphNoLabel},
 	AppendTo[return,"RawDetuning"->Transpose[ordPair][[1]]];
 	AppendTo[return,"RawAngles"->Transpose[ordPair][[2]]];
 	
-
+	densityWrapFixer[angle_]:=If[angle<-0.5,angle+Pi/2,angle];
 	workingDataset=Select[dataset,#[detCT]<\[Delta]lowCut||#[detCT]>\[Delta]highCut&];
 	minAngle=Normal[workingDataset[All,angCT]][[-1]];
 	workingDataset=workingDataset[All,<|#,angCT->#[angCT]-minAngle|>&];
+	workingDataset=workingDataset[All,{angCT->densityWrapFixer}];
 	AppendTo[return,"Working Dataset"->Normal[workingDataset]];
 	If[ToString[Head[Normal[workingDataset]]]=="List",
 	ordPair=Normal[Values[workingDataset[All,{detCT,angCT}]]],
@@ -360,7 +362,7 @@ dlmaxn=-upperLimit; (* Detuning limit Maximum for negative values *)
 dlminn=-lowerLimit; (* Detuning limit Minimum for negative values *)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Equations to work with Data*)
 
 
@@ -480,7 +482,7 @@ workingDataset
 
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Equations to Organize Data*)
 
 
@@ -536,7 +538,7 @@ Apply[Export[FileBaseName[#1]<>"_rbPol.csv",#2]&,fileNamesAndData,1]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*One File, One Function*)
 
 

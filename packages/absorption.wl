@@ -120,12 +120,32 @@ PlotSignalProfile[fileName_]:=Module[
 dataset,plotList,transitionLines,rawFile,
 headerStrippedData,columnHeaderLineNumber,
 j,k,ass,tabularData,ds,rbAbsorptionRef,
-rbAbsorptionPro,rbAbsorptionPmp},
+rbAbsorptionPro,rbAbsorptionPmp,
+wavemeterOffset=-.25},
 
 datasetRaw=GetFileDataset[fileName];
 headerInfo=GetFileHeaderInfo[fileName];
-dataset=datasetRaw[All,<|#,detuningCT->#[detuningCT]-1.06|>&];
+dataset=datasetRaw[All,<|#,detuningCT->#[detuningCT]-wavemeterOffset|>&];
 plotList={Normal[dataset[All,{#[detuningCT],#[signalCT[[2]]]}&]],Normal[dataset[All,{#[detuningCT],#[signalCT[[1]]]}&]]};
+transitionLines=Line[{{{transGHz[[1]],0},{transGHz[[1]],10}},{{transGHz[[2]],0},{transGHz[[2]],10}},{{transGHz[[3]],0},{transGHz[[3]],10}},{{transGHz[[4]],0},{transGHz[[4]],10}}}];
+ListPlot[plotList,Joined->True,PlotRange->{{-8,8},Full},Epilog->Style[transitionLines,Thickness[.005],Dotted],PlotLabel->"Absorption Profile",FrameLabel->{"Detuning(GHz)","Intensity"}]
+];
+
+PlotAllProfiles[fileName_]:=Module[
+{datasetRaw,headerInfo,datasetZeroLineRemoved,
+dataset,plotList,transitionLines,rawFile,
+headerStrippedData,columnHeaderLineNumber,
+j,k,ass,tabularData,ds,rbAbsorptionRef,
+rbAbsorptionPro,rbAbsorptionPmp,
+wavemeterOffset=-.25},
+
+datasetRaw=GetFileDataset[fileName];
+headerInfo=GetFileHeaderInfo[fileName];
+dataset=datasetRaw[All,<|#,detuningCT->#[detuningCT]-wavemeterOffset|>&];
+plotList={
+Normal[dataset[All,{#[detuningCT],#[signalCT[[2]]]}&]],
+Normal[dataset[All,{#[detuningCT],#[signalCT[[1]]]}&]], 
+Normal[dataset[All,{#[detuningCT],#[signalCT[[3]]]}&]]};
 transitionLines=Line[{{{transGHz[[1]],0},{transGHz[[1]],10}},{{transGHz[[2]],0},{transGHz[[2]],10}},{{transGHz[[3]],0},{transGHz[[3]],10}},{{transGHz[[4]],0},{transGHz[[4]],10}}}];
 ListPlot[plotList,Joined->True,PlotRange->{{-8,8},Full},Epilog->Style[transitionLines,Thickness[.005],Dotted],PlotLabel->"Absorption Profile",FrameLabel->{"Detuning(GHz)","Intensity"}]
 ];

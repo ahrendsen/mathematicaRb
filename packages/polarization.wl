@@ -127,7 +127,7 @@ rev=1;
 *)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Calculate Polarization*)
 
 
@@ -387,7 +387,7 @@ do=DateObject[{Interpreter["Number"][year],Interpreter["Number"][month],Interpre
 ];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Quick Polarization*)
 
 
@@ -455,7 +455,7 @@ results
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Public Functions *)
 
 
@@ -647,12 +647,21 @@ dataPts=Length[signal];
 s=fc["Sin Coefficients"];
 c=fc["Cos Coefficients"];
 ePlot=ListPlot[{Partition[Riffle[Range[0,2\[Pi]-2\[Pi]/dataPts,2\[Pi]/dataPts],signal],2]},
-{PlotLegends->{"Data"},
+{PlotLegends->Placed[{"Data"},{.5,.5}],
 FrameTicks->{{Automatic,None},{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},None}},
 GridLines->{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},Automatic}}];
 fourierFitFunction=c[0]+c[2]*Cos[2#]+s[2]*Sin[2#]+c[4]*Cos[4#]+s[4]*Sin[4#]&;
-plot=Plot[{fourierFitFunction[\[Theta]]["Value"],fourierFitFunction[\[Theta]]["Value"]+fourierFitFunction[\[Theta]]["Uncertainty"],fourierFitFunction[\[Theta]]["Value"]-fourierFitFunction[\[Theta]]["Uncertainty"]},{\[Theta],0,2\[Pi]},PlotRange->Full,PlotLegends->{"Fourier Coefficient Fit"},FrameTicks->{{Automatic,None},{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},None}},
-GridLines->{Automatic,{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]}},Filling->{1->{2},1->{3}},FillingStyle->RGBColor["#6699CC"],PlotStyle->{RGBColor["#004488"],{Opacity[0],White},{Opacity[0],White}}];
+plot=Plot[{
+fourierFitFunction[\[Theta]]["Value"],
+fourierFitFunction[\[Theta]]["Value"]+fourierFitFunction[\[Theta]]["Uncertainty"],
+fourierFitFunction[\[Theta]]["Value"]-fourierFitFunction[\[Theta]]["Uncertainty"]},{\[Theta],0,2\[Pi]},
+PlotRange->Full,
+PlotLegends->Placed[{"Fit"},{.5,.5}],
+FrameTicks->{{Automatic,None},{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},None}},
+GridLines->{Automatic,{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]}},
+Filling->{1->{2},1->{3}},
+FillingStyle->RGBColor["#6699CC"],
+PlotStyle->{RGBColor["#004488"],{Opacity[0],White},{Opacity[0],White}}];
 fourierFit=Show[plot,ePlot,ImageSize->{UpTo[3*72],UpTo[2*72]}];
 AppendTo[results,"rawAverageSignal"->ListPlot[{signal},ImageSize->{UpTo[3*72],UpTo[2*72]}]];
 AppendTo[results,"fourierFit"->fourierFit];
@@ -680,11 +689,11 @@ ProcessElectronPolarizationFromStokesParameters[stokes_Association]:=Module[
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Multiple Files*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Obtaining Count Rates*)
 
 
@@ -774,7 +783,7 @@ GetAverageCountRateFromFilenames[fn_,darkCountsSubtract_:True]:=Module[{signals,
 ];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Averaging Methods of Files*)
 
 
@@ -939,7 +948,7 @@ newVector
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Background Subtraction Methods*)
 
 
@@ -987,7 +996,7 @@ SubtractElectronPolarizationBackgroundELECTRON[signal_,background_]:=Module[
 ];
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*DataRun Processing*)
 
 
@@ -1012,6 +1021,27 @@ For[i=1,i<=Length[pumpTypes],i++,
 	AppendTo[fnCategorized,pumpType->Take[fn,{i,-1,Length[pumpTypes]}]];
 	darkCountRate=GetAverageCountRateFromFilenames[noBeamBackground[pumpType],False]["avgSignal"];
 	AppendTo[return,pumpType->GetAverageElectronPolarizationWithBackgroudSubtractionELECTRON[fnCategorized[pumpType],beamOnBackground[pumpType]]];
+];
+ResetDirectory[];
+return
+];
+
+Clear[POLProcessElectronPolarizationNoBackground];
+POLProcessElectronPolarizationNoBackground[folder_,pumpTypes_:{"noPump","s+Pump","s-Pump"}]:=
+Module[
+{fn,fnCategorized,
+i,
+pumpType,
+return},
+SetDirectory[folder];
+return=<||>;
+fn=FileNames[RegularExpression["POL.*_[0-9]*.dat"]];
+fnCategorized=<||>;
+For[i=1,i<=Length[pumpTypes],i++,
+	pumpType=pumpTypes[[i]];
+	AppendTo[fnCategorized,pumpType->Take[fn,{i,-1,Length[pumpTypes]}]];
+	darkCountRate=100;
+	AppendTo[return,pumpType->ProcessElectronPolarizationFileAverage[fnCategorized[pumpType],True,True]];
 ];
 ResetDirectory[];
 return

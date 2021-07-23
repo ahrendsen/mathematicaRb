@@ -19,6 +19,7 @@
 
 
 
+(* ::Input::Initialization:: *)
 (* :Title: MathObject *)
 (* :Context: MathObject` *)
 (* :Summary: Object oriented programming infrastructure *)
@@ -29,6 +30,7 @@
 (* :History: May 2011. Initiated.*)
 
 
+(* ::Input::Initialization:: *)
 (* :Discussion: To use the package, the contexts "MathObject`", "MathObject`Methods`", and "MathObject`InstanceData`" should all be in the $ContextPath.  
 
 For interactive use: It always suffices to evaluate Get["MathObject`"], though this will cause the package to be reloaded unnecessarily if already loaded.  It normally suffices to evaluate Needs["MathObject`"], but this will fail to add the subcontexts to the $ContextPath if the package has already been loaded, say, privately to another package.  The completely proper way to load the package is through 
@@ -51,20 +53,23 @@ Object@x[]; (* FAILS *)
 *)
 
 
+(* ::Input::Initialization:: *)
 BeginPackage[
 "MathObject`",
 {"MathObject`Methods`","MathObject`InstanceData`"}
 ];
 
 
+(* ::Input::Initialization:: *)
 Unprotect[Evaluate[$Context<>"*"]];
 
 
+(* ::Input::Initialization:: *)
 Object::usage="Object[name] signifies an object of the given name.";
 DeclareClass::usage="DeclareClass[class,[parent,]{data1,data2,...},{method1,method2,...}] declares a class of objects, with given members.";
 Destroy::usage="Destroy[object] destroys object.  Destruction is carried out by executing a generic destruction function, which in turn invokes the user-defined destructor as one step in the process.";
 SetObjectData::usage="SetObjectData[o2,o1] populates all data fields in o2 with the values assigned for o1.  The object o1 must be of the same class as o2 or a daughter class, so insure that all these fields are present.";
-ObjectExistsQ::usage="ObjectExistsQ[object] returns True if object is defined, i.e., has been created and not subsequently destroyed.";
+ObjectExistsQSD::usage="ObjectExistsQSD[object] returns True if object is defined, i.e., has been created and not subsequently destroyed.";
 ObjectClass::usage="ObjectClass[object] returns the class type of object.";
 ObjectName::usage="ObjectName[object] returns the name of object.  (This is an expression, not necessarily a string.)";
 ShowObject::usage="ShowObject[object] displays diagnostic information for object.";
@@ -77,31 +82,39 @@ ClearObjects::usage="ClearObjects[] removes all object instance data and clears 
 ConstructorWrapper::usage="MathObject internal implementation function.  External access is only needed in special circumstances for defining nonstandard syntaxes for calling the constructor.";
 
 
+(* ::Input::Initialization:: *)
 $ObjectClass::usage="Global storage for Object (not intended for direct access by user but visible for diagnostic purposes).";
 $ObjectInstanceIdentifier::usage="Global storage for Object (not intended for direct access by user but visible for diagnostic purposes).";
 $ObjectReference::usage="Global storage for Object (not intended for direct access by user but visible for diagnostic purposes).";
 $ObjectRegistry::usage="Global registry of created objects (not intended for direct access by user but visible for diagnostic purposes).";
 
 
+(* ::Input::Initialization:: *)
 $ObjectMethodContext="MathObject`Methods`";
 $ObjectInstanceContext="MathObject`InstanceData`";
 
 
+(* ::Input::Initialization:: *)
 $ObjectRegistry={};
 
 
+(* ::Input::Initialization:: *)
 Begin["`Private`"];
 
 
+(* ::Input::Initialization:: *)
 
 
 
+(* ::Input::Initialization:: *)
 ListToString[l_List]:=StringJoin@@Riffle[ToString/@l,","];
 
 
+(* ::Input::Initialization:: *)
 Options[DeclareClass]={Replace->False};
 
 
+(* ::Input::Initialization:: *)
 DeclareClass[Class_Symbol,Parent_Symbol:None,DataMemberNamesP:{___String},MethodNamesP:{___String},OptionsPattern[]]:=Module[
 {s,DataMemberNames,MethodNames,MutatorAccessorMethods,ExplicitMethods},
 
@@ -160,13 +173,16 @@ Null
 ];
 
 
+(* ::Input::Initialization:: *)
 General::objdupl="Cannot create object `1`[[`2`]], since an object named \"`2`\" already exists (as an instance of class `3`).";
 General::objsyntax="Missing or unexpected arguments in `1``2`[`3`].  (The given arguments do not match any of the definitions for the constructor for class `1`.)";
 
 
+(* ::Input::Initialization:: *)
 UniqueObjectBaseName=$ObjectInstanceContext<>"Object$";
 
 
+(* ::Input::Initialization:: *)
 ConstructorWrapper[Class_Symbol,AlmostSelf:Object[AlmostName_]][Args___]:=Module[
 {Self,Name,NameArgumentString,Result,Aborted},
 
@@ -180,7 +196,7 @@ Self=Object[Name];
 
 (* check for duplicate creation *)
 If[
-ObjectExistsQ[Self],
+ObjectExistsQSD[Self],
 If[
 ClassAllowClobber[ObjectClass[Self]],
 
@@ -238,6 +254,7 @@ Self
 ];
 
 
+(* ::Input::Initialization:: *)
 ClearObjectData[Class_Symbol,Self:Object[n_]]:=Module[
 {},
 
@@ -251,15 +268,17 @@ $ObjectClass[Self]=.;
 ];
 
 
+(* ::Input::Initialization:: *)
 (*General::objdestroy="Attempting to destroy object `1` when this object does not exist.";*)
 
 
+(* ::Input::Initialization:: *)
 Destroy[Self:Object[A_]]:=Module[
 {Class},
 
 (* check that object exists in order to be destroyed *)
 If[
-!ObjectExistsQ[Self],
+!ObjectExistsQSD[Self],
 (*Message[General::objdestroy,Self];*)
 Return[]
 ];
@@ -282,20 +301,23 @@ Null
 ];
 
 
+(* ::Input::Initialization:: *)
 Object/:HoldPattern[(Self:Object[A_])@((Method_Symbol)[Args___])]:=MethodWrapper[Self,Method,Args];
 
 
+(* ::Input::Initialization:: *)
 Object::objaccess="Cannot complete method call `2`@`3`[`4`] since object does not exist.";
 General::objmethod="Cannot complete method call `2`@`3`[`4`] since no method named `3` is defined for class `1`.";
 General::objmethodsyntax="Cannot complete method call `2`@`3`[`4`] since given arguments do not match any of the definitions for method `3`.";
 
 
+(* ::Input::Initialization:: *)
 MethodWrapper[Self:Object[A_],Method_Symbol,Args___]:=Module[
 {Class,Result,Msg},
 
 (* validate object *)
 If[
-!ObjectExistsQ[Self],
+!ObjectExistsQSD[Self],
 Message[Object::objaccess,None,Self,Method,ListToString[{Args}]];
 Return[$Failed]
 ];
@@ -329,9 +351,11 @@ Result
 ];
 
 
+(* ::Input::Initialization:: *)
 SetObjectData::ancestry="Source object `1` is not of the same class as `2` or of a descendent class thereof.";
 
 
+(* ::Input::Initialization:: *)
 SetObjectData[o2_Object,o1_Object]:=Module[
 {},
 
@@ -357,21 +381,25 @@ o2@SetMethod[o1@GetMethod[]]
 ];
 
 
-ObjectExistsQ[Self:Object[A_]]:=(Head[$ObjectClass[Self]]=!=$ObjectClass);
+(* ::Input::Initialization:: *)
+ObjectExistsQSD[Self:Object[A_]]:=(Head[$ObjectClass[Self]]=!=$ObjectClass);
 
 
+(* ::Input::Initialization:: *)
 ObjectName[Self:Object[A_]]:=A;
 
 
+(* ::Input::Initialization:: *)
 ObjectClass::noclass="Attempting to determine class of object `1` when this object does not exist.";
 
 
+(* ::Input::Initialization:: *)
 ObjectClass[Self_Object]:=Module[
 {},
 
 (* check that object created *)
 If[
-!ObjectExistsQ[Self],
+!ObjectExistsQSD[Self],
 Message[ObjectClass::noclass,Self];
 Return[]
 ];
@@ -381,12 +409,13 @@ $ObjectClass[Self]
 ];
 
 
+(* ::Input::Initialization:: *)
 ShowObject[Self_Object]:=Module[
 {},
 
 Print["Object name: ",ObjectName[Self]];
 If[
-!ObjectExistsQ[Self],
+!ObjectExistsQSD[Self],
 Print["Object not defined."];
 Return[]
 ];
@@ -402,30 +431,38 @@ DownValues[Evaluate[$ObjectInstanceIdentifier[Self]]],
 ];
 
 
+(* ::Input::Initialization:: *)
 ClassAncestry::noclass="Ancestry requested for undefined class `1`.";
 
 
+(* ::Input::Initialization:: *)
 ClassAncestry[Class_Symbol]/;MatchQ[ClassParent[Class],None]:={Class};
 ClassAncestry[Class_Symbol]/;MatchQ[ClassParent[Class],Except[None,_Symbol]]:=Append[ClassAncestry[ClassParent[Class]],Class];
 ClassAncestry[Class_Symbol]/;MatchQ[ClassParent[Class],Except[_Symbol]]:=(Message[ClassAncestry::noclass,Class];{});
 
 
+(* ::Input::Initialization:: *)
 ClassPattern[Class_Symbol]:=(_Symbol)?(MatchQ[ClassParent[#],_Symbol]&&MemberQ[ClassAncestry[#],Class]&);
 
 
-ObjectPattern[Class_Symbol]:=(_Object)?(ObjectExistsQ[#]&&MemberQ[ClassAncestry[ObjectClass[#]],Class]&);
+(* ::Input::Initialization:: *)
+ObjectPattern[Class_Symbol]:=(_Object)?(ObjectExistsQSD[#]&&MemberQ[ClassAncestry[ObjectClass[#]],Class]&);
 
 
-ObjectNamePattern[Class_Symbol]:=_?(ObjectExistsQ[Object[#]]&&MemberQ[ClassAncestry[ObjectClass[Object[#]]],Class]&);
+(* ::Input::Initialization:: *)
+ObjectNamePattern[Class_Symbol]:=_?(ObjectExistsQSD[Object[#]]&&MemberQ[ClassAncestry[ObjectClass[Object[#]]],Class]&);
 
 
+(* ::Input::Initialization:: *)
 SetAttributes[ScopeObjects,HoldAll];
 
 
+(* ::Input::Initialization:: *)
 ScopeObjects::numargs="ScopeObjects must be called with exactly one argument.";
 ScopeObjects[_,__]:=Message[ScopeObjects::numargs];
 
 
+(* ::Input::Initialization:: *)
 (*
 ScopeObjects[Body_]:=Module[
 {
@@ -460,6 +497,7 @@ If[Aborted,Abort[];$Aborted,EvaluatedBody]
 *)
 
 
+(* ::Input::Initialization:: *)
 ScopeObjects[Body_]:=Module[
 {
 $ObjectRegistry0,Self,
@@ -485,6 +523,7 @@ Destroy[Self],
 ];
 
 
+(* ::Input::Initialization:: *)
 ClearObjects[]:=Module[
 {},
 $ObjectRegistry={};
@@ -495,9 +534,11 @@ Remove["MathObject`InstanceData`*"],
 ]
 
 
+(* ::Input::Initialization:: *)
 End[];
 
 
+(* ::Input::Initialization:: *)
 Protect[Evaluate[$Context<>"*"]];
 Unprotect[Evaluate[$Context<>"$*"]];
 EndPackage[];
