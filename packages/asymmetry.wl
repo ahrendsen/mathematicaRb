@@ -11,7 +11,9 @@ ASYMBlockAverageShift::usage="ASYMBlockAverageShift[filename,detector,plotLabel]
 
 Begin["`Private`"];
 <<dataManipulation`; (* For SDM *)
+<<fileManipulation`; (* For importing files and headers *)
 
+detColumns={"K617_1","PUMP_1","PROBE_1","REF_1"};
 ASYMRawOverview[fileName_,detector_:"cb",plotLabel_]:=Module[
 {justData,
 logNumber,
@@ -20,19 +22,22 @@ spinDown,
 firstDataLine=11,
 detectorColumn,
 sPlusPos=160,
-sMinusPos=72
+sMinusPos=72,
+nA=1*^-9,
 },
 Switch[detector,
-"fd",detectorColumn=3,
-"ct",detectorColumn=5,
-"cb",detectorColumn=7,
-"he",detectorColumn=9
+"fd",detectorColumn=detColumns[[1]],
+"ct",detectorColumn=detColumns[[2]],
+"cb",detectorColumn=detColumns[[3]],
+"he",detectorColumn=detColumns[[4]]
 ];
-justData=Import[fileName][[firstDataLine;;]];
-logNumber=Range[Length[justData]];
-justData=Map[PrependTo[justData[[#]],#]&,logNumber];
-spinUp=Flatten[Partition[Cases[justData,{_,sPlusPos,___}][[All,{1,detectorColumn}]],10],1];
-spinDown=Flatten[Partition[Cases[justData,{_,sMinusPos,___}][[All,{1,detectorColumn}]],10],1];
+{header,dataset}=ImportFile[fileName];
+meas=Range[Length[dataset]];
+append=Map[<|"measurementNumber"->#|>&,meas];
+t=Transpose[{append,dataset//Normal}];
+d=Apply[Join[#1,#2]&,t, {1}];
+spinUp=Dataset[d][Select[#QWPPOS ==sPlusPos&]][All,{#["measurementNumber"],#[detectorColumn]/nA}&]//Normal;
+spinDown=Dataset[d][Select[#QWPPOS ==sMinusPos&]][All,{#["measurementNumber"],#[detectorColumn]/nA}&]//Normal;
 ListPlot[{{{Null,Null}},spinUp,spinDown},
 AspectRatio->1/4,
 PlotRange->Full,
@@ -50,19 +55,24 @@ spinDown,
 firstDataLine=11,
 detectorColumn,
 sPlusPos=160,
-sMinusPos=72
+sMinusPos=72,
+t,d,meas,append,header,dataset,
+nA=1*^-9
 },
 Switch[detector,
-"fd",detectorColumn=3,
-"ct",detectorColumn=5,
-"cb",detectorColumn=7,
-"he",detectorColumn=9
+"fd",detectorColumn=detColumns[[1]],
+"ct",detectorColumn=detColumns[[2]],
+"cb",detectorColumn=detColumns[[3]],
+"he",detectorColumn=detColumns[[4]]
 ];
-justData=Import[fileName][[firstDataLine;;]];
-logNumber=Range[Length[justData]];
-justData=Map[PrependTo[justData[[#]],#]&,logNumber];
-spinUp=Cases[justData,{_,sPlusPos,___}][[All,{detectorColumn}]]//Flatten;
-spinDown=Cases[justData,{_,sMinusPos,___}][[All,{detectorColumn}]]//Flatten;
+{header,dataset}=ImportFile[fileName];
+meas=Range[Length[dataset]];
+append=Map[<|"measurementNumber"->#|>&,meas];
+t=Transpose[{append,dataset//Normal}];
+d=Apply[Join[#1,#2]&,t, {1}];
+spinUp=Dataset[d][Select[#QWPPOS ==sPlusPos&]][All,#[detectorColumn]/nA&]//Normal;
+spinDown=Dataset[d][Select[#QWPPOS ==sMinusPos&]][All,#[detectorColumn]/nA&]//Normal;
+
 spinUp=Partition[spinUp,10];
 spinDown=Partition[spinDown,10];
 spinUp=Map[Around,spinUp];
@@ -85,19 +95,23 @@ sPlusPos=160,
 sMinusPos=72,
 shiftUp,shiftDown,
 spinDownShift,spinUpShift,
-setSpacing=3
+setSpacing=3,
+meas,append,t,d,
+nA=1*^-9
 },
 Switch[detector,
-"fd",detectorColumn=3,
-"ct",detectorColumn=5,
-"cb",detectorColumn=7,
-"he",detectorColumn=9
+"fd",detectorColumn=detColumns[[1]],
+"ct",detectorColumn=detColumns[[2]],
+"cb",detectorColumn=detColumns[[3]],
+"he",detectorColumn=detColumns[[4]]
 ];
-justData=Import[fileName][[firstDataLine;;]];
-logNumber=Range[Length[justData]];
-justData=Map[PrependTo[justData[[#]],#]&,logNumber];
-spinUp=Cases[justData,{_,sPlusPos,___}][[All,{detectorColumn}]]//Flatten;
-spinDown=Cases[justData,{_,sMinusPos,___}][[All,{detectorColumn}]]//Flatten;
+{header,dataset}=ImportFile[fileName];
+meas=Range[Length[dataset]];
+append=Map[<|"measurementNumber"->#|>&,meas];
+t=Transpose[{append,dataset//Normal}];
+d=Apply[Join[#1,#2]&,t, {1}];
+spinUp=Dataset[d][Select[#QWPPOS ==sPlusPos&]][All,#[detectorColumn]/nA&]//Normal;
+spinDown=Dataset[d][Select[#QWPPOS ==sMinusPos&]][All,#[detectorColumn]/nA&]//Normal;
 spinUp=Partition[spinUp,10];
 spinDown=Partition[spinDown,10];
 spinUp=Map[Around,spinUp];
@@ -126,19 +140,24 @@ asymmetry,
 firstDataLine=11,
 detectorColumn,
 sPlusPos=160,
-sMinusPos=72
+sMinusPos=72,
+meas,append,t,d,
+header,dataset,
+nA=1*^-9
 },
 Switch[detector,
-"fd",detectorColumn=3,
-"ct",detectorColumn=5,
-"cb",detectorColumn=7,
-"he",detectorColumn=9
+"fd",detectorColumn=detColumns[[1]],
+"ct",detectorColumn=detColumns[[2]],
+"cb",detectorColumn=detColumns[[3]],
+"he",detectorColumn=detColumns[[4]]
 ];
-justData=Import[fileName][[firstDataLine;;]];
-logNumber=Range[Length[justData]];
-justData=Map[PrependTo[justData[[#]],#]&,logNumber];
-spinUp=Cases[justData,{_,sPlusPos,___}][[All,{detectorColumn}]]//Flatten;
-spinDown=Cases[justData,{_,sMinusPos,___}][[All,{detectorColumn}]]//Flatten;
+{header,dataset}=ImportFile[fileName];
+meas=Range[Length[dataset]];
+append=Map[<|"measurementNumber"->#|>&,meas];
+t=Transpose[{append,dataset//Normal}];
+d=Apply[Join[#1,#2]&,t, {1}];
+spinUp=Dataset[d][Select[#QWPPOS ==sPlusPos&]][All,#[detectorColumn]/nA&]//Normal;
+spinDown=Dataset[d][Select[#QWPPOS ==sMinusPos&]][All,#[detectorColumn]/nA&]//Normal;
 spinUp=Partition[spinUp,10];
 spinDown=Partition[spinDown,10];
 spinUp=Map[Around[Mean[#],SDM[#]]&,spinUp];
@@ -157,19 +176,23 @@ asymmetry,
 firstDataLine=11,
 detectorColumn,
 sPlusPos=160,
-sMinusPos=72
+sMinusPos=72,
+header,dataset,meas,append,t,d,
+nA=1*^-9
 },
 Switch[detector,
-"fd",detectorColumn=3,
-"ct",detectorColumn=5,
-"cb",detectorColumn=7,
-"he",detectorColumn=9
+"fd",detectorColumn=detColumns[[1]],
+"ct",detectorColumn=detColumns[[2]],
+"cb",detectorColumn=detColumns[[3]],
+"he",detectorColumn=detColumns[[4]]
 ];
-justData=Import[fileName][[firstDataLine;;]];
-logNumber=Range[Length[justData]];
-justData=Map[PrependTo[justData[[#]],#]&,logNumber];
-spinUp=Cases[justData,{_,sPlusPos,___}][[All,{detectorColumn}]]//Flatten;
-spinDown=Cases[justData,{_,sMinusPos,___}][[All,{detectorColumn}]]//Flatten;
+{header,dataset}=ImportFile[fileName];
+meas=Range[Length[dataset]];
+append=Map[<|"measurementNumber"->#|>&,meas];
+t=Transpose[{append,dataset//Normal}];
+d=Apply[Join[#1,#2]&,t, {1}];
+spinUp=Dataset[d][Select[#QWPPOS ==sPlusPos&]][All,#[detectorColumn]/nA&]//Normal;
+spinDown=Dataset[d][Select[#QWPPOS ==sMinusPos&]][All,#[detectorColumn]/nA&]//Normal;
 spinUp=Partition[spinUp,10];
 spinDown=Partition[spinDown,10];
 spinUp=Drop[spinUp,1];
@@ -192,13 +215,21 @@ detectorColumn,
 sPlusPos=160,
 sMinusPos=72
 },
-Switch[detector,
-"fd",detectorColumn=3,
-"ct",detectorColumn=5,
-"cb",detectorColumn=7,
-"he",detectorColumn=9
-];
 (Drop[ASYMAsymmetry[fileName,detector],1]+ASYMAsymmetry2[fileName,detector])/2
+]
+
+
+Clear[ASYMAsymmetrySingleValue];
+ASYMAsymmetrySingleValue[fileName_,detector_:"cb"]:=Module[
+{
+asymmetry,
+firstDataLine=11,
+detectorColumn,
+sPlusPos=160,
+sMinusPos=72
+},
+asymmetry=ASYMAsymmetry3[fileName,detector];
+Mean[asymmetry]
 ]
 
 
