@@ -1,12 +1,14 @@
 (* ::Package:: *)
 
 BeginPackage["asymmetry`"];
+ASYMImport::usage="Imports the file and header into one dataset object"
 ASYMAsymmetry::usage="ASYMAsymmetry[filename,detector] Returns a list of the calculated asymmetries between successive blocks."
 ASYMAsymmetry2::usage="ASYMAsymmetry2[filename,detector] Returns a list of the calculated asymmetries between successive blocks, skipping the first half of the first block"
 ASYMAsymmetry3::usage="ASYMAsymmetry3[filename,detector] Returns a list of the calculated asymmetries between successive blocks, averaging methods 1 and 2"
 ASYMRawOverview::usage="ASYMRawOverview[filename,detector,plotLabel] Returns Plot of all datapoints in order they were collected."
 ASYMBlockAverage::usage="ASYMBlockAverage[filename,detector,plotLabel] Returns Plot of average of blocks of data"
 ASYMBlockAverageShift::usage="ASYMBlockAverageShift[filename,detector,plotLabel] Returns Plot of data and data shifted so opposite pump collected first."
+ASYMAsymmetrySingleValue::usage="ASYMAymmetrySingleValue[filename,detector]"
 
 
 Begin["`Private`"];
@@ -14,7 +16,20 @@ Begin["`Private`"];
 <<fileManipulation`; (* For importing files and headers *)
 
 detColumns={"K617_1","PUMP_1","PROBE_1","REF_1"};
-ASYMRawOverview[fileName_,detector_:"cb",plotLabel_]:=Module[
+detColumns={"fd","ct","cb","he"};
+qwpColumn="qwppos";
+
+ASYMImport[fileName_]:=Module[{header,dataset,meas,append,t,d},
+{header,dataset}=ImportFile[fileName];
+meas=Range[Length[dataset]];
+append=Map[<|"measurementNumber"->#|>&,meas];
+t=Transpose[{append,dataset//Normal}];
+d=Apply[Join[#1,#2]&,t, {1}];
+d=Dataset[d][All,<|#,"fd"-> #["fd"]/(1*^-9),"ct"-> #["ct"]/(1*^-9),"cb"-> #["cb"]/(1*^-9),"he"-> #["he"]/(1*^-9)|>&];
+Append[header,"data"->d//Normal]
+]
+
+ASYMRawOverview[fileName_,detector_:"cb",plotLabel_:""]:=Module[
 {justData,
 logNumber,
 spinUp,
@@ -24,6 +39,7 @@ detectorColumn,
 sPlusPos=160,
 sMinusPos=72,
 nA=1*^-9,
+d
 },
 Switch[detector,
 "fd",detectorColumn=detColumns[[1]],
@@ -31,13 +47,9 @@ Switch[detector,
 "cb",detectorColumn=detColumns[[3]],
 "he",detectorColumn=detColumns[[4]]
 ];
-{header,dataset}=ImportFile[fileName];
-meas=Range[Length[dataset]];
-append=Map[<|"measurementNumber"->#|>&,meas];
-t=Transpose[{append,dataset//Normal}];
-d=Apply[Join[#1,#2]&,t, {1}];
-spinUp=Dataset[d][Select[#QWPPOS ==sPlusPos&]][All,{#["measurementNumber"],#[detectorColumn]/nA}&]//Normal;
-spinDown=Dataset[d][Select[#QWPPOS ==sMinusPos&]][All,{#["measurementNumber"],#[detectorColumn]/nA}&]//Normal;
+d=ASYMImport[fileName];
+spinUp=Dataset[d["data"]][Select[#[qwpColumn] ==sPlusPos&]][All,{#["measurementNumber"],#[detectorColumn]}&]//Normal;
+spinDown=Dataset[d["data"]][Select[#[qwpColumn] ==sMinusPos&]][All,{#["measurementNumber"],#[detectorColumn]}&]//Normal;
 ListPlot[{{{Null,Null}},spinUp,spinDown},
 AspectRatio->1/4,
 PlotRange->Full,
@@ -47,7 +59,7 @@ PlotLabel->FileBaseName[fileName]<>plotLabel]
 ]
 
 
-ASYMBlockAverage[fileName_,detector_:"cb",plotLabel_]:=Module[
+ASYMBlockAverage[fileName_,detector_:"cb",plotLabel_:""]:=Module[
 {justData,
 logNumber,
 spinUp,
@@ -70,8 +82,8 @@ meas=Range[Length[dataset]];
 append=Map[<|"measurementNumber"->#|>&,meas];
 t=Transpose[{append,dataset//Normal}];
 d=Apply[Join[#1,#2]&,t, {1}];
-spinUp=Dataset[d][Select[#QWPPOS ==sPlusPos&]][All,#[detectorColumn]/nA&]//Normal;
-spinDown=Dataset[d][Select[#QWPPOS ==sMinusPos&]][All,#[detectorColumn]/nA&]//Normal;
+spinUp=Dataset[d][Select[#[qwpColumn] ==sPlusPos&]][All,#[detectorColumn]/nA&]//Normal;
+spinDown=Dataset[d][Select[#[qwpColumn] ==sMinusPos&]][All,#[detectorColumn]/nA&]//Normal;
 
 spinUp=Partition[spinUp,10];
 spinDown=Partition[spinDown,10];
@@ -84,7 +96,7 @@ PlotLabel->FileBaseName[fileName]<>plotLabel]
 ]
 
 
-ASYMBlockAverageShift[fileName_,detector_:"cb",plotLabel_]:=Module[
+ASYMBlockAverageShift[fileName_,detector_:"cb",plotLabel_:""]:=Module[
 {justData,
 logNumber,
 spinUp,
@@ -110,8 +122,8 @@ meas=Range[Length[dataset]];
 append=Map[<|"measurementNumber"->#|>&,meas];
 t=Transpose[{append,dataset//Normal}];
 d=Apply[Join[#1,#2]&,t, {1}];
-spinUp=Dataset[d][Select[#QWPPOS ==sPlusPos&]][All,#[detectorColumn]/nA&]//Normal;
-spinDown=Dataset[d][Select[#QWPPOS ==sMinusPos&]][All,#[detectorColumn]/nA&]//Normal;
+spinUp=Dataset[d][Select[#[qwpColumn] ==sPlusPos&]][All,#[detectorColumn]/nA&]//Normal;
+spinDown=Dataset[d][Select[#[qwpColumn] ==sMinusPos&]][All,#[detectorColumn]/nA&]//Normal;
 spinUp=Partition[spinUp,10];
 spinDown=Partition[spinDown,10];
 spinUp=Map[Around,spinUp];
@@ -156,8 +168,8 @@ meas=Range[Length[dataset]];
 append=Map[<|"measurementNumber"->#|>&,meas];
 t=Transpose[{append,dataset//Normal}];
 d=Apply[Join[#1,#2]&,t, {1}];
-spinUp=Dataset[d][Select[#QWPPOS ==sPlusPos&]][All,#[detectorColumn]/nA&]//Normal;
-spinDown=Dataset[d][Select[#QWPPOS ==sMinusPos&]][All,#[detectorColumn]/nA&]//Normal;
+spinUp=Dataset[d][Select[#[qwpColumn] ==sPlusPos&]][All,#[detectorColumn]/nA&]//Normal;
+spinDown=Dataset[d][Select[#[qwpColumn] ==sMinusPos&]][All,#[detectorColumn]/nA&]//Normal;
 spinUp=Partition[spinUp,10];
 spinDown=Partition[spinDown,10];
 spinUp=Map[Around[Mean[#],SDM[#]]&,spinUp];
@@ -191,8 +203,8 @@ meas=Range[Length[dataset]];
 append=Map[<|"measurementNumber"->#|>&,meas];
 t=Transpose[{append,dataset//Normal}];
 d=Apply[Join[#1,#2]&,t, {1}];
-spinUp=Dataset[d][Select[#QWPPOS ==sPlusPos&]][All,#[detectorColumn]/nA&]//Normal;
-spinDown=Dataset[d][Select[#QWPPOS ==sMinusPos&]][All,#[detectorColumn]/nA&]//Normal;
+spinUp=Dataset[d][Select[#[qwpColumn] ==sPlusPos&]][All,#[detectorColumn]/nA&]//Normal;
+spinDown=Dataset[d][Select[#[qwpColumn] ==sMinusPos&]][All,#[detectorColumn]/nA&]//Normal;
 spinUp=Partition[spinUp,10];
 spinDown=Partition[spinDown,10];
 spinUp=Drop[spinUp,1];
