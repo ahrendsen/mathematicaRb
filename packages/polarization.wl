@@ -455,7 +455,7 @@ results
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Public Functions *)
 
 
@@ -540,9 +540,9 @@ ProcessElectronPolarizationFileAverage[fn_List,darkCountsSubtract_:True,cn_:True
 ProcessElectronPolarizationFileAverageSUM[fn,darkCountsSubtract,cn]
 ];
 
-ProcessElectronPolarizationFileSubtractBackgroundAverage[fn_List,fnBack_List,darkCountsSubtract_:True,cn_:True]:=Module[
+ProcessElectronPolarizationFileSubtractBackgroundAverage[fn_List,fnBack_List,cn_:True]:=Module[
 {},
-GetAverageElectronPolarizationWithBackgroudSubtractionSUM[fn,fnBack,cn]
+GetAverageElectronPolarizationWithBackgroundSubtractionSUM[fn,fnBack,cn]
 ];
 
 
@@ -689,11 +689,11 @@ ProcessElectronPolarizationFromStokesParameters[stokes_Association]:=Module[
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Multiple Files*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Obtaining Count Rates*)
 
 
@@ -783,7 +783,7 @@ GetAverageCountRateFromFilenames[fn_,darkCountsSubtract_:True]:=Module[{signals,
 ];
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Averaging Methods of Files*)
 
 
@@ -948,11 +948,11 @@ newVector
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Background Subtraction Methods*)
 
 
-GetAverageElectronPolarizationWithBackgroudSubtractionSUM[fn_,fnBack_,cn_:True]:=Module[
+GetAverageElectronPolarizationWithBackgroundSubtractionSUM[fn_,fnBack_,cn_:True,darkSubtract_:False]:=Module[
 {rawSignal,beamBackgroundSignal,processedSignal,return=<||>},
 	rawSignal=GetAverageCurrentNormalizedCountRateFromFilenames[fn];
 	AppendTo[return,"signalCurrentNormalized"->rawSignal];
@@ -965,8 +965,8 @@ GetAverageElectronPolarizationWithBackgroudSubtractionSUM[fn_,fnBack_,cn_:True]:
 	AppendTo[return,"processedSignal"->processedSignal]
 ];
 
-Clear[GetAverageElectronPolarizationWithBackgroudSubtractionELECTRON];
-GetAverageElectronPolarizationWithBackgroudSubtractionELECTRON[fn_,fnBack_,cn_:True]:=Module[
+Clear[GetAverageElectronPolarizationWithBackgroundSubtractionELECTRON];
+GetAverageElectronPolarizationWithBackgroundSubtractionELECTRON[fn_,fnBack_,cn_:True]:=Module[
 {rawSignal,beamBackgroundSignal,processedSignal=<||>,return=<||>,individualRunInfo,
 pe,peerr},
 	individualRunInfo=Map[ProcessElectronPolarizationFileSubtractBackground[#,fnBack]&,fn];
@@ -1020,7 +1020,7 @@ For[i=1,i<=Length[pumpTypes],i++,
 	pumpType=pumpTypes[[i]];
 	AppendTo[fnCategorized,pumpType->Take[fn,{i,-1,Length[pumpTypes]}]];
 	darkCountRate=GetAverageCountRateFromFilenames[noBeamBackground[pumpType],False]["avgSignal"];
-	AppendTo[return,pumpType->GetAverageElectronPolarizationWithBackgroudSubtractionELECTRON[fnCategorized[pumpType],beamOnBackground[pumpType]]];
+	AppendTo[return,pumpType->GetAverageElectronPolarizationWithBackgroundSubtractionELECTRON[fnCategorized[pumpType],beamOnBackground[pumpType]]];
 ];
 ResetDirectory[];
 return
@@ -1073,7 +1073,7 @@ results
 ];
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Operations On Completed Datasets*)
 
 

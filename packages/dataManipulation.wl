@@ -99,5 +99,6 @@ RemoveErrorVariableColumnsFromDataset[dataset_Dataset]:=dataset[All,DeleteCases[
 (*Data Manipulation*)
 
 
+ShiftX[op_,shiftx_]:=Transpose[{op[[All,1]]+shiftx,op[[All,2]]}];
 MultiplyColumn[data_,columnNumber_,value_]:=If[columnNumber==1,Transpose[{Transpose[data][[1]]*value,Transpose[data][[2]]}],Transpose[{Transpose[data][[1]],Transpose[data][[2]]*value}]];
 MultiplyColumn[data_,columnNumber_,value_]:=If[columnNumber==1,Transpose[{Transpose[data][[1]]*value,Transpose[data][[2]]}],Transpose[{Transpose[data][[1]],Transpose[data][[2]]*value}]];
