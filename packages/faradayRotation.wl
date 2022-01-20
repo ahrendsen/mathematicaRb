@@ -198,7 +198,7 @@ GetAnglesFromFourierDataset[fourierDataset_,frequencyComponent_]:=Module[{intens
 		lineData=<||>;
 		sn=fourierDataset[[i]]["Fourier Data","Sin Coefficients"];
 		cs=fourierDataset[[i]]["Fourier Data","Cos Coefficients"];
-		angle=-.5*ArcTan[sn[Key[frequencyComponent]]/cs[Key[frequencyComponent]]];
+		angle=-.5*ArcTan[sn[Key[frequencyComponent]],cs[Key[frequencyComponent]]];
 		AppendTo[lineData,"DETUNING"->sectionHeaders[[i]]];
 		AppendTo[lineData,"ANGLE"->angle];
 		AppendTo[allData,sectionHeaders[[i]]->lineData];
@@ -218,7 +218,7 @@ AppendAnglesToFourierDataset[fourierDataset_,frequencyComponent_]:=Module[{inten
 		sn=fourierDataset[[i]]["Fourier Data","Sin Coefficients"];
 		cs=fourierDataset[[i]]["Fourier Data","Cos Coefficients"];
 		intensity=cs[Key[0]];
-		angle=-.5*ArcTan[sn[Key[frequencyComponent]]/cs[Key[frequencyComponent]]];
+		angle=-.5*ArcTan[sn[Key[frequencyComponent]],cs[Key[frequencyComponent]]];
 		
 		(*Correct angles that are likely wrapping.*)
 		(*angle=If[angle<-.1,angle=\[Pi]/4-angle,angle];*)
