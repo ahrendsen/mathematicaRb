@@ -95,6 +95,8 @@ Flatten[AppendTo[sparseList,ConstantArray[Null,blanksBetweenEntries]]]
 RemoveErrorVariableColumnsFromDataset[dataset_Dataset]:=dataset[All,DeleteCases[Normal[Keys[dataset[[1]]]],t_String/;StringMatchQ[t,"*err"]]]
 
 
+
+
 (* ::Subtitle:: *)
 (*Data Manipulation*)
 
@@ -102,3 +104,21 @@ RemoveErrorVariableColumnsFromDataset[dataset_Dataset]:=dataset[All,DeleteCases[
 ShiftX[op_,shiftx_]:=Transpose[{op[[All,1]]+shiftx,op[[All,2]]}];
 MultiplyColumn[data_,columnNumber_,value_]:=If[columnNumber==1,Transpose[{Transpose[data][[1]]*value,Transpose[data][[2]]}],Transpose[{Transpose[data][[1]],Transpose[data][[2]]*value}]];
 MultiplyColumn[data_,columnNumber_,value_]:=If[columnNumber==1,Transpose[{Transpose[data][[1]]*value,Transpose[data][[2]]}],Transpose[{Transpose[data][[1]],Transpose[data][[2]]*value}]];
+
+(* Calculate the discrete derivative. Take the differences between successive 2nd elements in a list. And pair them with the first element in the list *)
+DiscreteDerivative[nestedList_]:=Module[{t,diff,xVal},
+t=Transpose[nestedList];
+diff=Map[Differences[#]&,t];
+diff=Map[#/diff[[1]]&,diff];
+xVal=Drop[t[[1]],1];
+Transpose[Prepend[Drop[diff,1],xVal]]
+];
+
+NormalizeToMax[op_]:=Module[{m},
+(* Get the maximum Y value *)
+m=Max[op[[All,2]]];
+(* For each entry in the list, leave 
+the first item unchanged, and 
+divide by the max value on the second. *)
+Map[#*{1,1/m}&,op]
+];

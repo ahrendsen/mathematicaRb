@@ -80,7 +80,8 @@ While[StringPart[rawFile[[k]][[1]],1]=="#",
 *)
 k++;
 ];
-association=Append[association,"Time"->GetTimeInfoFromFileNameString[dataFileName]];
+association=Append[association,"Time"->ExtractTimeInfoFromFileNameString[dataFileName]];
+association=Prepend[association,"File"->FileNameTake[dataFileName]];
 association
 ];
 
@@ -159,7 +160,7 @@ f=ImportFile[fileName];
 Normal[f[[1]][property]]
 ];
 
-GetTimeInfoFromFileNameString[fileNameString_]:=Module[{lastChars,date,year,month,day,hour,min,sec,do},
+ExtractTimeInfoFromFileNameString[fileNameString_]:=Module[{lastChars,date,year,month,day,hour,min,sec,do},
 lastChars=StringTake[fileNameString,-21];
 date=StringTake[lastChars,17];
 year=StringTake[date,{1,4}];

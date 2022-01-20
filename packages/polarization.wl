@@ -15,7 +15,7 @@ Import["apparatus.wl"];
 Import["physicalConstants.wl"];
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Plotting Functions*)
 
 
@@ -83,7 +83,7 @@ results
 FourierFitFunction[fc_,var_]:=fc["Cos Coefficients"][0];
 
 
-(* ::Subchapter::Closed:: *)
+(* ::Subchapter:: *)
 (*Raw Data*)
 
 
@@ -92,8 +92,7 @@ RepeatedMeasurementSummary[dataPoints_List]:=Module[
 
 	dataPointsAvg=Mean[dataPoints];
 	dataPointsStd=StandardDeviation[dataPoints];
-	dataPointsPlot=ListPlot[dataPoints,PlotRange->{.8*dataPointsAvg,1.2*dataPointsAvg}];
-	<|"currentPlot"->dataPointsPlot,"currentAvg"->dataPointsAvg,"currentStd"->dataPointsStd|>
+	<|"currentAvg"->dataPointsAvg,"currentStd"->dataPointsStd|>
 ];
 
 
@@ -127,7 +126,7 @@ rev=1;
 *)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Calculate Polarization*)
 
 
@@ -387,7 +386,7 @@ do=DateObject[{Interpreter["Number"][year],Interpreter["Number"][month],Interpre
 ];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Quick Polarization*)
 
 
@@ -415,18 +414,28 @@ results
 SetAttributes[QPOLProcessFileDataNoBackground,Listable]
 
 QPOLProcessFileDataNoBeamBackground[fileName_,noBeamFileName_]:=Module[
-{t,f,avgNoBeam,avg,stdDev,i45,i135,i45err,i135err,p3,pe,peErr,results,fNoBeam,p,bnc(*background Normalized Counts*)},
+{t,f,avgNoBeam,avg,stdDev,i45,i135,i45err,i135err,p3,pe,peErr,results,fNoBeam,p,bnc(*background Normalized Counts*),exp(*exponent on ammeter *)},
 results=<||>;
 fNoBeam=ImportFile[noBeamFileName];
 t=ToExpression[fNoBeam[[1]]["DWELL(s)"]];
 avgNoBeam=fNoBeam[[2]][Mean,<|"COUNT+45"->#["COUNT+45"]/t,"COUNT-45"->#["COUNT-45"]/t|>&];
 f=ImportFile[fileName];
 t=ToExpression[f[[1]]["DWELL(s)"]];
-bnc=f[[2]][All,<|"COUNT+45"->(#["COUNT+45"]/t-avgNoBeam["COUNT+45"])/(#["CURRENT+45"]),"COUNT-45"->(#["COUNT-45"]/t-avgNoBeam["COUNT-45"])/(#["CURRENT-45"])|>&];
-p3=Normal[Flatten[bnc[All,{(#["COUNT+45"]-#["COUNT-45"])/(#["COUNT+45"]+#["COUNT-45"])}&]]];
+exp=ToExpression[f[[1]]["SCALE"]];
+bnc=f[[2]][All,<|"COUNT/CURRENT+45"->(#["COUNT+45"]/t-avgNoBeam["COUNT+45"])/(Abs[#["CURRENT+45"]]),"COUNT/CURRENT-45"->(#["COUNT-45"]/t-avgNoBeam["COUNT-45"])/(Abs[#["CURRENT-45"]])|>&];
+p3=Normal[Flatten[bnc[All,{(#["COUNT/CURRENT+45"]-#["COUNT/CURRENT-45"])/(#["COUNT/CURRENT+45"]+#["COUNT/CURRENT-45"])}&]]];
 pe=CalculateElectronPolarization[polConstxxunPolP1,Mean[p3]];
 peErr=CalculateElectronPolarization[polConstxxunPolP1,StandardDeviation[p3]/Sqrt[Length[p3]]];
 AppendTo[results,<|"P_e"->pe,"P_eerr"->peErr,"rawP3"->p3,"averageP3"->Mean[p3],"stdDevP3"->StandardDeviation[p3],"p1"->polConstxxunPolP1|>];
+AppendTo[results,<|"AvgCurrent+45"->f[[2]][Mean,#["CURRENT+45"]&]*Power[10,-exp],
+					"AvgCurrent-45"->f[[2]][Mean,#["CURRENT-45"]&]*Power[10,-exp],
+					"AvgRate+45"->N[f[[2]][Mean,#["COUNT+45"]/t&]],
+					"AvgRate-45"->N[f[[2]][Mean,#["COUNT-45"]/t&]],
+					"DarkRate+45"->avgNoBeam["COUNT+45"],
+					"DarkRate-45"->avgNoBeam["COUNT-45"],
+					"CurrentNormalizedRate+45"->N[bnc[Mean,"COUNT/CURRENT+45"]],
+					"CurrentNormalizedRate-45"->N[bnc[Mean,"COUNT/CURRENT-45"]]|>];
+AppendTo[results,f[[1]]];
 results
 ]
 
@@ -451,7 +460,65 @@ AppendTo[results,<|"AvgCurrent+45"->f[[2]][Mean,#["CURRENT+45"]&],
 					"AvgCurrent-45"->f[[2]][Mean,#["CURRENT-45"]&],
 					"AvgCount+45"->N[f[[2]][Mean,#["COUNT+45"]&]],
 					"AvgCount-45"->N[f[[2]][Mean,#["COUNT-45"]&]]|>];
+AppendTo[results,f[[1]]];
 results
+]
+
+QPOLPlotRawDataCurrent[fileName_]:=Module[
+{f,avg,stdDev,
+t,s,p,
+normCounts,normCounts2,allCounts,
+yLabel,
+p0,p3,pe,peErr,results},
+results=<||>;
+f=ImportFile[fileName];
+t=ToExpression[f[[1]]["DWELL(s)"]];
+s=ToExpression[f[[1]]["SCALE"]];
+normCounts=Normal[f[[2]][All,"CURRENT+45"]];normCounts2=Normal[f[[2]][All,"CURRENT-45"]];
+normCounts=normCounts*Power[10,-s]/(1*^-9);
+normCounts2=normCounts2*Power[10,-s]/(1*^-9);
+If[Mean[normCounts]<0,
+yLabel="Current (-nA)";
+normCounts=-normCounts;
+normCounts2=-normCounts2;,
+yLabel="Current (nA)";
+];
+allCounts=Join[normCounts,normCounts2];
+ListPlot[
+{{None,None}
+,Transpose[{Range[Length[normCounts]]*2-1,normCounts}]
+,Transpose[{Range[Length[normCounts2]]*2,normCounts2}]}
+,PlotRange->
+{Min[Mean[allCounts]*.75,Min[allCounts]]
+,Max[Mean[allCounts]*1.25,Max[allCounts]]}
+,PlotLabel->"Raw Current Plot"
+,FrameLabel->{"Measurement Number", yLabel}
+,Epilog->{Text[Style[FileBaseName[fileName],Gray,8],Scaled[{0.03,.97}],{-1,1}]}
+]
+]
+
+QPOLPlotRawDataCounts[fileName_]:=Module[
+{f,avg,stdDev,
+t,p,
+normCounts,normCounts2,allCounts,
+p0,p3,pe,peErr,results},
+results=<||>;
+f=ImportFile[fileName];
+t=ToExpression[f[[1]]["DWELL(s)"]];
+normCounts=Normal[f[[2]][All,"COUNT+45"]];
+normCounts2=Normal[f[[2]][All,"COUNT-45"]];
+allCounts=Join[normCounts,normCounts2];
+ListPlot[
+{{None,None}
+,Transpose[{Range[Length[normCounts]]*2-1,normCounts}]
+,Transpose[{Range[Length[normCounts2]]*2,normCounts2}]}
+,PlotRange->
+{Min[Mean[allCounts]*.75,Min[allCounts]]
+,Max[Mean[allCounts]*1.25,Max[allCounts]]}
+,PlotLabel->"Raw Counts Plot"
+,FrameLabel->{"Measurement Number", "Counts"}
+,Epilog->{Text[Style[FileBaseName[fileName],Gray,8],Scaled[{0.03,.97}],{-1,1}]}
+]
 ]
 
 
@@ -506,8 +573,11 @@ f,dataset,results,background,d},
 	signal=GetCurrentNormalizedCountRate[counts,current,dwellTime];
 	AppendTo[results,"signal"->signal];
 
-	If[Head[fnBack]!= List,
-		f=ImportFile[fnBack];
+	If[Head[fnBack]!= String, (* If the head isn't a string, it's probably a List of strings *)
+		d=ProcessElectronPolarizationFileAverage[fnBack,True,True];
+		background=Normal[Dataset[d][Values,"avgSignal"]][[1]];
+		,
+				f=ImportFile[fnBack];
 		header=f[[1]];
 		AppendTo[results,"backgroundHeader"->header];
 		dataset=f[[2]];
@@ -517,10 +587,8 @@ f,dataset,results,background,d},
 		current=Abs[Normal[dataset[All,"CURRENT"]]]*10^(-header["SCALE"])/nA;
 		dwellTime=header["DWELL(s)"];
 		background=GetCurrentNormalizedCountRate[counts,current,dwellTime];
-		,
-		d=ProcessElectronPolarizationFileAverage[fnBack,True,True];
-		background=Normal[Dataset[d][Values,"avgSignal"]][[1]];
 	];
+	
 
 	AppendTo[results,"background"->background];
 	AppendTo[results,"trueSignal"->signal-background];
@@ -531,7 +599,7 @@ f,dataset,results,background,d},
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Multiple Files*)
 
 
@@ -589,7 +657,8 @@ GetCurrentNormalizedCountRateError[counts_,current_,dwellTime_,darkCountsSubtrac
 		countRateError=Sqrt[(Sqrt[counts]/dwellTime)^2];
 	];
 	r=countRateError/current; (* r= Count rate *)
-	Normal[r]/Sqrt[Length[r]]
+	(*Normal[r]/Sqrt[Length[r]] Before 2021-11-17, this is what the next line read. I think it was an error.*)
+	Normal[r]
 ];
 
 GetCountRate[counts_,dwellTime_,darkCountsSubtract_:True]:=Module[
@@ -610,7 +679,8 @@ GetCountRateError[counts_,dwellTime_,darkCountsSubtract_:True]:=Module[
 		countRateError=Sqrt[(Sqrt[counts]/dwellTime)^2];
 	];
 	r=countRateError; (* r= Count rate *)
-	Normal[r]/Sqrt[Length[r]]
+	(*Normal[r]/Sqrt[Length[r]] Before 2021-11-17, this is what the next line read. I think it was an error.*)
+	Normal[r]
 ];
 
 CalculateStokesFromDFT[dftOutput_,rev_:rev,alpha_:alpha,beta0_:beta,delta_:delta]:=Module[{c,s},
@@ -646,28 +716,10 @@ fc=DFT[signal];
 dataPts=Length[signal];
 s=fc["Sin Coefficients"];
 c=fc["Cos Coefficients"];
-ePlot=ListPlot[{Partition[Riffle[Range[0,2\[Pi]-2\[Pi]/dataPts,2\[Pi]/dataPts],signal],2]},
-{PlotLegends->Placed[{"Data"},{.5,.5}],
-FrameTicks->{{Automatic,None},{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},None}},
-GridLines->{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},Automatic}}];
 fourierFitFunction=c[0]+c[2]*Cos[2#]+s[2]*Sin[2#]+c[4]*Cos[4#]+s[4]*Sin[4#]&;
-plot=Plot[{
-fourierFitFunction[\[Theta]]["Value"],
-fourierFitFunction[\[Theta]]["Value"]+fourierFitFunction[\[Theta]]["Uncertainty"],
-fourierFitFunction[\[Theta]]["Value"]-fourierFitFunction[\[Theta]]["Uncertainty"]},{\[Theta],0,2\[Pi]},
-PlotRange->Full,
-PlotLegends->Placed[{"Fit"},{.5,.5}],
-FrameTicks->{{Automatic,None},{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},None}},
-GridLines->{Automatic,{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]}},
-Filling->{1->{2},1->{3}},
-FillingStyle->RGBColor["#6699CC"],
-PlotStyle->{RGBColor["#004488"],{Opacity[0],White},{Opacity[0],White}}];
-fourierFit=Show[plot,ePlot,ImageSize->{UpTo[3*72],UpTo[2*72]}];
-AppendTo[results,"rawAverageSignal"->ListPlot[{signal},ImageSize->{UpTo[3*72],UpTo[2*72]}]];
-AppendTo[results,"fourierFit"->fourierFit];
+(*AppendTo[results,"fourierFit"->fourierFit];*)
 AppendTo[results,"fourierFitFunction"->fourierFitFunction];
 AppendTo[results,"fc"->fc];
-AppendTo[results,"fcBarChart"->FourierCoefficientBarChart[fc]];
 AppendTo[results,ProcessElectronPolarizationFromFourierCoefficients[fc]]
 ];
 
@@ -729,7 +781,7 @@ GetAverageCurrentNormalizedCountRateFromFilenames[fn_,darkCountsSubtract_:True]:
 	
 	For[i=1,i<=Length[singleRunInfo],i++,
 	AppendTo[singleRunInfo[[i]],currents[[i]]];
-	AppendTo[singleRunInfo[[i]],"Time"->GetTimeInfoFromFileNameString[fn[[i]]]];
+	AppendTo[singleRunInfo[[i]],"Time"->ExtractTimeInfoFromFileNameString[fn[[i]]]];
 	AppendTo[singleRunInfo[[i]],header];
 	];
 
@@ -737,9 +789,9 @@ GetAverageCurrentNormalizedCountRateFromFilenames[fn_,darkCountsSubtract_:True]:
 	signalStdm=StandardDeviation[signals]/Sqrt[Length[signals]];
 	signal=Apply[Around[#1,#2]&,Partition[Riffle[signal,signalStdm],2],{1}];
 	AppendTo[results,"avgSignal"->signal];
-	AppendTo[results,"Time"->GetTimeInfoFromFileNameString[fn[[1]]]];
+	AppendTo[results,"Time"->ExtractTimeInfoFromFileNameString[fn[[1]]]];
 	
-	AppendTo[results,"IndividualRunInfo"->Dataset[singleRunInfo]]
+	AppendTo[results,"IndividualRunInfo"->singleRunInfo]
 ];
 
 Clear[GetAverageCountRateFromFilenames]
@@ -800,7 +852,8 @@ ProcessElectronPolarizationFileAverageSUM[fn_List,darkCountsSubtract_:True,cn_:T
 	];
 
 	AppendTo[results,ProcessElectronPolarizationFromSignal[r["avgSignal"]]];
-	AppendTo[results,"IndividualRunInfo"->Dataset[r]["IndividualRunInfo"]];
+	(*AppendTo[results,"IndividualRunInfo"->Dataset[r]["IndividualRunInfo"]];*)
+		AppendTo[results,"IndividualRunInfo"->r];
 	<|FileNameTake[fn[[1]]]->results|>
 ];
 
@@ -948,6 +1001,37 @@ newVector
 ];
 
 
+(* ::Subsubsection:: *)
+(*Plotting*)
+
+
+POLPlotSignal[signal_]:=ListPlot[{signal},ImageSize->{UpTo[3*72],UpTo[2*72]}];
+
+POLPlotFourierFit[processedDatasetLine_]:=Module[{signal,dataPts,fitFunction,ePlot,plot},
+signal=processedDatasetLine[[1]]["avgSignal"];
+dataPts=Length[signal];
+fitFunction=processedDatasetLine[[1]]["fourierFitFunction"];
+ePlot=ListPlot[{Partition[Riffle[Range[0,2\[Pi]-2\[Pi]/dataPts,2\[Pi]/dataPts],signal],2]},
+{PlotLegends->Placed[{"Data"},{.5,.5}],
+FrameTicks->{{Automatic,None},{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},None}},
+GridLines->{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},Automatic}}];
+
+plot=Plot[{
+fitFunction[\[Theta]]["Value"],
+fitFunction[\[Theta]]["Value"]+fitFunction[\[Theta]]["Uncertainty"],
+fitFunction[\[Theta]]["Value"]-fitFunction[\[Theta]]["Uncertainty"]},{\[Theta],0,2\[Pi]},
+PlotRange->Full,
+PlotLegends->Placed[{"Fit"},{.5,.5}],
+FrameTicks->{{Automatic,None},{{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]},None}},
+GridLines->{Automatic,{0,\[Pi]/2,\[Pi],3\[Pi]/2,2\[Pi]}},
+Filling->{1->{2},1->{3}},
+FillingStyle->RGBColor["#6699CC"],
+PlotStyle->{RGBColor["#004488"],{Opacity[0],White},{Opacity[0],White}}];
+
+Show[plot,ePlot,ImageSize->{UpTo[3*72],UpTo[2*72]}]
+]
+
+
 (* ::Subsection:: *)
 (*Background Subtraction Methods*)
 
@@ -976,6 +1060,7 @@ pe,peerr},
 	AppendTo[processedSignal,"P_e"->Around[pe,peerr]];
 	AppendTo[processedSignal,"fc"->Normal[Dataset[individualRunInfo][Mean,"fc"]]];
 	AppendTo[processedSignal,"stokes"->Normal[Dataset[individualRunInfo][Mean,"stokes"]]];
+	AppendTo[processedSignal,"Time"->ExtractTimeInfoFromFileNameString[fn[[1]]]];
 	AppendTo[processedSignal,"individualRunInfo"->individualRunInfo];
 	AppendTo[return,"processedSignal"->processedSignal];
 	return
@@ -1041,6 +1126,64 @@ For[i=1,i<=Length[pumpTypes],i++,
 	pumpType=pumpTypes[[i]];
 	AppendTo[fnCategorized,pumpType->Take[fn,{i,-1,Length[pumpTypes]}]];
 	darkCountRate=100;
+	AppendTo[return,pumpType->ProcessElectronPolarizationFileAverage[fnCategorized[pumpType],True,True]];
+];
+ResetDirectory[];
+return
+];
+
+QPOLProcessFileDataNoBeamBackground2[signalFile_,backgroundFile_]:=
+Module[{fNoBeam,t,nMeas,avgNoBeam,f,exp,bnc,p3,pe,results},
+results=<||>;
+fNoBeam=ImportFile[backgroundFile];
+t=ToExpression[fNoBeam[[1]]["DWELL(s)"]];
+nMeas=Length[fNoBeam[[2]]];
+avgNoBeam=fNoBeam[[2]][Total,<|"COUNT+45"->#["COUNT+45"],"COUNT-45"->#["COUNT-45"]|>&];
+avgNoBeam=avgNoBeam[<|
+"COUNT+45"->Around[#["COUNT+45"],Sqrt[#["COUNT+45"]]]
+,"COUNT-45"->Around[#["COUNT-45"],Sqrt[#["COUNT-45"]]]
+|>&];
+avgNoBeam=avgNoBeam[<|
+"COUNT+45"->#["COUNT+45"]/nMeas
+,"COUNT-45"->#["COUNT-45"]/nMeas
+|>&];
+f=ImportFile[signalFile];
+t=ToExpression[f[[1]]["DWELL(s)"]];
+exp=ToExpression[f[[1]]["SCALE"]];
+nMeas=f[[2]]//Length;
+(* background normlized counts *)
+bnc=f[[2]][Total,<|"COUNT+45"->#["COUNT+45"],"COUNT-45"->#["COUNT-45"]|>&];
+bnc=bnc[
+<|"COUNT+45"->Around[#["COUNT+45"],Sqrt[#["COUNT+45"]]]
+,"COUNT-45"->Around[#["COUNT-45"],Sqrt[#["COUNT-45"]]]|>&];
+bnc=bnc[
+<|"COUNT+45"->bnc["COUNT+45"]/nMeas/t-avgNoBeam["COUNT+45"]
+,"COUNT-45"->bnc["COUNT-45"]/nMeas/t-avgNoBeam["COUNT-45"]|>&];
+bnc=bnc[
+<|"COUNT+45"->bnc["COUNT+45"]
+,"COUNT-45"->bnc["COUNT-45"]|>&];
+p3=Normal[Flatten[bnc[{(#["COUNT+45"]-#["COUNT-45"])/(#["COUNT+45"]+#["COUNT-45"])}&]]];
+pe=CalculateElectronPolarization[polConstxxunPolP1,Mean[p3]];
+AppendTo[results,<|"P_e"->pe,"p1"->polConstxxunPolP1|>];
+	AppendTo[results,f[[1]]];
+	results
+];
+
+Clear[POLProcessElectronPolarizationSubtractDarkCounts];
+POLProcessElectronPolarizationSubtractDarkCounts[folder_,noBeamBackground_, pumpTypes_:{"noPump","s+Pump","s-Pump"}]:=
+Module[
+{fn,fnCategorized,
+i,
+pumpType,
+return},
+SetDirectory[folder];
+return=<||>;
+fn=FileNames[RegularExpression["POL.*_[0-9]*.dat"]];
+fnCategorized=<||>;
+For[i=1,i<=Length[pumpTypes],i++,
+	pumpType=pumpTypes[[i]];
+	AppendTo[fnCategorized,pumpType->Take[fn,{i,-1,Length[pumpTypes]}]];
+	darkCountRate=GetAverageCountRateFromFilenames[noBeamBackground[pumpType],False]["avgSignal"];
 	AppendTo[return,pumpType->ProcessElectronPolarizationFileAverage[fnCategorized[pumpType],True,True]];
 ];
 ResetDirectory[];
@@ -1131,7 +1274,7 @@ Apply[Around[#1,#2]&,Transpose[{allValues,allErrors}],{1}]
 ];
 
 
-(* ::Chapter::Closed:: *)
+(* ::Chapter:: *)
 (*Optics Polarization*)
 
 
@@ -1166,3 +1309,75 @@ offset=(G/.nlm["BestFitParameters"])/\[Pi]*180;
 If[offset>45, offset=offset-90];
 <|"model"->nlm,"plot"->fullPlot,"offset"->Around[offset,nlm["ParameterErrors"][[3]]]|>
 ]
+
+
+(* ::Chapter:: *)
+(*The Legit Package*)
+
+
+BeginPackage["POL`"];
+
+
+(* Here be the public strings that you'll see when you type the function *)
+POLProcessElectronPolarizationFile::usage="POLProcessElectronPolarizationFile[fileName]"
+POLProcessElectronPolarizationFileAverage::usage="POLProcessElectronPolarizationFileAverage[listOfFileNames, DarkCountSubtract(T/F), Current Norm(T/F)"
+
+
+Begin["`Private`"];
+
+
+(* The functions that will be regularly called from the Data Processing notebooks. *)
+POLProcessElectronPolarizationFile[fn_String,subtractDarkCounts_:True,cn_:True(*Current Normalization*)]:=Module[
+{counts,current,dwellTime,header,signal,
+f,dataset,results,error},
+	results=<||>;
+	f=ImportFile[fn];
+	header=f[[1]];
+	AppendTo[results,header];
+	dataset=f[[2]];
+	AppendTo[results,"dataset"->Normal[dataset]];
+
+	counts=Normal[dataset[All,"COUNT"]];
+	current=Abs[Normal[dataset[All,"CURRENT"]]]*10^(-header["SCALE"])/nA;
+	dwellTime=header["DWELL(s)"];
+	If[cn==True,
+		signal=GetCurrentNormalizedCountRate[counts,current,dwellTime,subtractDarkCounts];
+		error=GetCurrentNormalizedCountRateError[counts,current,dwellTime,subtractDarkCounts];,
+		signal=GetCountRate[counts,dwellTime,subtractDarkCounts];
+		error=GetCountRateError[counts,dwellTime,subtractDarkCounts];
+	];
+	
+	AppendTo[results,"signal"->signal];
+	AppendTo[results,"error"->error];
+	AppendTo[results,ProcessElectronPolarizationFromSignal[signal]](* See Private Functions for the rest of processing. *)
+];
+
+POLProcessElectronPolarizationFileAverage[fn_List,darkCountsSubtract_:True,cn_:True]:=Module[
+{},
+ProcessElectronPolarizationFileAverageSUM[fn,darkCountsSubtract,cn]
+];
+
+Clear[ProcessElectronPolarizationFileAverageSUM];
+ProcessElectronPolarizationFileAverageSUM[fn_List,darkCountsSubtract_:True,cn_:True(*Current Normalization*)]:=Module[
+	{signals,i,f,header,dataset,
+	counts,current,dwellTime,signal,signalStdm, (*Stdm stands for standard deviation of the mean *)
+	fileNames,results,r},
+	results=<||>;
+	
+	If[cn==True,
+	AppendTo[results,r=GetAverageCurrentNormalizedCountRateFromFilenames[fn,darkCountsSubtract]];,
+	AppendTo[results,r=GetAverageCountRateFromFilenames[fn,darkCountsSubtract]];
+	];
+
+	AppendTo[results,ProcessElectronPolarizationFromSignal[r["avgSignal"]]];
+	(*AppendTo[results,"IndividualRunInfo"->Dataset[r]["IndividualRunInfo"]]; The original line *)
+	AppendTo[results,"IndividualRunInfo"->r];  (*What I changed it to *)
+	<|FileNameTake[fn[[1]]]->results|>
+];
+
+
+
+End[]; (* End of private *)
+
+
+EndPackage[];

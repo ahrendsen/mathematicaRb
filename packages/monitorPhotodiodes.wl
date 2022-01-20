@@ -18,8 +18,8 @@ MPDGetFilesBetweenTimestamps[date_,timeString1_,timeString2_]:=Module[{rbData,us
 username=SystemInformation["Kernel","Username"];
 (* If the username is kahrendsen2, we're on the lab computer, so we can access the raspberry pi on the network. Otherwise, use the backup on Box. *)
 If[username=="kahrendsen2",
-rbData=FileNameJoin[{"\\\\129.93.33.132\\PiShare","RbData"}];,
-rbData=FileNameJoin[{$HomeDirectory,"OneDrive - University of Nebraska-Lincoln","Gay Group","Project - Rb Spin Filter","RbDataRaw"}];
+rbData=FileNameJoin[{"\\\\129.93.33.183\\PiShare","RbData"}];,
+rbData=FileNameJoin[{$HomeDirectory,"OneDrive - University of Nebraska-Lincoln","BoxMigrationUNL","Gay Group","Project - Rb Spin Filter","RbDataRaw"}];
 ];
 fileString1=Flatten[FileNames[FileNameJoin[{rbData,date,"*"<>timeString1<>"*.dat"}]]];
 fileNames=FileNames[FileNameJoin[{rbData,date,"*.dat"}]];
@@ -29,7 +29,7 @@ pos2=Flatten[Position[fileNames,fileString2[[1]]]][[1]];
 fileNames=fileNames[[pos1;;pos2]];
 day=StringTake[date,-2];
 
-If[DirectoryQ[day],,CreateDirectory[day]];
+If[DirectoryQ[day],None,CreateDirectory[day]];
 Map[CopyFile[#,FileNameJoin[{day,FileNameTake[#]}]]&,fileNames];
 Map[FileNameJoin[{day,FileNameTake[#]}]&,fileNames]
 ];
