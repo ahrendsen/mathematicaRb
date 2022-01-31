@@ -61,32 +61,6 @@ angle=-.5*ArcTan[s[4],c[4]]
 SetAttributes[GetAngleFromFaradayRotationFile,Listable];
 
 
-FDRotProcessFile[fileName_]:=Module[
-{im, h, d,res},
-im=FDRotImportFile[fileName];
-h=im[[1]];
-d=im[[2]];
-
-res=FDRotProcessDataset[d];
-res=Join[res,<|"dataset"->Normal[d,Dataset]|>];
-res=Join[res,h];
-Prepend[res,<|"File"->res["File"],"Comments"->res["Comments"]|>]
-];
-SetAttributes[FDRotProcessFile,Listable];
-
-FDRotImportFile[fileName_]:=ImportFile[fileName];
-
-FDRotProcessDataset[dataset_]:=Module[
-{angle, d=dataset, fc, s, c, res},
-fc=DFT[d[All,"HORIZ"]//Normal];
-	s=fc["Sin Coefficients"];
-	c=fc["Cos Coefficients"];
-	angle=-.5*ArcTan[s[4],c[4]];
-res=Apply[Join,{fc,<|"angle"->angle|>}];
-res
-];
-
-
 (* ::Chapter:: *)
 (*Faraday Scans*)
 
@@ -116,7 +90,7 @@ startPoints={{\[Theta]0,0},{a2,1},{a4,1}};
 $Assumptions=a2>0;
 $Assumptions=a4>0;
 *)
-nlmFit =NonlinearModelFit[Normal[faradayRotationOrderedPairs],{\[Theta]0+(*.012/62*\[Delta]-.006+*)(a2 ((\[Delta]+\[Nu]0)*1*^9)^2)/(\[Delta]*1*^9)^2+(a4 ((\[Delta]+\[Nu]0)*1*^9)^2)/((\[Delta])*1*^9)^4(*,a2>0,a4>0*)},startPoints,\[Delta]]
+nlmFit =NonlinearModelFit[Normal[faradayRotationOrderedPairs],{\[Theta]0+(*.012/62*\[Delta]-.006+*)(a2 ((\[Delta]+\[Nu]0)*1*^9)^2)/(\[Delta]*1*^9)^2+(a4 ((\[Delta]+\[Nu]0)*1*^9)^2)/((\[Delta])*1*^9)^4,a2>0,a4>0},startPoints,\[Delta]]
 ];
 
 CalculateFittingParametersFreeLineCenter[faradayRotationOrderedPairs_]:=Module[{startPoints,nlmFit,fitParam},
@@ -388,7 +362,7 @@ dlmaxn=-upperLimit; (* Detuning limit Maximum for negative values *)
 dlminn=-lowerLimit; (* Detuning limit Minimum for negative values *)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Equations to work with Data*)
 
 
@@ -564,7 +538,7 @@ Apply[Export[FileBaseName[#1]<>"_rbPol.csv",#2]&,fileNamesAndData,1]
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*One File, One Function*)
 
 
@@ -577,50 +551,44 @@ ProcessFaradayRotationPolarizationFilesThreePumps[unPumped_,
 												numberDensity_Around]:=
 Module[{fileResults,return,lm,
 		pol,viz,results,polarizationResults,
-		detuning,angles,orderedPairs,op},
+		detuning,angles,orderedPairs},
 	return=<||>;
 	polarizationResults=<||>;
 	fileResults=CalculateAngleDifferenceOrdPairsFromFileNames[sPlusPump,sMinusPump,dataColumnName];
 	AppendTo[polarizationResults,fileResults];
-	op=fileResults["orderedPairs"];
-	op=Select[op,Abs[#[[1]]]>\[Delta]lowCut&];
-	{detuning,angles}=Transpose[op];
+	{detuning,angles}=Transpose[fileResults["orderedPairs"]];
 	orderedPairs=Transpose[{detuning,angles/2}];
 	orderedPairs=FixWrapping[orderedPairs,"-"];
 	AppendTo[polarizationResults,"n_Rb"->numberDensity];
 	AppendTo[polarizationResults,"orderedPairsCorrected"->orderedPairs];
 	results=CalculateRubidiumPolarizationFromOrderedPairs[orderedPairs,numberDensity];
 	AppendTo[polarizationResults,results];
-	AppendTo[polarizationResults,"Time"->ExtractTimeInfoFromFileNameString[unPumped]];
+	AppendTo[polarizationResults,"Time"->GetTimeInfoFromFileNameString[unPumped]];
 	AppendTo[return,"Both Pumps"->polarizationResults];
 	
 	fileResults=CalculateAngleDifferenceOrdPairsFromFileNames[sPlusPump,unPumped,dataColumnName];
 	AppendTo[polarizationResults,fileResults];
-	op=fileResults["orderedPairs"];
-	op=Select[op,Abs[#[[1]]]>\[Delta]lowCut&];
-	{detuning,angles}=Transpose[op];
+	{detuning,angles}=Transpose[fileResults["orderedPairs"]];
 	orderedPairs=Transpose[{detuning,angles}];
 	orderedPairs=FixWrapping[orderedPairs,"-"];
 	AppendTo[polarizationResults,"n_Rb"->numberDensity];
 	AppendTo[polarizationResults,"orderedPairsCorrected"->orderedPairs];
 	results=CalculateRubidiumPolarizationFromOrderedPairs[orderedPairs,numberDensity];
 	AppendTo[polarizationResults,results];
-	AppendTo[polarizationResults,"Time"->ExtractTimeInfoFromFileNameString[unPumped]];
+	AppendTo[polarizationResults,"Time"->GetTimeInfoFromFileNameString[unPumped]];
 	AppendTo[polarizationResults,"File"->sPlusPump];
 	AppendTo[return,"S+ Pump"->polarizationResults];
 	
 	fileResults=CalculateAngleDifferenceOrdPairsFromFileNames[sMinusPump,unPumped,dataColumnName];
 	AppendTo[polarizationResults,fileResults];
-	op=fileResults["orderedPairs"];
-	op=Select[op,Abs[#[[1]]]>\[Delta]lowCut&];
-	{detuning,angles}=Transpose[op];
+	{detuning,angles}=Transpose[fileResults["orderedPairs"]];
 	orderedPairs=Transpose[{detuning,angles}];
 	orderedPairs=FixWrapping[orderedPairs,"+"];
 	AppendTo[polarizationResults,"n_Rb"->numberDensity];
 	AppendTo[polarizationResults,"orderedPairsCorrected"->orderedPairs];
 	results=CalculateRubidiumPolarizationFromOrderedPairs[orderedPairs,numberDensity];
 	AppendTo[polarizationResults,results];
-	AppendTo[polarizationResults,"Time"->ExtractTimeInfoFromFileNameString[unPumped]];
+	AppendTo[polarizationResults,"Time"->GetTimeInfoFromFileNameString[unPumped]];
 	AppendTo[polarizationResults,"File"->sMinusPump];
 	AppendTo[return,"S- Pump"->polarizationResults];
 	

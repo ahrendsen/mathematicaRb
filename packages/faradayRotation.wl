@@ -191,16 +191,18 @@ FourierAnalyzeSectionedFaradayDatasets[faradayDataset_,
 a set of fourier components. The angle is determined by the arc tangent of the
 sine and cosine components. *)
 Clear[GetAnglesFromFourierDataset];
-GetAnglesFromFourierDataset[fourierDataset_,frequencyComponent_]:=Module[{intensity,lineData,i,sectionHeaders,angle,sn,cs,allData},
+GetAnglesFromFourierDataset[fourierDataset_,frequencyComponent_]:=Module[{intensity,lineData,i,sectionHeaders,angle,angle2, sn,cs,allData},
 	allData=<||>;
 	sectionHeaders=Normal[Keys[fourierDataset]];
 	For[i=1,i<=Length[sectionHeaders],i++,
 		lineData=<||>;
 		sn=fourierDataset[[i]]["Fourier Data","Sin Coefficients"];
 		cs=fourierDataset[[i]]["Fourier Data","Cos Coefficients"];
-		angle=-.5*ArcTan[sn[Key[frequencyComponent]],cs[Key[frequencyComponent]]];
+		angle=-.5*ArcTan[sn[Key[frequencyComponent]]/cs[Key[frequencyComponent]]];
+		angle2=-.5*ArcTan[sn[Key[frequencyComponent]]/cs[Key[frequencyComponent]]];
 		AppendTo[lineData,"DETUNING"->sectionHeaders[[i]]];
 		AppendTo[lineData,"ANGLE"->angle];
+		(*AppendTo[lineData,"ANGLE2"->angle2];*)
 		AppendTo[allData,sectionHeaders[[i]]->lineData];
 	];
 	allData
@@ -210,7 +212,7 @@ GetAnglesFromFourierDataset[fourierDataset_,frequencyComponent_]:=Module[{intens
 a set of fourier components. The angle is determined by the arc tangent of the
 sine and cosine components. This function should replace GetAngles as I move forward with the code. *)
 Clear[AppendAnglesToFourierDataset];
-AppendAnglesToFourierDataset[fourierDataset_,frequencyComponent_]:=Module[{intensity,lineData,i,sectionHeaders,angle,sn,cs,allData},
+AppendAnglesToFourierDataset[fourierDataset_,frequencyComponent_]:=Module[{intensity,lineData,i,sectionHeaders,angle,angle2, sn,cs,allData},
 	allData=<||>;
 	sectionHeaders=Normal[Keys[fourierDataset]];
 	For[i=1,i<=Length[sectionHeaders],i++,
@@ -218,12 +220,13 @@ AppendAnglesToFourierDataset[fourierDataset_,frequencyComponent_]:=Module[{inten
 		sn=fourierDataset[[i]]["Fourier Data","Sin Coefficients"];
 		cs=fourierDataset[[i]]["Fourier Data","Cos Coefficients"];
 		intensity=cs[Key[0]];
-		angle=-.5*ArcTan[sn[Key[frequencyComponent]],cs[Key[frequencyComponent]]];
-		
+		angle=-.5*ArcTan[sn[Key[frequencyComponent]]/cs[Key[frequencyComponent]]];
+		angle2=-.5*ArcTan[sn[Key[frequencyComponent]],cs[Key[frequencyComponent]]];
 		(*Correct angles that are likely wrapping.*)
 		(*angle=If[angle<-.1,angle=\[Pi]/4-angle,angle];*)
 		AppendTo[lineData,"DETUNING"->sectionHeaders[[i]]];
 		AppendTo[lineData,"ANGLE"->angle];
+		(*AppendTo[lineData,"ANGLE2"->angle2];*)
 		AppendTo[lineData,"INTENSITY"->intensity];
 		AppendTo[allData,sectionHeaders[[i]]->lineData];
 	];
@@ -297,7 +300,7 @@ ProcessFaradayRotationNumberDensityDataset[dataset_,magneticField_]:=Module[
 workingDataset,d,a,a2Val,a2PosInPar,
 datasetNoAbs,minAngle,ordPair,nlmFit,nlmFit2,
 a2err,n,nerr,return,lp,
-plot,viz,graphNoLabel,
+plot,viz,graphNoLabel,angle2,
 densityWrapFixer},
 	return=<||>;
 
@@ -308,6 +311,14 @@ densityWrapFixer},
 	];
 	AppendTo[return,"RawDetuning"->Transpose[ordPair][[1]]];
 	AppendTo[return,"RawAngles"->Transpose[ordPair][[2]]];
+	(*
+	If[ToString[Head[Normal[dataset]]]=="List",
+	angle2=Normal[Values[dataset[All,"ANGLE2"]]],
+	angle2=Normal[Values[dataset[Values,"ANGLE2"]]]
+	];
+	AppendTo[return,"RawAngles2"\[Rule]angle2];
+	Echo[angle2];
+	*)
 	
 	densityWrapFixer[angle_]:=If[angle<-0.5,angle+Pi/2,angle];
 	workingDataset=Select[dataset,#[detCT]<\[Delta]lowCut||#[detCT]>\[Delta]highCut&];

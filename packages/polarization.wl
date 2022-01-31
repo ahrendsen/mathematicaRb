@@ -172,7 +172,7 @@ For[j=1,j<=Length[polFileNames],j++,
 	countsPlot=ListPlot[counts];
 	AppendTo[stokesValues,stokes];
 	singleRunInfo=<|"stokes"->stokes|>;
-	AppendTo[singleRunInfo,current];
+	AppendTo[singleRunInfo,"current"->current];
 	AppendTo[singleRunInfo,"counts"->countsPlot];
 	AppendTo[singleRunInfo,"rawCounts"->counts];
 	AppendTo[allSingleRunInfo, polFileNames[[j]]->singleRunInfo];
@@ -202,7 +202,7 @@ For[j=1,j<=Length[polFileNames],j++,
 	countsPlot=ListPlot[counts];
 	AppendTo[stokesValues,stokes];
 	singleRunInfo=<|"stokes"->stokes|>;
-	AppendTo[singleRunInfo,current];
+	AppendTo[singleRunInfo,"current"->current];
 	AppendTo[singleRunInfo,"counts"->countsPlot];
 	AppendTo[singleRunInfo,"rawCounts"->counts];
 	AppendTo[allSingleRunInfo, polFileNames[[j]]->singleRunInfo];
@@ -526,7 +526,7 @@ ListPlot[
 (*Public Functions *)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Single File*)
 
 
@@ -599,7 +599,7 @@ f,dataset,results,background,d},
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Multiple Files*)
 
 
@@ -771,6 +771,7 @@ GetAverageCurrentNormalizedCountRateFromFilenames[fn_,darkCountsSubtract_:True]:
 		dwellTime=header["DWELL(s)"];
 		signal=GetCurrentNormalizedCountRate[counts,current,dwellTime,darkCountsSubtract];
 		AppendTo[signals,signal];
+		AppendTo[currents,current];
 		AppendTo[fileNames,header["File"]];
 	];
 	AppendTo[results,"averagedFiles"->fn];
@@ -780,7 +781,7 @@ GetAverageCurrentNormalizedCountRateFromFilenames[fn_,darkCountsSubtract_:True]:
 	singleRunInfo=AssociationThread[fn,Map[threader,singleRunInfo]];
 	
 	For[i=1,i<=Length[singleRunInfo],i++,
-	AppendTo[singleRunInfo[[i]],currents[[i]]];
+	AppendTo[singleRunInfo[[i]],"current"->currents[[i]]];
 	AppendTo[singleRunInfo[[i]],"Time"->ExtractTimeInfoFromFileNameString[fn[[i]]]];
 	AppendTo[singleRunInfo[[i]],header];
 	];
@@ -789,6 +790,7 @@ GetAverageCurrentNormalizedCountRateFromFilenames[fn_,darkCountsSubtract_:True]:
 	signalStdm=StandardDeviation[signals]/Sqrt[Length[signals]];
 	signal=Apply[Around[#1,#2]&,Partition[Riffle[signal,signalStdm],2],{1}];
 	AppendTo[results,"avgSignal"->signal];
+	AppendTo[results,"avgCurrent" -> Mean[Flatten[currents]]];
 	AppendTo[results,"Time"->ExtractTimeInfoFromFileNameString[fn[[1]]]];
 	
 	AppendTo[results,"IndividualRunInfo"->singleRunInfo]
@@ -812,10 +814,12 @@ GetAverageCountRateFromFilenames[fn_,darkCountsSubtract_:True]:=Module[{signals,
 		header=f[[i]][[1]];
 		dataset=f[[i]][[2]];
 		AppendTo[datasets,Normal[dataset]];
+		current=Abs[Normal[dataset[All,"CURRENT"]]]*10^(-header["SCALE"])/nA;
 		counts=Normal[dataset[All,"COUNT"]];
 		dwellTime=header["DWELL(s)"];
 		signal=GetCountRate[counts,dwellTime,darkCountsSubtract];
 		AppendTo[signals,signal];
+		AppendTo[currents,current];
 		AppendTo[fileNames,header["File"]];
 	];
 	
@@ -831,6 +835,7 @@ GetAverageCountRateFromFilenames[fn_,darkCountsSubtract_:True]:=Module[{signals,
 	(* Use the Around[] object to let Mathematica take care of error propogation *)
 	signal=Apply[Around[#1,#2]&,Transpose[{signal,signalStdm}],{1}];
 	AppendTo[results,"avgSignal"->signal];
+	AppendTo[results,"avgCurrent"->Mean[Flatten[currents]]];
 	AppendTo[results,"IndividualRunInfo"->singleRunInfo]
 ];
 

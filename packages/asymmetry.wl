@@ -9,9 +9,9 @@ ASYMAsymmetry3::usage="ASYMAsymmetry3[filename,detector] Returns a list of the c
 ASYMAsymmetryFiltered::usage="ASYMAsymmetry[filename,detector] Returns a list of the calculated asymmetries between successive blocks."
 ASYMAsymmetry2Filtered::usage="ASYMAsymmetry2[filename,detector] Returns a list of the calculated asymmetries between successive blocks, skipping the first half of the first block"
 ASYMAsymmetry3Filtered::usage="ASYMAsymmetry3[filename,detector] Returns a list of the calculated asymmetries between successive blocks, averaging methods 1 and 2"
-ASYMRawOverview::usage="ASYMRawOverview[filename,detector,plotLabel] Returns Plot of all datapoints in order they were collected."
+ASYMRawOverview::usage="ASYMRawOverview[filename,plotLabel] Returns Plot of all datapoints in order they were collected."
 ASYMRawOverviewMethod2::usage="ASYMRawOverviewMethod2[filename,detector,plotLabel] Returns Plot of all datapoints in order they were collected."
-ASYMRawOverviewFiltered::usage="ASYMRawOverviewFiltered[filename,detector,plotLabel] Returns Plot of all datapoints in order they were collected."
+ASYMRawOverviewFiltered::usage="ASYMRawOverviewFiltered[filename, plotLabel] Returns Plot of all datapoints in order they were collected."
 ASYMRawOverviewOtherPos::usage="ASYMRawOverviewOtherPos[fileName_,detector_] Returns plot at two positions data was collected at."
 ASYMBlockAverage::usage="ASYMBlockAverage[filename,detector,plotLabel] Returns Plot of average of blocks of data"
 ASYMBlockAverageShift::usage="ASYMBlockAverageShift[filename,detector,plotLabel] Returns Plot of data and data shifted so opposite pump collected first."
@@ -27,8 +27,8 @@ detColumns={"K617_1","PUMP_1","PROBE_1","REF_1"};
 detColumns={"fd","ct","cb","he"};
 qwpColumn="qwppos";
 (* These are the current values to use for the QWP as of 2022-01-19 *)
-sPlusPos=164;
-sMinusPos=72;
+sPlusPositions={170,164,160,15};
+sMinusPositions={82,72,103};
 
 (* These values must be uncommented to run some historical sets of data *)
 (*
@@ -47,7 +47,7 @@ d=Dataset[d][All,<|#,"fd"-> #["fd"]/(1*^-9),"ct"-> #["ct"]/(1*^-9),"cb"-> #["cb"
 Append[header,"data"->d//Normal]
 ]
 
-ASYMRawOverview[fileName_,detector_:"cb",plotLabel_:""]:=Module[
+ASYMRawOverview[fileName_,plotLabel_:""]:=Module[
 {justData,
 logNumber,
 spinUp,
@@ -63,6 +63,7 @@ Switch[ToLowerCase[detector],
 "he",detectorColumn=detColumns[[4]]
 ];
 d=ASYMImport[fileName];
+detectorColumn=d["detector"];
 spinUp=Dataset[d["data"]][Select[#[qwpColumn] ==sPlusPos&]][All,{#["measurementNumber"],#[detectorColumn]}&]//Normal;
 spinDown=Dataset[d["data"]][Select[#[qwpColumn] ==sMinusPos&]][All,{#["measurementNumber"],#[detectorColumn]}&]//Normal;
 ListPlot[{{{Null,Null}},spinUp,spinDown},
@@ -70,7 +71,7 @@ AspectRatio->1/4,
 PlotRange->Full,
 ImageSize->Large,
 FrameLabel->{"Measurement Number","Current (nA)"},
-PlotLabel->FileBaseName[fileName]<>plotLabel]
+PlotLabel->FileBaseName[fileName]<> " (" <> detectorColumn <> ") " <>plotLabel]
 ]
 
 ASYMRawOverviewMethod2[fileName_,detector_:"cb",plotLabel_:""]:=Module[
@@ -357,16 +358,34 @@ ASYMBlockLevelFilter[d_,rejects_]:=Module[
 {blockedUp,blockedDown,
 upRejectMask,downRejectMask,overallMask,
 pickedUp,pickedDown,picked,d2,
-vals,as,normAs,rejectMask,rejectSTD},
+qwpPos,sPlusPos,sMinusPos,
+vals,ma,as,normAs,rejectMask,rejectSTD},
 d["Cycles"];
 d["MeasurementsPerCycle"];
+qwpPos=DeleteDuplicates[Normal[d["data"][[All,qwpColumn]]]];
+If[ContainsAny[{qwpPos[[1]]},sPlusPositions],
+sPlusPos=qwpPos[[1]];sMinusPos=qwpPos[[2]],
+sPlusPos=qwpPos[[2]];sMinusPos=qwpPos[[1]]
+];
 (* Partition the dataset into the "blocks" they were collected in*)
 blockedUp=Partition[Dataset[d["data"]][Select[#["qwppos"]==sPlusPos&]]//Normal,d["MeasurementsPerCycle"]];
 blockedDown=Partition[Dataset[d["data"]][Select[#["qwppos"]==sMinusPos&]]//Normal,d["MeasurementsPerCycle"]];
 (* Get just the current values for all measurements *)
 vals=Dataset[d["data"]][All,ToLowerCase[d["detector"]]]//Normal;
+(* If the DAQ malfunctions and fails to obtain a value, it returns a zero. 
+In the next step, we're going to calculate a "moving asymmetry" involving
+a sum of the current values in the denominator. If those current values
+are zero, then we have an indeterminant expression. To avoid these expressions,
+I'll set any zero values to very small numbers *)
+(* We use the MovingAverage function as a convenience function to 
+calculate the Sum from point to point. Then multiply by 2 to get the 
+sum *)
+ma=MovingAverage[vals,2]*2;
+(* If there are any zeros in the MovingAverage, replace them with 
+.000001 *)
+ma=ma/.{0.0->0.000001};
 (* Convert the currents into a "moving" asymmetry *)
-as=Differences[vals]/(MovingAverage[vals,2]*2);
+as=Differences[vals]/ma;
 (* Normalize the asymmetry to the standard deviation *)
 normAs=(as-Mean[as])/StandardDeviation[as];
 (* Taking Differences or a moving average reduces the number of data points by 1,
@@ -398,6 +417,7 @@ asymmetry,
 detectorColumn,
 meas,append,t,d,
 header,dataset,
+qwpPos,sPlusPos,sMinusPos,
 nA=1*^-9
 },
 Switch[ToLowerCase[detector],
@@ -408,6 +428,11 @@ Switch[ToLowerCase[detector],
 ];
 d=ASYMImport[fileName];
 d=ASYMBlockLevelFilter[d,False];
+qwpPos=DeleteDuplicates[Normal[d["data"][[All,qwpColumn]]]];
+If[ContainsAny[{qwpPos[[1]]},sPlusPositions],
+sPlusPos=qwpPos[[1]];sMinusPos=qwpPos[[2]],
+sPlusPos=qwpPos[[2]];sMinusPos=qwpPos[[1]]
+];
 spinUp=Dataset[d["data"]][Select[#[qwpColumn] ==sPlusPos&]][All,#[detectorColumn]/nA&]//Normal;
 spinDown=Dataset[d["data"]][Select[#[qwpColumn] ==sMinusPos&]][All,#[detectorColumn]/nA&]//Normal;
 spinUp=Partition[spinUp,d["MeasurementsPerCycle"]];
@@ -428,6 +453,7 @@ asymmetry,
 firstDataLine=11,
 detectorColumn,
 header,dataset,meas,append,t,d,
+qwpPos,sPlusPos,sMinusPos,
 nA=1*^-9,
 firstPump
 },
@@ -440,6 +466,13 @@ Switch[ToLowerCase[detector],
 d=ASYMImport[fileName];
 firstPump=d["data"][[1]][qwpColumn];
 d=ASYMBlockLevelFilter[d,False];
+
+qwpPos=DeleteDuplicates[Normal[d["data"][[All,qwpColumn]]]];
+If[ContainsAny[{qwpPos[[1]]},sPlusPositions],
+sPlusPos=qwpPos[[1]];sMinusPos=qwpPos[[2]],
+sPlusPos=qwpPos[[2]];sMinusPos=qwpPos[[1]]
+];
+
 spinUp=Dataset[d["data"]][Select[#[qwpColumn] ==sPlusPos&]][All,#[detectorColumn]/nA&]//Normal;
 spinDown=Dataset[d["data"]][Select[#[qwpColumn] ==sMinusPos&]][All,#[detectorColumn]/nA&]//Normal;
 spinUp=Partition[spinUp,d["MeasurementsPerCycle"]];
@@ -470,13 +503,14 @@ detectorColumn
 ]
 
 
-ASYMRawOverviewFiltered[fileName_,detector_,plotLabel_:""]:=Module[
+ASYMRawOverviewFiltered[fileName_, plotLabel_:""]:=Module[
 {justData,
 logNumber,
 spinUp,
 spinDown,
 firstDataLine=11,
 detectorColumn,
+qwpPos,sPlusPos,sMinnusPos,
 nA=1*^-9,
 d,d1,d2,spinUpRej,spinDownRej
 },
@@ -487,6 +521,12 @@ Switch[ToLowerCase[detector],
 "he",detectorColumn=detColumns[[4]]
 ];
 d=ASYMImport[fileName];
+detectorColumn=d["detector"];
+qwpPos=DeleteDuplicates[Normal[d["data"][[All,qwpColumn]]]];
+If[ContainsAny[{qwpPos[[1]]},sPlusPositions],
+sPlusPos=qwpPos[[1]];sMinusPos=qwpPos[[2]],
+sPlusPos=qwpPos[[2]];sMinusPos=qwpPos[[1]]
+];
 d1=ASYMBlockLevelFilter[d,False]; (* Pick Those that were accepted *)
 d2=ASYMBlockLevelFilter[d,True]; (* Pick those that were rejected *)
 spinUp=Dataset[d1["data"]][Select[#[qwpColumn] ==sPlusPos&]][All,{#["measurementNumber"],#[detectorColumn]}&]//Normal;
@@ -508,7 +548,7 @@ Global`colorBlindPalette[[3]],
 Blend[{Global`colorBlindPalette[[2]],White},.75],
 Blend[{Global`colorBlindPalette[[3]],White},.75]
 },
-PlotLabel->FileBaseName[fileName]<>plotLabel]
+PlotLabel->FileBaseName[fileName]<> " (" <> detectorColumn <> ") " <>plotLabel]z
 ]
 
 
