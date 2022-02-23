@@ -1,7 +1,8 @@
 *~
-packages/deflectorProcessingPrototyping.nb
 *.nb
 packages/deflectorProcessingPrototyping.nb
 packages/.absorption.wl.un~
+packages/SciDraw/**
+packages/palettes/**
+packages/ColorBrewer-Master/**
 
-packages/SciDraw/

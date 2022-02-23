@@ -1010,8 +1010,6 @@ newVector
 (*Plotting*)
 
 
-POLPlotSignal[signal_]:=ListPlot[{signal},ImageSize->{UpTo[3*72],UpTo[2*72]}];
-
 POLPlotFourierFit[processedDatasetLine_]:=Module[{signal,dataPts,fitFunction,ePlot,plot},
 signal=processedDatasetLine[[1]]["avgSignal"];
 dataPts=Length[signal];
@@ -1356,6 +1354,12 @@ f,dataset,results,error},
 	AppendTo[results,"error"->error];
 	AppendTo[results,ProcessElectronPolarizationFromSignal[signal]](* See Private Functions for the rest of processing. *)
 ];
+
+POLPlotSignal[signal_]:=ListPlot[
+Transpose[{(Range[0,2\[Pi] (#-1)/#,2\[Pi]/#])&[signal],signal}]
+]
+POLTransformSignalDataForPlot[signal_]:=Transpose[{(Range[0,2\[Pi] (#-1)/#,2\[Pi]/#])&[signal],signal}]
+
 
 POLProcessElectronPolarizationFileAverage[fn_List,darkCountsSubtract_:True,cn_:True]:=Module[
 {},
